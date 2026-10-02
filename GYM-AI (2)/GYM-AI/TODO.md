@@ -25,10 +25,11 @@
 - [x] Structural fix (survival consistent with truncated duration law), full nested LOVO rerun → F1 0.93/0.97
 - [ ] Later (more data): revisit correct_01's missed rep and asymmetry_01's trailing-partial FP — do NOT tune further on these 6 videos
 
-## Phase 3 — Supabase (parallelisable with Step 0)
-- [ ] Migrations for MASTER_PROMPT §13 tables, RLS by organization, RLS tests, `seed.sql`, `.env.example`
-- [ ] `shared/event-schemas/` JSON Schema → pydantic + TypeScript
-- [ ] Owner: Supabase project URL + keys
+## Phase 3 — Supabase — CODE COMPLETE 2026-10-02
+- [x] Migrations (schema + RLS), `seed.sql`, `.env.example`, `supabase/README.md`
+- [x] RLS test suite (auto-skips without `SUPABASE_DB_URL`)
+- [x] `shared/event-schemas/` JSON Schema v1.0 → pydantic + TypeScript, sync-tested
+- [ ] **Owner: create a free Supabase project, put URL/keys/DB URL in `.env`** → then: apply migrations + seed, run `pytest supabase/tests` (phase "done when security tests pass")
 
 ## Phase 4 — Dashboard + simulator (parallelisable)
 - [ ] Owner: Vercel account

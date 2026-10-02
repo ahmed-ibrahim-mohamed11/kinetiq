@@ -2,6 +2,14 @@
 
 All behaviour-changing changes to the AI, data, schema, or services are recorded here.
 
+## [Unreleased] — Phase 3: Supabase foundation (2026-10-02, code complete; deploy awaits owner's project)
+- `supabase/migrations/20261002000001_core_schema.sql`: all MASTER_PROMPT §13 tables (organizations → evidence_assets), constraints, idempotency keys (`reps.event_uuid` unique, `(session_id, rep_index)` unique), heartbeat retention function.
+- `supabase/migrations/20261002000002_rls.sql`: RLS enabled on every table; organization scoping via `profiles` + `auth_org_id()`/`auth_role()`; admin-only config writes; coach alert/form review; anon sees nothing; edge devices use a secured ingestion endpoint (Phase 6), never direct table access.
+- `supabase/seed.sql`: two orgs (isolation testable), demo gym/machine/device/sessions/reps/alert, active model version `rep-seg-core-hsmm 0.2.0`.
+- `supabase/tests/test_rls.py`: 6 RLS isolation tests (JWT-claim injection, rollback-only); auto-skip until `SUPABASE_DB_URL` is provided.
+- `shared/event-schemas/`: `v1/events.schema.json` (source of truth, v1.0) + pydantic (`gym_ai_events`) + TypeScript (`events.ts`); sync enforced by `ai/tests/test_event_schema.py` (13 tests, green).
+- `.env.example`, `supabase/README.md`; requirements: + pydantic, jsonschema, psycopg.
+
 ## [Unreleased] — Phase 2: asymmetry_01 diagnosis + survival-law fix (2026-10-02)
 **Behaviour change in `ai/core/decoder.py` (`build_tables`), validated by a full nested-LOVO rerun.**
 - Added `ai/research/diagnose_asymmetry01.py`: reproduces the asymmetry_01 outer fold and decomposes

@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gym-ai.local/schemas/v1/events.schema.json",
+  "title": "GYM-AI edge event envelope v1.0",
+  "description": "Source of truth for events sent from the edge agent to the cloud (MASTER_PROMPT section 15). Python mirror: shared/event-schemas/python/gym_ai_events/models.py. TypeScript mirror: shared/event-schemas/typescript/events.ts. Keep the three in sync; bump schema_version on breaking change.",
+  "type": "object",
+  "required": ["schema_version", "event_type", "event_uuid", "device_id", "agent_version"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "event_type": {
+      "enum": ["rep_completed", "session_started", "session_ended", "device_heartbeat",
+               "camera_error", "alert_created", "model_loaded"]
+    },
+    "event_uuid": { "type": "string", "format": "uuid", "description": "Idempotency key, generated once in the edge outbox" },
+    "device_id": { "type": "string", "format": "uuid" },
+    "ts": { "type": "string", "format": "date-time", "description": "Event time at the edge (UTC)" },
+    "agent_version": { "type": "string" },
+    "model_version": { "type": "string" },
+    "session_id": { "type": "string", "format": "uuid" },
+    "machine_id": { "type": "string", "format": "uuid" },
+    "exercise": { "type": "string" },
+    "rep_index": { "type": "integer", "minimum": 1 },
+    "frames": {
+      "type": "object",
+      "required": ["start", "pull", "end"],
+      "properties": {
+        "start": { "type": "integer", "minimum": 0 },
+        "pull": { "type": "integer", "minimum": 0 },
+        "end": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "duration_ms": { "type": "number" },
+        "pull_duration_ms": { "type": "number" },
+        "return_duration_ms": { "type": "number" },
+        "pull_left_frame": { "type": "integer" },
+        "pull_right_frame": { "type": "integer" },
+        "lag_pull_ms": { "type": "number" },
+        "lag_onset_ms": { "type": "number" },
+        "amp_ratio": { "type": "number" },
+        "peak": { "type": "number" },
+        "peak_z": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "heartbeat": {
+      "type": "object",
+      "required": ["camera_ok"],
+      "properties": {
+        "camera_ok": { "type": "boolean" },
+        "capture_fps": { "type": "number" },
+        "inference_fps": { "type": "number" },
+        "latency_ms": { "type": "number" },
+        "queue_depth": { "type": "integer" },
+        "error_code": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "alert": {
+      "type": "object",
+      "required": ["alert_type", "severity", "message"],
+      "properties": {
+        "alert_type": { "type": "string" },
+        "severity": { "enum": ["info", "warning", "critical"] },
+        "message": { "type": "string" },
+        "rep_event_uuid": { "type": "string", "format": "uuid" }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "event_type": { "const": "rep_completed" } } },
+      "then": { "required": ["session_id", "machine_id", "rep_index", "frames", "metrics", "model_version"] }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "session_started" } } },
+      "then": { "required": ["session_id", "machine_id"] }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "session_ended" } } },
+      "then": { "required": ["session_id"] }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "device_heartbeat" } } },
+      "then": { "required": ["heartbeat"] }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "camera_error" } } },
+      "then": { "required": ["error"] }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "alert_created" } } },
+      "then": { "required": ["session_id", "alert"] }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "model_loaded" } } },
+      "then": { "required": ["model_version"] }
+    }
+  ],
+  "additionalProperties": false
+}
