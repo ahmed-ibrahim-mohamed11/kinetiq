@@ -31,7 +31,8 @@ GYM-AI/                                  git repo (branch main) since 2026-10-02
 │  │  ├─ eval_rep_segmentation.py                 ← the single evaluator (Phase 0)
 │  │  ├─ extract_poses3d.py                       Path B: YOLO → COCO→H36M → MotionBERT → poses3d/*.npy
 │  │  └─ legacy_2d_predictions.py                 packages dataset_build/*/reps.csv for the evaluator
-│  ├─ src/                                        legacy 2D YOLO-only pipeline (9 scripts, ~5.9k lines, untouched)
+│  ├─ core/                                       production package extracted from v2 (Phase 1, regression-locked)
+│  ├─ tests/                                      pytest: unit + byte-identical regression vs Phase 0 baseline
 │  └─ models/README.md                            artifact registry (weights are git-ignored)
 ├─ scripts/eval_legacy_2d.ps1, eval_v2.ps1, extract_poses3d.ps1   one-command steps
 ├─ motionbert/                                    vendored official MotionBERT (commit 705d3a95, Apache-2.0, see VENDORED.md)
@@ -46,7 +47,7 @@ GYM-AI/                                  git repo (branch main) since 2026-10-02
 |---|---|
 | **Current baseline** | `ai/research/rep_segmentation_v2_hsmm.py` — ridge phase model + explicit-duration HSMM, nested LOVO |
 | **Legacy baseline (kept)** | `ai/research/rep_segmentation_v1_fsm.py` |
-| **Legacy 2D pipeline (kept, sanity reference only)** | `ai/src/*.py` — YOLO 2D → elbow-span/shoulder-width → percentile FSM. Measured F1 0.62 (pull ±15) / 0.69 (IoU ≥ 0.5). |
+| **Legacy 2D pipeline (kept, sanity reference only)** | `ai/research/legacy_2d/*.py` — YOLO 2D → elbow-span/shoulder-width → percentile FSM. Measured F1 0.62 (pull ±15) / 0.69 (IoU ≥ 0.5). |
 | **Diagnostic history only, no files on disk** | 3D elbow-depth FSM, elbow angle, peak/prominence, basic HMM, notebook HSMM, logistic-emission HSMM |
 
 ## 3. Blockers

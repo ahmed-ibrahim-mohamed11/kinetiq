@@ -1,7 +1,7 @@
 {
  "name": "legacy_2d_elbow_span_fsm",
- "created_utc": "2026-10-02T18:28:14+00:00",
- "git_commit": "3ccdc20",
+ "created_utc": "2026-10-02T19:17:52+00:00",
+ "git_commit": "8d80fce",
  "evaluator": "ai/research/eval_rep_segmentation.py",
  "frame_convention": "frames compared as given; GT CSV and legacy 2D predictions are 1-based",
  "inputs": {

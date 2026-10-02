@@ -8,7 +8,7 @@ import pandas as pd
 # 1. Paths
 # =========================================================
 
-AI_DIR = Path(__file__).resolve().parent.parent
+AI_DIR = Path(__file__).resolve().parent.parent.parent
 
 VIDEO_PATH = (
     AI_DIR

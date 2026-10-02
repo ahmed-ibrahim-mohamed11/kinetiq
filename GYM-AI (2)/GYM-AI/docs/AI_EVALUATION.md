@@ -13,7 +13,7 @@
 | asymmetry_02 | 18/30/43 · 48/62/84 · 90/102/124 · 131/143/166 · 175/185/212 |
 | asymmetry_03 | 41/65/85 · 100/119/145 · 155/171/192 · 207/229/253 · 257/281/314 |
 
-**Frame convention.** The annotator (`ai/src/manual_rep_annotator.py`) records `frame_index + 1`, so GT frames are **1-based**. The legacy 2D pipeline is also 1-based. The v1/v2 research scripts index the (T,17,3) arrays directly with the GT numbers, i.e. a systematic +1 shift that applies identically to training targets and evaluation — harmless, but any new code must not "fix" it on one side only.
+**Frame convention.** The annotator (`ai/research/legacy_2d/manual_rep_annotator.py`) records `frame_index + 1`, so GT frames are **1-based**. The legacy 2D pipeline is also 1-based. The v1/v2 research scripts index the (T,17,3) arrays directly with the GT numbers, i.e. a systematic +1 shift that applies identically to training targets and evaluation — harmless, but any new code must not "fix" it on one side only.
 
 **Validation scope.** Leave-one-VIDEO-out, one athlete/setup. This does **not** demonstrate new-person generalisation. Switch to leave-one-PERSON-out (`--groups_csv video,athlete`) as soon as a second athlete is recorded.
 
@@ -43,7 +43,7 @@ scripts\eval_v2.ps1               # v2 nested LOVO + evaluator  (needs ai\data\p
 
 | Approach | GT | Pred | TP | FP | FN | P | R | F1 | Start/Pull/End MAE | Rule | Status |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Legacy 2D elbow-span FSM (`ai/src`) | 30 | 25 | 17 | 8 | 13 | 0.68 | 0.57 | **0.62** | 12.5 / 8.9 / 16.7 | pull ±15 | **measured** 2026-10-02 |
+| Legacy 2D elbow-span FSM (`ai/research/legacy_2d`) | 30 | 25 | 17 | 8 | 13 | 0.68 | 0.57 | **0.62** | 12.5 / 8.9 / 16.7 | pull ±15 | **measured** 2026-10-02 |
 | same | 30 | 25 | 19 | 6 | 11 | 0.76 | 0.63 | **0.69** | 13.7 / 11.2 / 6.4 | IoU ≥ 0.5 | **measured** 2026-10-02 |
 | 3D elbow-depth state machine | per-video counts 5/5/8/4/4/7 | | | | | | | | | | history, no file |
 | 3D elbow angle (wrist-dependent) | | | | | | | | | worse timing | | history, no file |

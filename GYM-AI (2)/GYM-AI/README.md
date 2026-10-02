@@ -28,4 +28,4 @@ Both write `ai/outputs/baselines/<name>.json` via the single evaluator `ai/resea
 Claimed v2 result (not yet reproduced): pooled F1 0.93 under IoU ≥ 0.5, Start/Pull/End MAE 3.5/3.3/6.6 frames. All current numbers are same-athlete LOVO — not evidence of new-person generalisation.
 
 ## Layout
-`ai/research/` frozen baselines + evaluator · `ai/src/` legacy 2D pipeline · `ai/data/` videos (+ `poses3d/` once available) · `ai/outputs/` GT, baselines, derived CSVs · `ai/models/` artifact registry · `scripts/` one-command runs · `docs/`.
+`ai/research/` frozen baselines + evaluator (+ `legacy_2d/` old 2D pipeline) · `ai/core/` the production package · `ai/data/` videos + `poses3d/` · `ai/outputs/` GT, baselines, derived CSVs · `ai/models/` artifact registry · `scripts/` one-command runs · `docs/`.

@@ -10,7 +10,7 @@ from scipy.signal import savgol_filter
 # 1. Paths
 # =========================================================
 
-AI_DIR = Path(__file__).resolve().parent.parent
+AI_DIR = Path(__file__).resolve().parent.parent.parent
 
 KEYPOINTS_CSV = (
     AI_DIR

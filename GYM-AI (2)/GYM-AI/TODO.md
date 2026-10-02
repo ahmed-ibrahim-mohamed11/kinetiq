@@ -15,10 +15,10 @@
 - [ ] Owner: back up the 6 research videos off this machine (git-ignored, not protected by the repo)
 - [x] Record GPU status (none; CPU timings measured) in `docs/HARDWARE_SETUP.md`
 
-## Phase 1 — Clean package (no behaviour change)
-- [ ] Move `ai/src/` → `ai/research/legacy_2d/` (update path constants only)
-- [ ] Extract `ai/core/{pose, lifting, features, phase_model, decoder, evaluation}.py` from v2; config + logging
-- [ ] pytest: unit tests + `results`-identical regression test against the Phase 0 baseline JSON
+## Phase 1 — Clean package (no behaviour change) — DONE 2026-10-02
+- [x] Move `ai/src/` → `ai/research/legacy_2d/` (AI_DIR constants only; legacy eval unchanged 0.62/0.69)
+- [x] Extract `ai/core/{config, pose, lifting, features, phase_model, decoder, evaluation, io, log}.py` from v2
+- [x] pytest: 23 unit tests + byte-identical (md5) regression vs `v2_hsmm_nested_lovo.json` — all green
 
 ## Phase 2 — asymmetry_01 diagnosis
 - [ ] Score-decomposition tool for `hsmm_decode` (frames ~15–145; candidates around pulls 60/93/126)

@@ -24,7 +24,7 @@ video (rear camera, ~30 fps)
 ```
 The `label` column is dropped in `load_annotations()` — the segmenter never sees correct/asymmetry.
 
-### 1b. Legacy 2D path (`ai/src/`, kept for reference)
+### 1b. Legacy 2D path (`ai/research/legacy_2d/`, kept for reference)
 
 `pose_test.py` (YOLO → CSV) → `rep_counter.py` / `rep_segmentation.py` / `rep_video.py` (elbow-span ÷ shoulder-width signal, Savitzky–Golay, 30/70-percentile FSM) → `form_features.py` → `build_dataset.py`. Also `manual_rep_annotator.py` + `fix_annotation.py` (GT tooling) and `rep_signal_diagnostics.py` (peak-detector vs GT). Same signal/FSM code is duplicated across ~5 files; it fails on asymmetry videos (dev history §4.1) and is **not** the research baseline.
 
@@ -65,7 +65,7 @@ gym-ai/
 ├─ docs/                     this folder
 ├─ .env.example  CHANGELOG.md  TODO.md  README.md
 ```
-Existing `ai/src`, `ai/data`, `ai/outputs` are kept; nothing is moved until a reproducible metrics command exists (Phase 0 exit criterion).
+Phase 1 (2026-10-02): `ai/src` moved to `ai/research/legacy_2d` (path constants only); `ai/core/` extracted from v2 with a byte-identical regression test.
 
 ## 5. Event contract (v1.0 draft — to be formalised in `shared/event-schemas/`)
 

@@ -2,6 +2,13 @@
 
 All behaviour-changing changes to the AI, data, schema, or services are recorded here.
 
+## [Unreleased] — Phase 1: clean package, no behaviour change (2026-10-02)
+- Moved `ai/src/` → `ai/research/legacy_2d/` (only the `AI_DIR` path constants changed: `.parent.parent` → `.parent.parent.parent`). `scripts/eval_legacy_2d.ps1` re-run: F1 0.62/0.69 unchanged.
+- Extracted `ai/core/` from the frozen `rep_segmentation_v2_hsmm.py` (verbatim function copies): `config` (Cfg/GRID/constants), `features`, `phase_model`, `decoder`, `evaluation` (incl. nested LOVO), `io` (+ `segment_video` live entry), `pose` + `lifting` (moved from `extract_poses3d.py`, which is now a thin CLI), `log`.
+- Added `ai/tests/` (pytest; `pytest.ini` at repo root): 23 unit tests + 3 slow regression tests. The regression test re-runs the full nested LOVO through `ai.core` and asserts the predictions CSV is **byte-identical** (md5) to the one recorded in `ai/outputs/baselines/v2_hsmm_nested_lovo.json`, plus pooled/per-video metric equality. All pass.
+- `requirements.txt`: added pytest and its dependencies (exact versions).
+- The frozen research scripts in `ai/research/` are untouched; `ai.core` is now the import surface for Phases 5–8.
+
 ## [Unreleased] — Phase 0: audit + freeze baseline (2026-10-02)
 
 ### Commit 3 — Path B rebuild of the MotionBERT stage + measured v2 baseline (Phase 0 complete)

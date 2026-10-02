@@ -8,7 +8,7 @@ import pandas as pd
 # Paths
 # =========================================================
 
-AI_DIR = Path(__file__).resolve().parent.parent
+AI_DIR = Path(__file__).resolve().parent.parent.parent
 
 DATASET_DIR = AI_DIR / "data" / "seated_row"
 

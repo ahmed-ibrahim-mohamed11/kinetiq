@@ -11,7 +11,7 @@ from ultralytics import YOLO
 # 1. PROJECT PATHS
 # =========================================================
 
-AI_DIR = Path(__file__).resolve().parent.parent
+AI_DIR = Path(__file__).resolve().parent.parent.parent
 
 DATASET_DIR = (
     AI_DIR
