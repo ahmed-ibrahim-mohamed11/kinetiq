@@ -2,6 +2,25 @@
 
 All behaviour-changing changes to the AI, data, schema, or services are recorded here.
 
+## [Unreleased] — Phase 2: asymmetry_01 diagnosis + survival-law fix (2026-10-02)
+**Behaviour change in `ai/core/decoder.py` (`build_tables`), validated by a full nested-LOVO rerun.**
+- Added `ai/research/diagnose_asymmetry01.py`: reproduces the asymmetry_01 outer fold and decomposes
+  the decoded vs ground-truth path scores into emission / duration / transition / peak terms.
+- Finding: the decoded giant-rep path won because a right-censored RET of 231 frames paid only a constant
+  `-30.0` log-survival "floor", although the fitted (truncated at +4 sigma) RET duration law caps real
+  returns at 50 frames. The per-segment duration overhead of the 5 true reps (~-62.6) could not compete.
+- Fix: survival beyond `dmax` is now `-inf`, consistent with the truncated duration pmf the decoder
+  already uses. No constant, no new hyper-parameter, nothing fitted on held-out data. The diagnosis used
+  the held-out video's decode (that is what Phase 2 is for) but the fix is a global structural correction;
+  with 6 videos a residual selection-on-test risk remains and is documented in docs/AI_EVALUATION.md.
+- Full nested LOVO rerun (`scripts/eval_core.ps1` -> `ai/outputs/baselines/core_hsmm_nested_lovo.json`):
+  pooled **F1 0.93 (pull +/-15) / 0.97 (IoU >= 0.5)**, GT 30 / Pred 30 / IoU: TP 29 FP 1 FN 1
+  (was 0.87/0.87). asymmetry_01: 0 -> 5/5 TP (+1 FP trailing partial movement). Trade-off: correct_01
+  4/5 (one rep now missed; was 5/5). MAE start/pull/end 5.2/5.0/6.9 (IoU rule).
+- Added `ai/research/run_core_lovo.py` + `scripts/eval_core.ps1` (the current baseline command).
+  The frozen v2 script and `scripts/eval_v2.ps1` still reproduce the Phase 0/1 baseline (F1 0.87).
+- `ai/tests/test_regression.py` now locks `ai.core` to `core_hsmm_nested_lovo.json` (byte-identical md5).
+
 ## [Unreleased] — Phase 1: clean package, no behaviour change (2026-10-02)
 - Moved `ai/src/` → `ai/research/legacy_2d/` (only the `AI_DIR` path constants changed: `.parent.parent` → `.parent.parent.parent`). `scripts/eval_legacy_2d.ps1` re-run: F1 0.62/0.69 unchanged.
 - Extracted `ai/core/` from the frozen `rep_segmentation_v2_hsmm.py` (verbatim function copies): `config` (Cfg/GRID/constants), `features`, `phase_model`, `decoder`, `evaluation` (incl. nested LOVO), `io` (+ `segment_video` live entry), `pose` + `lifting` (moved from `extract_poses3d.py`, which is now a thin CLI), `log`.

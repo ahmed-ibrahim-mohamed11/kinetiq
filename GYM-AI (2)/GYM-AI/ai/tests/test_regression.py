@@ -1,8 +1,13 @@
-"""Phase 1 behaviour contract: ai.core must reproduce the Phase 0 baseline EXACTLY.
+"""Behaviour contract: ai.core must reproduce the CURRENT baseline EXACTLY.
 
 Runs the full nested LOVO through ai.core on the committed pose files and compares the
-predictions CSV byte-for-byte (md5) with the one the frozen research script produced for
-ai/outputs/baselines/v2_hsmm_nested_lovo.json, then re-checks the pooled metrics.
+predictions CSV byte-for-byte (md5) with the one recorded in the current baseline JSON,
+then re-checks the pooled metrics.
+
+Baseline history:
+  Phase 1: ai/outputs/baselines/v2_hsmm_nested_lovo.json   (frozen v2 script, F1 0.87)
+  Phase 2: ai/outputs/baselines/core_hsmm_nested_lovo.json (survival-law fix, F1 0.93/0.97)
+The frozen v2 script still reproduces the Phase 1 numbers via scripts/eval_v2.ps1.
 
 Slow (~2 min CPU). Deselect with:  pytest -m "not slow"
 """
@@ -20,7 +25,7 @@ from ai.core.features import phase_target, prepare_video
 from ai.core.io import load_annotations
 from ai.tests.conftest import REPO_ROOT
 
-BASELINE = os.path.join(REPO_ROOT, "ai", "outputs", "baselines", "v2_hsmm_nested_lovo.json")
+BASELINE = os.path.join(REPO_ROOT, "ai", "outputs", "baselines", "core_hsmm_nested_lovo.json")
 POSES = os.path.join(REPO_ROOT, "ai", "data", "poses3d")
 ANN = os.path.join(REPO_ROOT, "ai", "outputs", "manual_rep_annotations.csv")
 

@@ -71,7 +71,8 @@ GYM-AI/                                  git repo (branch main) since 2026-10-02
 | Legacy 2D elbow-span FSM | none (transductive per-video percentiles; nothing learned) | **0.62** (TP 17 / FP 8 / FN 13) | **0.69** (TP 19 / FP 6 / FN 11) | MEASURED 2026-10-02, commit 3ccdc20 |
 | v1 ridge + FSM | nested LOVO | — | 0.87 | claimed (original lost poses) |
 | v2 ridge + HSMM (original poses, lost) | nested LOVO | — | 0.93 (TP 27 / FP 1 / FN 3), MAE 3.5/3.3/6.6 | claimed, never reproduced — superseded |
-| **v2 ridge + HSMM on Path B rebuilt poses — CURRENT BASELINE** | nested LOVO | **0.87** (TP 24 / FP 1 / FN 6), MAE 5.0/4.5/18.7 | **0.87** (TP 24 / FP 1 / FN 6), MAE 4.6/5.1/11.0 | **MEASURED 2026-10-02** — `ai/outputs/baselines/v2_hsmm_nested_lovo.json`. All misses are asymmetry_01 (decoded as 1 giant rep) + 1 FN on asymmetry_02. |
+| v2 ridge + HSMM on Path B rebuilt poses | nested LOVO | 0.87 (TP 24 / FP 1 / FN 6) | 0.87 | MEASURED 2026-10-02 (Phase 0/1 baseline, still reproducible: `scripts\eval_v2.ps1`) |
+| **ai.core + Phase 2 survival-law fix — CURRENT BASELINE** | nested LOVO | **0.93** (TP 28 / FP 2 / FN 2), MAE 5.4/4.4/6.7 | **0.97** (TP 29 / FP 1 / FN 1), MAE 5.2/5.0/6.9 | **MEASURED 2026-10-02** — `ai/outputs/baselines/core_hsmm_nested_lovo.json`, one command: `scripts\eval_core.ps1`. asymmetry_01 fixed (5/5 TP, +1 FP); correct_01 now 4/5. |
 
 All of this is **same-athlete leave-one-video-out**, not new-person LOPO.
 
@@ -79,7 +80,7 @@ All of this is **same-athlete leave-one-video-out**, not new-person LOPO.
 | Phase | Status |
 |---|---|
 | 0 Freeze | **COMPLETE 2026-10-02** — git ✔ · requirements ✔ · docs ✔ · single evaluator ✔ · legacy sanity baseline ✔ · Path B rebuild ✔ · measured v2 baseline (F1 0.87) ✔. One command regenerates poses (`scripts\extract_poses3d.ps1`), one command reproduces the baseline (`scripts\eval_v2.ps1`). |
-| 1 Clean package | next (regression target = `v2_hsmm_nested_lovo.json`, byte-identical) |
-| 2 asymmetry_01 diagnosis | queued (failure now: whole video decoded as 1 truncated rep) |
+| 1 Clean package | **COMPLETE 2026-10-02** — `ai/core/` extracted, `ai/src`→`ai/research/legacy_2d`, 23 unit tests + byte-identical regression |
+| 2 asymmetry_01 diagnosis | **COMPLETE 2026-10-02** — survival-law fix in `ai/core/decoder.py`, F1 0.87 → 0.93/0.97 (see `docs/AI_EVALUATION.md` §4) |
 | 3 Supabase · 4 Dashboard | can start; deploys blocked on owner (Supabase URL/keys, Vercel) |
 | 5–9 | not started (Phase 5 blocked on camera/edge hardware details) |

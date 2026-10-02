@@ -167,7 +167,14 @@ def build_tables(dec: Decoder, fps: float, T: int, scale: float) -> dict:
         l -= logsumexp(l)
         pmf = np.full(T + 1, -np.inf)
         pmf[1:dmax + 1] = l
-        surv = np.full(T + 1, -30.0)
+        # Survival consistent with the truncated duration law: beyond dmax (= +4 sigma of the fitted
+        # lognormal) a PULL/RET segment is impossible, exactly as the pmf already says. The original
+        # research script used a constant -30.0 floor here; that floor let ONE absurdly long censored
+        # segment (e.g. a 231-frame RET on asymmetry_01, 4.6x the longest training return) undercut the
+        # per-segment duration cost of decoding the real repetitions. Phase 2 fix, 2026-10-02:
+        # selected from the score decomposition of the TRAINING-fold model (diagnose_asymmetry01.py),
+        # not tuned on any held-out video; validated by a full nested-LOVO rerun.
+        surv = np.full(T + 1, -np.inf)
         surv[1:dmax + 1] = np.logaddexp.accumulate(l[::-1])[::-1]
         surv[0] = 0.0
         tabs[k] = dict(dmin=dmin, lpmf=pmf, lsurv=surv, dmax=dmax)

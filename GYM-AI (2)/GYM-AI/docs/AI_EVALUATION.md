@@ -51,8 +51,10 @@ scripts\eval_v2.ps1               # v2 nested LOVO + evaluator  (needs ai\data\p
 | peak/prominence | | | | | | | | | | | history: real rep @ asym_01 f93 prominence 0.0258 < false move @ corr_03 f406 (0.1234 L / 0.0589 R) |
 | basic HMM / notebook HSMM / logistic-emission HSMM | | | | | | | | | | | history, no files |
 | v2 ridge phase + explicit-duration HSMM (original, lost poses) | 30 | 28 | 27 | 1 | 3 | 0.96 | 0.90 | 0.93 | 3.5 / 3.3 / 6.6 | IoU ≥ 0.5 | claimed — **never reproduced**; its pose files are lost, superseded by the Path B rebuild below |
-| **v2 unchanged, on Path B rebuilt poses** | 30 | 25 | 24 | 1 | 6 | 0.96 | 0.80 | **0.87** | 5.0 / 4.5 / 18.7 | pull ±15 | **measured** 2026-10-02 — **current baseline** |
+| v2 unchanged, on Path B rebuilt poses | 30 | 25 | 24 | 1 | 6 | 0.96 | 0.80 | **0.87** | 5.0 / 4.5 / 18.7 | pull ±15 | **measured** 2026-10-02 (Phase 0/1 baseline; still reproducible via `scripts\eval_v2.ps1`) |
 | same | 30 | 25 | 24 | 1 | 6 | 0.96 | 0.80 | **0.87** | 4.6 / 5.1 / 11.0 | IoU ≥ 0.5 | **measured** 2026-10-02 |
+| **ai.core + Phase 2 survival-law fix** | 30 | 30 | 28 | 2 | 2 | 0.93 | 0.93 | **0.93** | 5.4 / 4.4 / 6.7 | pull ±15 | **measured** 2026-10-02 — **CURRENT baseline** (`scripts\eval_core.ps1`) |
+| same | 30 | 30 | 29 | 1 | 1 | 0.97 | 0.97 | **0.97** | 5.2 / 5.0 / 6.9 | IoU ≥ 0.5 | **measured** 2026-10-02 |
 
 Legacy 2D per video (pull ±15 / IoU): asymmetry_01 F1 0.33 / 0.00 (1 prediction, the incomplete trailing rep) · asymmetry_02 0.75 / 0.50 · asymmetry_03 0.80 / 0.80 · correct_01 0.20 / 0.80 · correct_02 0.73 / 0.91 · correct_03 0.80 / 0.80. Note the legacy pipeline learns nothing (per-video percentile thresholds), so this is a sanity reference, not a nested-validation result.
 
@@ -60,11 +62,17 @@ Legacy 2D per video (pull ±15 / IoU): asymmetry_01 F1 0.33 / 0.00 (1 prediction
 
 **Pose provenance (Path B rebuild, 2026-10-02).** `ai/data/poses3d/*.npy` regenerated in-repo by `ai/research/extract_poses3d.py`: YOLO11n-pose → COCO-17→H36M-17 → `crop_scale` normalisation → MotionBERT `FT_MB_release_MB_ft_h36m` (official checkpoint, vendored repo commit `705d3a95`), 243-frame clips, flip TTA, root-relative. The original pose files behind the claimed 0.93 are lost; the rebuilt 2D front-end may differ from the original (unknown detector/person-selection/normalisation), so 0.87 vs 0.93 is **not** a refutation of the claim — it is the honest number for the pipeline that exists and is reproducible. YOLO no-detection frames (interpolated, conf 0): asymmetry_02 51/250, correct_03 11/418, asymmetry_03 3/341.
 
-## 4. Open failure: asymmetry_01 (v2, measured on rebuilt poses)
-The decoder outputs **one** rep spanning the whole video: start 33 / pull 50 / end 280, truncated, decoded RET median 7.19 tempo units vs training range [0.39, 0.55] — after the first PULL it never exits RET. Held-out tempo estimate 1.07 s/cycle is below the training range [1.33, 2.83] (flagged by the script, nominally handled by tempo normalisation). GT reps are 1.1 s/cycle, by far the fastest video.
-History (claimed run, original poses): pred `[51,66,89] [143,156,174] [182,196,215]`, F1 0.50 — a different, milder failure of the same video.
+## 4. Phase 2: the asymmetry_01 failure — diagnosed and fixed (2026-10-02)
 
-**Phase 2 task:** instrument `hsmm_decode` (`return_score` path) for frames ~15–145 and decompose, for the chosen vs. candidate segmentations around GT pulls 60/93/126: REST/PULL/RET emission score, duration log-lik, RET→REST vs RET→PULL transition, peak-height term, smoothing/detrending effect, fused phase + velocity. First suspects on the rebuilt poses: phase amplitude after the first rep (does fused phase stay high?), and the duration prior under the out-of-range tempo. Any change is selected on training folds and re-evaluated with full nested LOVO on all six videos.
+**Symptom (Phase 0/1 baseline).** The decoder output **one** rep spanning the whole video: start 33 / pull 50 / end 280, truncated; after the first PULL it never exited RET.
+
+**Diagnosis** (`ai/research/diagnose_asymmetry01.py`, score decomposition of decoded vs GT path under the training-fold model): the GT path scored −158.25 vs −128.91 for the giant-rep path. The decisive term was **duration**: a right-censored RET of 231 frames paid only a constant −30.0 log-survival "floor" in `build_tables`, although the fitted RET duration law (truncated at +4σ) caps real returns at 50 frames. Five real reps pay ~−62.6 of per-segment duration cost; one impossible giant RET paid −30. Emissions and the peak-height term were healthy (all five GT pulls had local peaks z ∈ [+0.1, +1.3] under the training peak law), tempo was estimated correctly (1.07 s/cycle vs GT ≈ 1.1).
+
+**Fix** (`ai/core/decoder.py`): survival beyond `dmax` is `-inf`, consistent with the truncated duration pmf the decoder already uses. No constant, no new hyper-parameter, nothing fitted on held-out data.
+
+**Validation**: full nested LOVO rerun (table above). asymmetry_01: 0 TP → 5/5 TP (+1 FP: the trailing partial movement at ~frames 219–269 now decodes as a complete rep). Trade-off: correct_01 lost one rep (4/5). Pooled 0.87 → **0.93 / 0.97**.
+
+**Honesty caveats.** (1) The diagnosis necessarily looked at the held-out video's decode — that is Phase 2's purpose, and the fix is a global structural correction rather than a tuned parameter, but with only 6 videos a residual selection-on-test risk remains; the number that matters is future LOPO on new athletes. (2) The frozen v2 script keeps the old behaviour; `scripts\eval_v2.ps1` still reproduces F1 0.87. (3) Do not optimise further toward "6/6 videos exactly 5 reps" (MASTER_PROMPT §17 Phase 2 warning).
 
 ## 5. Target gates (future LOPO, not current claims)
 Pooled F1 ≥ 0.90 on held-out people (stretch 0.95); Pull MAE ≤ 5 frames @30 fps; per-person reporting; include clips with rep counts ≠ 5.

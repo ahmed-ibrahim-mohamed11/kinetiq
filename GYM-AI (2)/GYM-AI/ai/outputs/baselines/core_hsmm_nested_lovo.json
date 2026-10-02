@@ -1,0 +1,784 @@
+{
+ "name": "core_hsmm_nested_lovo",
+ "created_utc": "2026-10-02T19:21:41+00:00",
+ "git_commit": "bb7caae",
+ "evaluator": "ai/research/eval_rep_segmentation.py",
+ "frame_convention": "frames compared as given; GT CSV and legacy 2D predictions are 1-based",
+ "inputs": {
+  "gt": {
+   "path": "ai\\outputs\\manual_rep_annotations.csv",
+   "md5": "02fe0ec236e29c0e7fbee395e52d6604",
+   "n_videos": 6,
+   "n_reps": 30
+  },
+  "pred": {
+   "path": "ai\\outputs\\rep_eval_core\\predicted_reps_with_arm_timing.csv",
+   "md5": "1841f8847c2d633ed9fd0cf65c1c29cd",
+   "n_videos": 6,
+   "n_reps": 30
+  }
+ },
+ "results": {
+  "pull_tol15": {
+   "rule": "pull",
+   "params": {
+    "tol_frames": 15
+   },
+   "pooled": {
+    "n_videos": 6,
+    "n_gt": 30,
+    "n_pred": 30,
+    "tp": 28,
+    "fp": 2,
+    "fn": 2,
+    "precision": 0.9333333333333333,
+    "recall": 0.9333333333333333,
+    "f1": 0.9333333333333333,
+    "mae_frames": {
+     "start": 5.357142857142857,
+     "pull": 4.392857142857143,
+     "end": 6.714285714285714
+    },
+    "videos_with_exact_count": 4
+   },
+   "per_video": {
+    "asymmetry_01": {
+     "n_gt": 5,
+     "n_pred": 6,
+     "tp": 5,
+     "fp": 1,
+     "fn": 0,
+     "precision": 0.8333333333333334,
+     "recall": 1.0,
+     "f1": 0.9090909090909091,
+     "mae_frames": {
+      "start": 5.8,
+      "pull": 3.8,
+      "end": 2.8
+     },
+     "pull_err_frac": 0.11014066393376738,
+     "signed_err_frames": {
+      "start": [
+       -2,
+       -5,
+       -5,
+       -4,
+       13
+      ],
+      "pull": [
+       -2,
+       2,
+       -3,
+       -5,
+       -7
+      ],
+      "end": [
+       6,
+       5,
+       0,
+       2,
+       -1
+      ]
+     },
+     "matched_pairs": [
+      [
+       3,
+       3
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "asymmetry_02": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 4,
+     "fp": 1,
+     "fn": 1,
+     "precision": 0.8,
+     "recall": 0.8,
+     "f1": 0.8000000000000002,
+     "mae_frames": {
+      "start": 6.0,
+      "pull": 7.75,
+      "end": 4.5
+     },
+     "pull_err_frac": 0.2221498599439776,
+     "signed_err_frames": {
+      "start": [
+       -6,
+       -1,
+       -2,
+       15
+      ],
+      "pull": [
+       -1,
+       4,
+       11,
+       15
+      ],
+      "end": [
+       5,
+       0,
+       8,
+       5
+      ]
+     },
+     "matched_pairs": [
+      [
+       0,
+       0
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       1,
+       1
+      ]
+     ]
+    },
+    "asymmetry_03": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 1.4,
+      "pull": 4.0,
+      "end": 6.6
+     },
+     "pull_err_frac": 0.0875524182389171,
+     "signed_err_frames": {
+      "start": [
+       -2,
+       0,
+       2,
+       0,
+       -3
+      ],
+      "pull": [
+       -1,
+       2,
+       -5,
+       5,
+       -7
+      ],
+      "end": [
+       1,
+       2,
+       8,
+       13,
+       -9
+      ]
+     },
+     "matched_pairs": [
+      [
+       3,
+       3
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       4,
+       4
+      ]
+     ]
+    },
+    "correct_01": {
+     "n_gt": 5,
+     "n_pred": 4,
+     "tp": 4,
+     "fp": 0,
+     "fn": 1,
+     "precision": 1.0,
+     "recall": 0.8,
+     "f1": 0.888888888888889,
+     "mae_frames": {
+      "start": 5.75,
+      "pull": 5.0,
+      "end": 8.75
+     },
+     "pull_err_frac": 0.06705713104009324,
+     "signed_err_frames": {
+      "start": [
+       -3,
+       -1,
+       -4,
+       -15
+      ],
+      "pull": [
+       -2,
+       -3,
+       -6,
+       -9
+      ],
+      "end": [
+       -9,
+       -7,
+       -8,
+       -11
+      ]
+     },
+     "matched_pairs": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "correct_02": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 6.4,
+      "pull": 2.0,
+      "end": 3.2
+     },
+     "pull_err_frac": 0.027295077157777386,
+     "signed_err_frames": {
+      "start": [
+       -9,
+       0,
+       -6,
+       2,
+       -15
+      ],
+      "pull": [
+       0,
+       0,
+       -1,
+       -2,
+       -7
+      ],
+      "end": [
+       0,
+       -2,
+       -8,
+       -4,
+       2
+      ]
+     },
+     "matched_pairs": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "correct_03": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 7.0,
+      "pull": 4.6,
+      "end": 14.4
+     },
+     "pull_err_frac": 0.08580316742081448,
+     "signed_err_frames": {
+      "start": [
+       -3,
+       2,
+       4,
+       -3,
+       -23
+      ],
+      "pull": [
+       -3,
+       4,
+       4,
+       -5,
+       -7
+      ],
+      "end": [
+       15,
+       9,
+       36,
+       9,
+       3
+      ]
+     },
+     "matched_pairs": [
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    }
+   }
+  },
+  "iou_0.50": {
+   "rule": "iou",
+   "params": {
+    "iou_thr": 0.5
+   },
+   "pooled": {
+    "n_videos": 6,
+    "n_gt": 30,
+    "n_pred": 30,
+    "tp": 29,
+    "fp": 1,
+    "fn": 1,
+    "precision": 0.9666666666666667,
+    "recall": 0.9666666666666667,
+    "f1": 0.9666666666666667,
+    "mae_frames": {
+     "start": 5.206896551724138,
+     "pull": 4.9655172413793105,
+     "end": 6.862068965517241
+    },
+    "videos_with_exact_count": 4
+   },
+   "per_video": {
+    "asymmetry_01": {
+     "n_gt": 5,
+     "n_pred": 6,
+     "tp": 5,
+     "fp": 1,
+     "fn": 0,
+     "precision": 0.8333333333333334,
+     "recall": 1.0,
+     "f1": 0.9090909090909091,
+     "mae_frames": {
+      "start": 5.8,
+      "pull": 3.8,
+      "end": 2.8
+     },
+     "pull_err_frac": 0.11014066393376738,
+     "signed_err_frames": {
+      "start": [
+       -5,
+       -4,
+       -2,
+       -5,
+       13
+      ],
+      "pull": [
+       -3,
+       -5,
+       -2,
+       2,
+       -7
+      ],
+      "end": [
+       0,
+       2,
+       6,
+       5,
+       -1
+      ]
+     },
+     "matched_pairs": [
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "asymmetry_02": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 5.0,
+      "pull": 10.4,
+      "end": 5.8
+     },
+     "pull_err_frac": 0.2912334014686956,
+     "signed_err_frames": {
+      "start": [
+       -1,
+       -2,
+       -1,
+       -6,
+       15
+      ],
+      "pull": [
+       4,
+       11,
+       21,
+       -1,
+       15
+      ],
+      "end": [
+       0,
+       8,
+       11,
+       5,
+       5
+      ]
+     },
+     "matched_pairs": [
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       1
+      ]
+     ]
+    },
+    "asymmetry_03": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 1.4,
+      "pull": 4.0,
+      "end": 6.6
+     },
+     "pull_err_frac": 0.0875524182389171,
+     "signed_err_frames": {
+      "start": [
+       0,
+       -2,
+       2,
+       -3,
+       0
+      ],
+      "pull": [
+       2,
+       -1,
+       -5,
+       -7,
+       5
+      ],
+      "end": [
+       2,
+       1,
+       8,
+       -9,
+       13
+      ]
+     },
+     "matched_pairs": [
+      [
+       1,
+       1
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       2,
+       2
+      ]
+     ]
+    },
+    "correct_01": {
+     "n_gt": 5,
+     "n_pred": 4,
+     "tp": 4,
+     "fp": 0,
+     "fn": 1,
+     "precision": 1.0,
+     "recall": 0.8,
+     "f1": 0.888888888888889,
+     "mae_frames": {
+      "start": 5.75,
+      "pull": 5.0,
+      "end": 8.75
+     },
+     "pull_err_frac": 0.06705713104009324,
+     "signed_err_frames": {
+      "start": [
+       -1,
+       -3,
+       -4,
+       -15
+      ],
+      "pull": [
+       -3,
+       -2,
+       -6,
+       -9
+      ],
+      "end": [
+       -7,
+       -9,
+       -8,
+       -11
+      ]
+     },
+     "matched_pairs": [
+      [
+       2,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "correct_02": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 6.4,
+      "pull": 2.0,
+      "end": 3.2
+     },
+     "pull_err_frac": 0.027295077157777386,
+     "signed_err_frames": {
+      "start": [
+       0,
+       2,
+       -9,
+       -15,
+       -6
+      ],
+      "pull": [
+       0,
+       -2,
+       0,
+       -7,
+       -1
+      ],
+      "end": [
+       -2,
+       -4,
+       0,
+       2,
+       -8
+      ]
+     },
+     "matched_pairs": [
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       4,
+       4
+      ]
+     ]
+    },
+    "correct_03": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 7.0,
+      "pull": 4.6,
+      "end": 14.4
+     },
+     "pull_err_frac": 0.08580316742081448,
+     "signed_err_frames": {
+      "start": [
+       2,
+       -3,
+       -3,
+       -23,
+       4
+      ],
+      "pull": [
+       4,
+       -5,
+       -3,
+       -7,
+       4
+      ],
+      "end": [
+       9,
+       9,
+       15,
+       3,
+       36
+      ]
+     },
+     "matched_pairs": [
+      [
+       3,
+       3
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       4,
+       4
+      ]
+     ]
+    }
+   }
+  }
+ }
+}

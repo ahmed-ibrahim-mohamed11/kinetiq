@@ -20,9 +20,10 @@
 - [x] Extract `ai/core/{config, pose, lifting, features, phase_model, decoder, evaluation, io, log}.py` from v2
 - [x] pytest: 23 unit tests + byte-identical (md5) regression vs `v2_hsmm_nested_lovo.json` — all green
 
-## Phase 2 — asymmetry_01 diagnosis
-- [ ] Score-decomposition tool for `hsmm_decode` (frames ~15–145; candidates around pulls 60/93/126)
-- [ ] Any change selected on training folds only; full nested LOVO rerun
+## Phase 2 — asymmetry_01 diagnosis — DONE 2026-10-02
+- [x] Score-decomposition tool `ai/research/diagnose_asymmetry01.py` → culprit: −30 survival floor beyond dmax
+- [x] Structural fix (survival consistent with truncated duration law), full nested LOVO rerun → F1 0.93/0.97
+- [ ] Later (more data): revisit correct_01's missed rep and asymmetry_01's trailing-partial FP — do NOT tune further on these 6 videos
 
 ## Phase 3 — Supabase (parallelisable with Step 0)
 - [ ] Migrations for MASTER_PROMPT §13 tables, RLS by organization, RLS tests, `seed.sql`, `.env.example`
