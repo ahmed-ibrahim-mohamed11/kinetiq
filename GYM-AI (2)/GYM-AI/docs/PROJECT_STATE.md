@@ -1,82 +1,81 @@
 # PROJECT_STATE.md — GYM-AI
 
-_Last audit: 2026-10-02 (Phase 0 start). Update this file whenever the baseline, data, or blockers change._
+_Last update: 2026-10-02, Phase 0 (freeze) — two commits in. Update whenever the baseline, data, or blockers change._
 
 ## 1. What the project is
-
 Smart-gym computer-vision platform. Current MVP: **dual-handed seated row, rear camera**.
 Current research priority: **robust repetition segmentation** (START / PULL / END).
-Form classification (correct vs asymmetry) is a **later phase** and is kept independent.
+Form classification (correct vs asymmetry) is a **later phase** and is kept independent. Spec: `docs/MASTER_PROMPT.md`. Plan: `docs/PHASE_PLAN.md`.
 
-## 2. What is actually in the repository (audited from disk)
+## 2. What is in the repository (audited from disk)
 
 ```
-GYM-AI/
+GYM-AI/                                  git repo (branch main) since 2026-10-02
 ├─ ai/
 │  ├─ data/
-│  │  ├─ raw/seated_row_test.mp4              (single early test clip)
-│  │  └─ seated_row/{correct,asymmetry}/*.mp4  (6 videos — ⚠️ folders are SWAPPED, see §5)
+│  │  ├─ raw/seated_row_test.mp4                 early test clip (git-ignored)
+│  │  ├─ seated_row/{correct,asymmetry}/*.mp4    6 research videos, 13–25 MB each (git-ignored; back up separately)
+│  │  └─ poses3d/                                 ← DOES NOT EXIST YET: MotionBERT (T,17,3) H36M .npy go here (blocker B1)
 │  ├─ outputs/
-│  │  ├─ manual_rep_annotations.csv            ← rep-segmentation GROUND TRUTH (30 reps, 5 per video)
-│  │  ├─ seated_row_dataset.csv                (legacy 2D per-rep form features, 25 reps)
-│  │  ├─ dataset_build/<video>/{keypoints,features,reps}.csv
-│  │  ├─ rep_signal_diagnostics.csv
-│  │  └─ seated_row_{keypoints,reps,form_features}.csv, *_pose.mp4, *_rep_counter.mp4
-│  ├─ research/                                ← NEW (Phase 0): frozen v1 FSM + v2 HSMM baselines
-│  ├─ src/                                     (legacy 2D YOLO-only pipeline, 9 scripts, ~5.9k lines)
-│  └─ requirements-lock.txt                    ← NEW: pip freeze of .venv
-├─ motionbert/                                 ⚠️ EMPTY directory
-├─ yolo11n-pose.pt                             YOLO11n-Pose weights (ultralytics)
-├─ .venv/                                      Python 3.10.0; numpy 2.2.6, pandas 2.3.3, scipy 1.15.3,
-│                                              torch 2.14.0, torchvision 0.29.0, ultralytics 8.4.155, matplotlib 3.10.9
-└─ docs/, CHANGELOG.md, TODO.md, README.md     ← NEW (Phase 0)
+│  │  ├─ manual_rep_annotations.csv               ← rep-segmentation GROUND TRUTH (30 reps, 5 per video, 1-based frames)
+│  │  ├─ baselines/                               ← evaluator JSON + prediction CSVs (tracked)
+│  │  │  ├─ legacy_2d_elbow_span_fsm.json          MEASURED legacy 2D sanity baseline
+│  │  │  ├─ legacy_2d_predictions.csv
+│  │  │  └─ v2_hsmm_nested_lovo_CLAIMED.json       claimed v2 numbers, NOT reproduced yet
+│  │  ├─ dataset_build/<video>/{keypoints,features,reps}.csv   legacy 2D per-video outputs
+│  │  └─ seated_row_*.csv, rep_signal_diagnostics.csv           other legacy derived data
+│  ├─ research/
+│  │  ├─ rep_segmentation_v2_hsmm.py              ← CURRENT BASELINE (frozen, md5 in ai/research/README.md)
+│  │  ├─ rep_segmentation_v1_fsm.py               legacy baseline (frozen)
+│  │  ├─ eval_rep_segmentation.py                 ← the single evaluator (Phase 0)
+│  │  └─ legacy_2d_predictions.py                 packages dataset_build/*/reps.csv for the evaluator
+│  ├─ src/                                        legacy 2D YOLO-only pipeline (9 scripts, ~5.9k lines, untouched)
+│  └─ models/README.md                            artifact registry (weights are git-ignored)
+├─ scripts/eval_legacy_2d.ps1, eval_v2.ps1        one-command evaluations
+├─ motionbert/                                    EMPTY
+├─ yolo11n-pose.pt                                YOLO11n-Pose weights (git-ignored, auto-downloaded by ultralytics)
+├─ .venv/  Python 3.10.0 — torch 2.14.0 (CPU), ultralytics 8.4.155, scipy 1.15.3, numpy 2.2.6, pandas 2.3.3
+├─ requirements.txt                               exact versions (pip freeze)
+└─ docs/, CHANGELOG.md, TODO.md, README.md
 ```
 
 ### Baseline vs legacy
-
 | Status | Files |
 |---|---|
-| **Current baseline** | `ai/research/rep_segmentation_v2_hsmm.py` (phase ridge model + explicit-duration HSMM) |
-| **Legacy baseline (keep)** | `ai/research/rep_segmentation_v1_fsm.py` |
-| **Legacy 2D pipeline (keep, not the research path)** | `ai/src/*.py` — YOLO 2D keypoints → elbow-span/shoulder-width signal → percentile FSM. Known to fail on asymmetry videos (dev history §4.1). Still useful: `manual_rep_annotator.py` / `fix_annotation.py` produced the GT CSV. |
-| **Diagnostic history only** | peak/prominence, basic HMM, notebook HSMM, logistic-emission HSMM — **none of these files are on disk**. |
+| **Current baseline** | `ai/research/rep_segmentation_v2_hsmm.py` — ridge phase model + explicit-duration HSMM, nested LOVO |
+| **Legacy baseline (kept)** | `ai/research/rep_segmentation_v1_fsm.py` |
+| **Legacy 2D pipeline (kept, sanity reference only)** | `ai/src/*.py` — YOLO 2D → elbow-span/shoulder-width → percentile FSM. Measured F1 0.62 (pull ±15) / 0.69 (IoU ≥ 0.5). |
+| **Diagnostic history only, no files on disk** | 3D elbow-depth FSM, elbow angle, peak/prominence, basic HMM, notebook HSMM, logistic-emission HSMM |
 
-## 3. Blockers (explicit)
+## 3. Blockers
+| # | Blocker | Status |
+|---|---|---|
+| B1 | **MotionBERT 3D pose arrays missing.** No `{video}.npy` (T,17,3) H36M files, no MotionBERT code/checkpoint, no COCO→H36M + inference script anywhere on this machine (searched Desktop, Downloads, Documents, OneDrive, all PyCharm/Python project folders). | **OPEN — Step 0 question to owner** (Path A: files exist somewhere; Path B: rebuild from the official MotionBERT repo + pretrained checkpoint, new honest baseline). |
+| B2 | Video folders were swapped (`correct/` held `asymmetry_0x.mp4` and vice-versa) at the first audit. | **RESOLVED** — folders verified correct at the second audit (fixed by owner between audits). |
+| B3 | No git repo at `GYM-AI/` (stray zero-commit `.git` in `C:\Users\Lenovo`). | **RESOLVED** — `git init` in `GYM-AI/`, commits `3ccdc20` (freeze) and the Phase 0 evaluator commit. The stray home-dir `.git` is left for the owner to delete (outside the project). |
 
-| # | Blocker | Impact | Resolution |
-|---|---|---|---|
-| B1 | **MotionBERT 3D pose arrays missing.** No `{video}.npy` (T,17,3) H36M files exist in the repo, `~/Downloads`, Documents, OneDrive, or other project folders. `motionbert/` is empty. | v2 baseline **cannot be reproduced**; Phase 0 "done" criterion unmet; Phase 1 refactor cannot be regression-tested. | Owner must supply the six `.npy` files (and optional (T,17) confidence files), **or** the COCO→H36M + MotionBERT inference script that produced them, **or** the MotionBERT checkpoint + repo so we can regenerate them. |
-| B2 | Video folders swapped on disk (§5). | Re-running `ai/src/build_dataset.py` would mislabel every rep; `fix_annotation.py` / `manual_rep_annotator.py` cannot find videos. | Move files back (owner to confirm it was accidental). |
-| B3 | No real git repo. `git rev-parse --show-toplevel` → `C:/Users/Lenovo` (a stray `git init` in the home directory, zero commits). | No history, no reproducibility, no CHANGELOG enforcement. | `git init` inside `GYM-AI/` with the `.gitignore` added in Phase 0. The home-dir `.git` should be removed by the owner (not done automatically). |
+## 4. Contradictions between the prompts and the files
+1. `docs/MASTER_PROMPT.md` §5 and `docs/CLAUDE_CODE_PROMPT.md` say the v1/v2 scripts are (or may be) missing. **They were recovered** from `~/Downloads` (`rep_segmentation_v1_fsm.py`, `rep_segmentation (1).py` = v2) and frozen in `ai/research/`. What is missing is only the **MotionBERT stage** (code, checkpoint, COCO→H36M conversion) and its **output `.npy` poses**.
+2. MASTER_PROMPT §3 calls the H36M `.npy` sequences "current pose files" — none exist (B1).
+3. MASTER_PROMPT §4.6–4.7 experiments: no files exist; history only.
+4. CLAUDE_CODE_PROMPT asks for a default matching rule of one-to-one PULL within ±15 frames; the v1/v2 scripts and the **claimed 0.93 use temporal IoU ≥ 0.5**. The evaluator reports **both** rules; the claimed baseline must be compared under IoU. See `docs/AI_EVALUATION.md` §2.
+5. CLAUDE_CODE_PROMPT says `ai/models/` is empty — it did not exist; it now holds only `README.md` (weights are git-ignored by design).
+6. v2 metrics are **claimed** (`ai/outputs/baselines/v2_hsmm_nested_lovo_CLAIMED.json`), not reproduced.
 
-## 4. Contradictions between the master prompt and the files
+## 5. Current metrics
+| Pipeline | Validation | Pull ±15 F1 | IoU ≥ 0.5 F1 | Status |
+|---|---|---|---|---|
+| Legacy 2D elbow-span FSM | none (transductive per-video percentiles; nothing learned) | **0.62** (TP 17 / FP 8 / FN 13) | **0.69** (TP 19 / FP 6 / FN 11) | MEASURED 2026-10-02, commit 3ccdc20 |
+| v1 ridge + FSM | nested LOVO | — | 0.87 | claimed |
+| v2 ridge + HSMM | nested LOVO | — | **0.93** (TP 27 / FP 1 / FN 3), MAE 3.5/3.3/6.6 | **claimed, not reproduced** |
 
-1. Prompt says the repo "should contain something equivalent to `rep_segmentation_v2_hsmm.py`". It did not; it was in `~/Downloads/rep_segmentation (1).py`. Copied into `ai/research/` with md5 recorded.
-2. Prompt describes H36M-17 `.npy` pose sequences as "current pose files". **None exist** (B1).
-3. Prompt lists prominence/HMM/HSMM-notebook/logistic experiments. **No such files exist**; they are documented here as history only.
-4. Prompt says "6 videos, 5 reps each". The legacy 2D dataset (`seated_row_dataset.csv`) has 25 auto-detected reps (asymmetry_01 → 1 rep), confirming the 2D signal's failure on asymmetry. GT CSV has 30. ✔ consistent with prompt.
-5. The v2 metrics in the prompt are **claimed**, recorded in `docs/baselines/v2_hsmm_nested_lovo_claimed.json`; they are **not** independently reproduced yet.
+All of this is **same-athlete leave-one-video-out**, not new-person LOPO.
 
-## 5. Data integrity issue: swapped video folders
-
-```
-ai/data/seated_row/asymmetry/  contains  correct_01.mp4, correct_02.mp4, correct_03.mp4
-ai/data/seated_row/correct/    contains  asymmetry_01.mp4, asymmetry_02.mp4, asymmetry_03.mp4
-```
-`manual_rep_annotations.csv` and `seated_row_dataset.csv` both label `correct_0x` as `correct`, and the per-video output folders in `dataset_build/` match the file names, so the **file names are trusted and the folder placement is wrong**. The v1/v2 research scripts key everything by file stem, so they are unaffected; the legacy `ai/src` pipeline keys by folder and **is** affected.
-
-## 6. Current metrics (CLAIMED, same-athlete nested LOVO — not new-person LOPO)
-
-v2 HSMM: pooled P 0.96 / R 0.90 / F1 0.93 (GT 30, Pred 28, TP 27, FP 1, FN 3); Start/Pull/End MAE 3.5 / 3.3 / 6.6 frames @30 fps.
-Only failure: `asymmetry_01` (F1 0.50, first three fast cycles merged/missed). See `docs/AI_EVALUATION.md`.
-
-## 7. Phase status
-
+## 6. Phase status
 | Phase | Status |
 |---|---|
-| 0 Audit + freeze baseline | **In progress** — docs, lockfile, frozen scripts done; reproduction blocked by B1 |
-| 1 Clean AI package | Not started (needs B1 for regression tests) |
-| 2 Diagnose asymmetry_01 | Not started (needs B1) |
-| 3 Supabase foundation | Not started — can proceed in parallel with B1 |
-| 4 Web dashboard + simulator | Not started — can proceed in parallel with B1 |
-| 5–10 | Not started |
+| 0 Freeze | git ✔ · requirements ✔ · docs ✔ · single evaluator ✔ · legacy sanity baseline ✔ · **v2 reproduction ✘ (B1 / Step 0)** |
+| 1 Clean package | not started (needs reproduced baseline for the byte-identical check) |
+| 2 asymmetry_01 diagnosis | not started (needs poses) |
+| 3 Supabase · 4 Dashboard | not started — independent of B1, can run in parallel |
+| 5–9 | not started |

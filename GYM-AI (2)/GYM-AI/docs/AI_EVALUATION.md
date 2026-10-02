@@ -2,7 +2,7 @@
 
 ## 1. Ground truth
 `ai/outputs/manual_rep_annotations.csv` — 6 videos × 5 reps = 30 reps; columns `video,label,rep,start_frame,pull_frame,end_frame`.
-`label` is **form** ground truth and is **never** given to the rep segmenter.
+`label` is **form** ground truth and is **never** given to the rep segmenter (both the research scripts and the evaluator drop it on load).
 
 | video | start/pull/end (frames) |
 |---|---|
@@ -13,35 +13,56 @@
 | asymmetry_02 | 18/30/43 · 48/62/84 · 90/102/124 · 131/143/166 · 175/185/212 |
 | asymmetry_03 | 41/65/85 · 100/119/145 · 155/171/192 · 207/229/253 · 257/281/314 |
 
-**Validation scope:** leave-one-VIDEO-out, one athlete/setup. This does **not** demonstrate new-person generalisation. Switch to leave-one-PERSON-out (`--groups_csv video,athlete`) as soon as a second athlete is recorded.
+**Frame convention.** The annotator (`ai/src/manual_rep_annotator.py`) records `frame_index + 1`, so GT frames are **1-based**. The legacy 2D pipeline is also 1-based. The v1/v2 research scripts index the (T,17,3) arrays directly with the GT numbers, i.e. a systematic +1 shift that applies identically to training targets and evaluation — harmless, but any new code must not "fix" it on one side only.
+
+**Validation scope.** Leave-one-VIDEO-out, one athlete/setup. This does **not** demonstrate new-person generalisation. Switch to leave-one-PERSON-out (`--groups_csv video,athlete`) as soon as a second athlete is recorded.
 
 ## 2. Protocol (must be preserved)
-- Match rule: temporal IoU ≥ 0.5 on `[start, end]`; metrics: TP/FP/FN, P/R/F1 pooled + per video; Start/Pull/End MAE (frames) on matched reps.
-- **Nested**: hyper-parameters (`GRID`) chosen by inner leave-one-group-out on training folds only (`select_config`); decoder emissions fit on cross-fitted phase predictions (`crossfit_fused`). The held-out video is touched only in `predict_video`.
-- Never report the `--save_model` (fit-on-all) model's numbers as validation.
-- Never hardcode 5 reps; never tune on the held-out fold after inspecting it.
 
-## 3. Results history (all same-athlete LOVO)
+### Evaluator
+`ai/research/eval_rep_segmentation.py` is the single evaluator. It takes a predictions CSV (`video, start, pull, end`) and the GT CSV and writes `ai/outputs/baselines/<name>.json` with per-video and pooled TP/FP/FN, precision/recall/F1 and START/PULL/END MAE (frames, matched reps only).
 
-| Approach | GT | Pred | TP | FP | FN | P | R | F1 | Start/Pull/End MAE | Status |
-|---|---|---|---|---|---|---|---|---|---|---|
-| 2D elbow-span FSM (`ai/src`) | 30 | 25 | — | — | — | — | — | — | — | failed on asymmetry (asymmetry_01 → 1 rep) |
-| 3D elbow-depth state machine | per-video counts 5/5/8/4/4/7 | | | | | | | | | not robust |
-| 3D elbow angle (wrist-dependent) | | | | | | | | | | worse timing; wrist quality poor in rear view |
-| v1 ridge phase + FSM | 30 | 25 | 24 | 1 | 6 | 0.96 | 0.80 | 0.87 | 9.1 / 3.5 / 6.5 | legacy, file kept |
-| peak/prominence | | | | | | | | | | real rep @ asym_01 f93 prominence 0.0258 < false move @ corr_03 f406 (0.1234 L / 0.0589 R) → not viable |
-| basic HMM / notebook HSMM / logistic-emission HSMM | | | | | | | | | | diagnostic only, no files on disk |
-| **v2 ridge phase + explicit-duration HSMM** | 30 | 28 | 27 | 1 | 3 | 0.96 | 0.90 | **0.93** | 3.5 / 3.3 / 6.6 | **current baseline — CLAIMED, not yet reproduced (poses missing)** |
+### Matching rules (one-to-one, greedy, deterministic) — both are always reported
+| key | rule | role |
+|---|---|---|
+| `pull_tol15` | closest pairs first, accepted if `|pred.pull − gt.pull| ≤ 15` frames | **project default** (CLAUDE_CODE_PROMPT) — strict on *when* the pull happens |
+| `iou_0.50` | highest temporal IoU of `[start, end]` first, accepted if `IoU ≥ 0.5` | rule used **inside** `rep_segmentation_v1/v2` (copied verbatim) — the **claimed v2 numbers are under this rule** |
 
-v2 per video: asymmetry_01 F1 0.50 (5 GT / 3 pred / 2 TP / 1 FP / 3 FN); all others 5/5, F1 1.00.
+The rules can disagree: on the legacy 2D pipeline they give F1 0.62 vs 0.69, because its "pull" is the first HIGH-threshold crossing rather than the peak-contraction frame. When comparing with the claimed baseline use `iou_0.50`; when judging timing quality for the product use `pull_tol15`.
 
-## 4. Open failure: asymmetry_01
+### Nested validation
+Hyper-parameters (`GRID` in v2) are chosen by inner leave-one-group-out on training folds only (`select_config`); decoder emissions are fit on cross-fitted phase predictions (`crossfit_fused`). The held-out video is touched only in `predict_video`. Never report the `--save_model` (fit-on-all) model as validation. Never hardcode 5 reps. Never tune on the held-out fold after inspecting it.
+
+### Commands
+```powershell
+scripts\eval_legacy_2d.ps1        # legacy 2D sanity baseline (no pose extraction needed)
+scripts\eval_v2.ps1               # v2 nested LOVO + evaluator  (needs ai\data\poses3d\*.npy)
+```
+
+## 3. Results (all same-athlete LOVO; "claimed" = reported by the owner, not yet reproduced here)
+
+| Approach | GT | Pred | TP | FP | FN | P | R | F1 | Start/Pull/End MAE | Rule | Status |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Legacy 2D elbow-span FSM (`ai/src`) | 30 | 25 | 17 | 8 | 13 | 0.68 | 0.57 | **0.62** | 12.5 / 8.9 / 16.7 | pull ±15 | **measured** 2026-10-02 |
+| same | 30 | 25 | 19 | 6 | 11 | 0.76 | 0.63 | **0.69** | 13.7 / 11.2 / 6.4 | IoU ≥ 0.5 | **measured** 2026-10-02 |
+| 3D elbow-depth state machine | per-video counts 5/5/8/4/4/7 | | | | | | | | | | history, no file |
+| 3D elbow angle (wrist-dependent) | | | | | | | | | worse timing | | history, no file |
+| v1 ridge phase + FSM | 30 | 25 | 24 | 1 | 6 | 0.96 | 0.80 | 0.87 | 9.1 / 3.5 / 6.5 | IoU ≥ 0.5 | claimed, file kept |
+| peak/prominence | | | | | | | | | | | history: real rep @ asym_01 f93 prominence 0.0258 < false move @ corr_03 f406 (0.1234 L / 0.0589 R) |
+| basic HMM / notebook HSMM / logistic-emission HSMM | | | | | | | | | | | history, no files |
+| **v2 ridge phase + explicit-duration HSMM** | 30 | 28 | 27 | 1 | 3 | 0.96 | 0.90 | **0.93** | 3.5 / 3.3 / 6.6 | IoU ≥ 0.5 | **claimed — current baseline, NOT reproduced (poses missing)** |
+
+Legacy 2D per video (pull ±15 / IoU): asymmetry_01 F1 0.33 / 0.00 (1 prediction, the incomplete trailing rep) · asymmetry_02 0.75 / 0.50 · asymmetry_03 0.80 / 0.80 · correct_01 0.20 / 0.80 · correct_02 0.73 / 0.91 · correct_03 0.80 / 0.80. Note the legacy pipeline learns nothing (per-video percentile thresholds), so this is a sanity reference, not a nested-validation result.
+
+v2 per video (claimed, IoU): asymmetry_01 F1 0.50 (5 GT / 3 pred / 2 TP / 1 FP / 3 FN); all others 5/5, F1 1.00.
+
+## 4. Open failure: asymmetry_01 (v2)
 Pred `[51,66,89] [143,156,174] [182,196,215]` vs GT above. Pred2/3 ≈ GT rep4/5. Pred1 spans part of rep1 + motion toward rep2; reps 2–3 missed. Tempo estimate ≈1.17 s/cycle vs GT pull spacing ≈33 frames ≈1.1 s — **tempo is not the primary cause**.
 
-**Next research task (Phase 2):** instrument `hsmm_decode` (return_score path) for frames ~15–145 and decompose, for the chosen vs. candidate segmentations around GT pulls 60/93/126: REST/PULL/RET emission score, duration log-lik, RET→REST vs RET→PULL transition, peak-height term, smoothing/detrending effect, fused phase + velocity. Any change is selected on training folds and re-evaluated with full nested LOVO on all six videos.
+**Phase 2 task:** instrument `hsmm_decode` (`return_score` path) for frames ~15–145 and decompose, for the chosen vs. candidate segmentations around GT pulls 60/93/126: REST/PULL/RET emission score, duration log-lik, RET→REST vs RET→PULL transition, peak-height term, smoothing/detrending effect, fused phase + velocity. Any change is selected on training folds and re-evaluated with full nested LOVO on all six videos.
 
 ## 5. Target gates (future LOPO, not current claims)
 Pooled F1 ≥ 0.90 on held-out people (stretch 0.95); Pull MAE ≤ 5 frames @30 fps; per-person reporting; include clips with rep counts ≠ 5.
 
-## 6. Form analysis (future phase — not started)
-Only after rep boundaries are stable and multiple athletes exist: per-rep features (lag_pull, lag_onset, amp_ratio, elbow-path asymmetry, trunk lean, ROM, velocity consistency; tempo as context only), balanced labels, tempo control, LOPO, macro-F1 + per-class recall + confusion matrix + calibration. Wording: "form deviation / potential biomechanical concern requiring coach review".
+## 6. Form analysis (Phase 8 — rule-based only, no classifier)
+Per-rep symmetry features inside decoded rep windows (lag_pull, lag_onset, amp_ratio, trunk lean, ROM; tempo as context only) and provisional rule thresholds producing "potential deviation — coach review" alerts. A classifier needs multiple athletes, balanced labels, tempo control and LOPO; it will not be trained on 6 videos of one athlete. Wording: "movement/form deviation", "potential biomechanical concern requiring coach review" — never a diagnosis.

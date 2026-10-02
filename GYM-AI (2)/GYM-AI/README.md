@@ -1,27 +1,31 @@
 # GYM-AI
 
-Smart-gym computer-vision platform. Current MVP: seated row (rear camera) **repetition segmentation** from estimated monocular 3D pose.
+Smart-gym computer-vision platform. Current MVP: seated row (rear camera) **repetition segmentation** from estimated monocular 3D pose. Form analysis is a later, independent phase.
 
-- Project status, blockers, contradictions → [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md)
-- Pipeline + target architecture → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- Evaluation protocol + results → [docs/AI_EVALUATION.md](docs/AI_EVALUATION.md)
-- Cloud/edge plan → [docs/CLOUD_MIGRATION.md](docs/CLOUD_MIGRATION.md)
-- Hardware → [docs/HARDWARE_SETUP.md](docs/HARDWARE_SETUP.md)
-- Changes → [CHANGELOG.md](CHANGELOG.md) · Work queue → [TODO.md](TODO.md)
+| Doc | What |
+|---|---|
+| [docs/MASTER_PROMPT.md](docs/MASTER_PROMPT.md) | the spec (vision, rules, history, target architecture) |
+| [docs/PHASE_PLAN.md](docs/PHASE_PLAN.md) | phases and done-criteria |
+| [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) | what actually exists, blockers, contradictions |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | pipeline reconstructed from code + target edge/cloud architecture |
+| [docs/AI_EVALUATION.md](docs/AI_EVALUATION.md) | protocol, matching rules, results |
+| [docs/CLOUD_MIGRATION.md](docs/CLOUD_MIGRATION.md) · [docs/HARDWARE_SETUP.md](docs/HARDWARE_SETUP.md) | cloud/edge plan · hardware |
+| [CHANGELOG.md](CHANGELOG.md) · [TODO.md](TODO.md) | changes · work queue |
 
-## Reproduce the current baseline (v2 HSMM, nested leave-one-video-out)
-
-Requires `ai/data/poses3d/{video}.npy` (MotionBERT, H36M-17, shape (T,17,3)) — **currently missing, see PROJECT_STATE.md**.
-
+## Setup
 ```powershell
-.venv\Scripts\python ai\research\rep_segmentation_v2_hsmm.py `
-  --poses_dir ai\data\poses3d `
-  --annotations ai\outputs\manual_rep_annotations.csv `
-  --fps 30 `
-  --out_dir ai\outputs\rep_eval_v2
+py -3.10 -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
 ```
+Dataset videos (`ai/data/seated_row/{correct,asymmetry}/*.mp4`) and model weights are git-ignored — copy them in separately.
 
-Expected: pooled F1 0.93 (GT 30 / Pred 28 / TP 27 / FP 1 / FN 3), Start/Pull/End MAE 3.5/3.3/6.6 frames. Same-athlete LOVO — not evidence of new-person generalisation.
+## Evaluate
+```powershell
+scripts\eval_legacy_2d.ps1   # legacy 2D sanity baseline: F1 0.62 (pull ±15) / 0.69 (IoU ≥ 0.5)
+scripts\eval_v2.ps1          # v2 HSMM nested leave-one-video-out — needs ai\data\poses3d\*.npy (MotionBERT H36M (T,17,3))
+```
+Both write `ai/outputs/baselines/<name>.json` via the single evaluator `ai/research/eval_rep_segmentation.py`.
+Claimed v2 result (not yet reproduced): pooled F1 0.93 under IoU ≥ 0.5, Start/Pull/End MAE 3.5/3.3/6.6 frames. All current numbers are same-athlete LOVO — not evidence of new-person generalisation.
 
 ## Layout
-`ai/research/` frozen baselines · `ai/src/` legacy 2D pipeline · `ai/data/` videos · `ai/outputs/` GT + derived CSVs · `docs/`.
+`ai/research/` frozen baselines + evaluator · `ai/src/` legacy 2D pipeline · `ai/data/` videos (+ `poses3d/` once available) · `ai/outputs/` GT, baselines, derived CSVs · `ai/models/` artifact registry · `scripts/` one-command runs · `docs/`.

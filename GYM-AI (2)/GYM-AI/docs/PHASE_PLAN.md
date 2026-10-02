@@ -1,6 +1,7 @@
 # PHASE_PLAN.md — operating plan
 
-> Provenance: project owner's operating prompt, pasted 2026-10-02. Spec = `docs/MASTER_PROMPT.md`. Live status = `docs/PROJECT_STATE.md` + `TODO.md`.
+> Provenance: structured version of the project owner's operating prompt (verbatim copy: `docs/CLAUDE_CODE_PROMPT.md`), 2026-10-02. Spec = `docs/MASTER_PROMPT.md`. Live status = `docs/PROJECT_STATE.md` + `TODO.md`.
+> Correction to the verbatim prompt: the v1 FSM and v2 HSMM scripts **were recovered** (`~/Downloads` → `ai/research/`); only the MotionBERT stage and its `.npy` poses are missing.
 
 | Stage | What we build | Done when |
 |---|---|---|
