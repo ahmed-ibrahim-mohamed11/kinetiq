@@ -1,0 +1,6 @@
+rep,start_frame,pull_frame,end_frame,incomplete_return
+1,81,116,147,False
+2,147,167,191,False
+3,191,218,250,False
+4,250,269,294,False
+5,294,338,341,True

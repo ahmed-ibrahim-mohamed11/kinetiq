@@ -1,0 +1,29 @@
+# --- environments / secrets ---
+.venv/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# --- large binaries: dataset videos + model weights (see docs/HARDWARE_SETUP.md, ai/models/README.md) ---
+*.mp4
+*.mov
+*.avi
+*.pt
+*.pth
+*.bin
+*.onnx
+
+# --- arrays: only the small (T,17,3) pose inputs that the baseline needs are tracked ---
+*.npy
+!ai/data/poses3d/*.npy
+
+# --- evaluation plots / scratch outputs ---
+ai/outputs/rep_eval*/
+
+# --- web (Phase 4) ---
+node_modules/
+.next/
+.vercel/
