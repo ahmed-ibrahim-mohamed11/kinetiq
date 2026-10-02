@@ -9,11 +9,11 @@
 - [x] Legacy 2D sanity baseline measured → `ai/outputs/baselines/legacy_2d_elbow_span_fsm.json`
 - [x] One-command scripts `scripts/eval_legacy_2d.ps1`, `scripts/eval_v2.ps1`
 - [x] Video folders verified correct (B2 resolved)
-- [ ] **STEP 0 (owner):** Path A (poses / MotionBERT files exist) or Path B (rebuild MotionBERT stage)
-- [ ] Path A: copy `.npy` to `ai/data/poses3d/`, run `scripts/eval_v2.ps1`, replace `*_CLAIMED.json` with the real run — report real numbers even if ≠ 0.93
-- [ ] Path B: official MotionBERT repo + pretrained checkpoint (`ai/models/README.md`), `ai/research/extract_poses3d.py` (YOLO → COCO-17 → H36M-17 → normalise → MotionBERT → `.npy`), regenerate poses, run v2 unchanged, new honest baseline
+- [x] **STEP 0:** owner deferred to recommendation → **Path B** (2026-10-02)
+- [x] Path B: vendored MotionBERT (commit `705d3a95`), downloaded pose3d checkpoint, `ai/research/extract_poses3d.py`, regenerated 6 pose files, ran v2 unchanged → **new honest baseline F1 0.87** (`ai/outputs/baselines/v2_hsmm_nested_lovo.json`)
 - [ ] Owner: delete the stray zero-commit `C:\Users\Lenovo\.git` (outside the project; not done automatically)
-- [ ] Record GPU status (none on this machine: `torch.cuda.is_available() == False`) in `docs/HARDWARE_SETUP.md`
+- [ ] Owner: back up the 6 research videos off this machine (git-ignored, not protected by the repo)
+- [x] Record GPU status (none; CPU timings measured) in `docs/HARDWARE_SETUP.md`
 
 ## Phase 1 — Clean package (no behaviour change)
 - [ ] Move `ai/src/` → `ai/research/legacy_2d/` (update path constants only)

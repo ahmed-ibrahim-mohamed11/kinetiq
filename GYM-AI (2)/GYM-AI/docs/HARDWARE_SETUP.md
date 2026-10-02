@@ -9,7 +9,7 @@ _Status: current research setup documented from data; production setup is a targ
 - 3D is **estimated monocular 3D (MotionBERT)**, not calibrated physical depth. Depth sign convention is a single flip vector in the research scripts (`BACK` vector comment near the H36M index block).
 
 ## Development machine (audited 2026-10-02)
-Windows 11 Home, Python 3.10.0 in `.venv`, torch 2.14.0, ultralytics 8.4.155, YOLO11n-Pose weights at repo root. GPU: _unknown — not yet checked_.
+Windows 11 Home, Python 3.10.0 in `.venv`, torch 2.14.0 **CPU-only**, ultralytics 8.4.155, YOLO11n-Pose weights at repo root. GPU: none usable (`torch.cuda.is_available() == False`, checked 2026-10-02). Measured CPU throughput: full pose rebuild (YOLO + MotionBERT, 6 videos, ~2,200 frames) ≈ 4 min; v2 nested LOVO + evaluation ≈ 2 min.
 
 ## Target edge station (Phase 5+)
 - Edge computer with GPU (or a capable CPU for YOLO11n + MotionBERT at reduced rate) running the Python edge agent as a long-running service.

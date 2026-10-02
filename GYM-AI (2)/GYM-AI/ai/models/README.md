@@ -5,7 +5,7 @@ Model weights are **not** committed (`*.pt *.pth *.bin *.onnx` are git-ignored).
 | Artifact | Task | Source | Status (2026-10-02) |
 |---|---|---|---|
 | `yolo11n-pose.pt` (repo root) | 2D COCO-17 pose | Auto-downloaded by `ultralytics==8.4.155` on first `YOLO("yolo11n-pose.pt")` | present, 6 MB |
-| MotionBERT checkpoint (2D→3D lifting, estimated monocular 3D) | 2D COCO-17 → H36M-17 (T,17,3) | Official MotionBERT release checkpoint | **absent** — Step 0 decision, see `docs/PROJECT_STATE.md` B1 |
+| `motionbert/FT_MB_release_MB_ft_h36m/best_epoch.bin` (2D→3D lifting, estimated monocular 3D) | H36M-17 2D+conf → (T,17,3) 3D | Official MotionBERT pose3d checkpoint, downloaded 2026-10-02 from the author's HuggingFace mirror `walterzhu/MotionBERT` (`checkpoint/pose3d/FT_MB_release_MB_ft_h36m/best_epoch.bin`, 169,958,969 bytes, DSTformer 42.5M params, config `configs/pose3d/MB_ft_h36m.yaml`). Re-download with the same URL if lost. | present (Path B rebuild) |
 | Rep-segmentation phase model + HSMM decoder (`--save_model` JSON from `rep_segmentation_v2_hsmm.py`) | rep segmentation | Produced in-repo | not yet produced (needs poses) |
 
 Versioning target (Phase 3): the `model_versions` table (name, semantic_version, task, git_commit, metrics_json, artifact_uri, active). Every rep event carries `model_version`.

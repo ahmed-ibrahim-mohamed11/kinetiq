@@ -8,7 +8,7 @@ param(
 $ErrorActionPreference = "Stop"
 Set-Location (Join-Path $PSScriptRoot "..")
 if (-not (Test-Path $PosesDir)) {
-    Write-Error "Missing $PosesDir — MotionBERT (T,17,3) H36M .npy pose files are required (docs/PROJECT_STATE.md, blocker B1)."
+    Write-Error "Missing $PosesDir - MotionBERT (T,17,3) H36M .npy pose files are required (docs/PROJECT_STATE.md, blocker B1)."
     exit 1
 }
 $py = ".\.venv\Scripts\python.exe"

@@ -4,6 +4,14 @@ All behaviour-changing changes to the AI, data, schema, or services are recorded
 
 ## [Unreleased] — Phase 0: audit + freeze baseline (2026-10-02)
 
+### Commit 3 — Path B rebuild of the MotionBERT stage + measured v2 baseline (Phase 0 complete)
+- Vendored the official MotionBERT repo at `motionbert/` (upstream commit `705d3a95`, Apache-2.0, `.git` removed, nothing modified; see `motionbert/VENDORED.md`).
+- Downloaded the official pose3d checkpoint `FT_MB_release_MB_ft_h36m/best_epoch.bin` (162 MB, git-ignored; source URL in `ai/models/README.md`).
+- Added `ai/research/extract_poses3d.py` + `scripts/extract_poses3d.ps1`: YOLO11n-pose → COCO-17→H36M-17 → `crop_scale` normalisation → MotionBERT (243-frame clips, flip TTA, root-relative) → `ai/data/poses3d/{video}.npy` (T,17,3) + `ai/data/poses3d_conf/{video}.npy` (T,17). Both output dirs are tracked in git (`.gitignore` exceptions). Frames with no YOLO detection are interpolated with conf 0 (asymmetry_02: 51/250, correct_03: 11/418, asymmetry_03: 3/341).
+- Ran the frozen `rep_segmentation_v2_hsmm.py` unchanged on the rebuilt poses, nested LOVO → **measured baseline** `ai/outputs/baselines/v2_hsmm_nested_lovo.json`: pooled **F1 0.87** under both rules (GT 30 / Pred 25 / TP 24 / FP 1 / FN 6); MAE start/pull/end 4.6/5.1/11.0 (IoU rule). asymmetry_01 decodes as one truncated rep (0 IoU TP) — Phase 2 target. The claimed 0.93 (original, lost poses) is retired as never reproduced.
+- Fixed `scripts/eval_v2.ps1` parse failure under Windows PowerShell 5.1 (em-dash in a no-BOM UTF-8 file); all scripts are now ASCII-only.
+- Docs updated: `PROJECT_STATE` (B1 resolved, Phase 0 complete), `AI_EVALUATION` (measured results, pose provenance, new asymmetry_01 failure description), `ai/research/README.md`, `ai/models/README.md`, `TODO`.
+
 ### Commit 2 — single evaluator + legacy 2D sanity baseline
 - Added `ai/research/eval_rep_segmentation.py`: the single evaluator (TP/FP/FN, P/R/F1, START/PULL/END MAE, per video + pooled). Two one-to-one greedy matching rules, both always reported: `pull_tol15` (project default) and `iou_0.50` (verbatim copy of the v2 rule, so claimed numbers are comparable). Drops the GT `label` column; no fixed rep count.
 - Added `ai/research/legacy_2d_predictions.py`: packages existing `ai/outputs/dataset_build/*/reps.csv` into `ai/outputs/baselines/legacy_2d_predictions.csv` (no re-run of YOLO).

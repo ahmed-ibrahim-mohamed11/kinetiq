@@ -1,0 +1,717 @@
+{
+ "name": "v2_hsmm_nested_lovo",
+ "created_utc": "2026-10-02T19:07:13+00:00",
+ "git_commit": "2ea145b",
+ "evaluator": "ai/research/eval_rep_segmentation.py",
+ "frame_convention": "frames compared as given; GT CSV and legacy 2D predictions are 1-based",
+ "inputs": {
+  "gt": {
+   "path": "ai\\outputs\\manual_rep_annotations.csv",
+   "md5": "02fe0ec236e29c0e7fbee395e52d6604",
+   "n_videos": 6,
+   "n_reps": 30
+  },
+  "pred": {
+   "path": "ai\\outputs\\rep_eval_v2\\predicted_reps_with_arm_timing.csv",
+   "md5": "7c96b22ae178edcf67141832685450d8",
+   "n_videos": 6,
+   "n_reps": 25
+  }
+ },
+ "results": {
+  "pull_tol15": {
+   "rule": "pull",
+   "params": {
+    "tol_frames": 15
+   },
+   "pooled": {
+    "n_videos": 6,
+    "n_gt": 30,
+    "n_pred": 25,
+    "tp": 24,
+    "fp": 1,
+    "fn": 6,
+    "precision": 0.96,
+    "recall": 0.8,
+    "f1": 0.8727272727272728,
+    "mae_frames": {
+     "start": 4.958333333333333,
+     "pull": 4.541666666666667,
+     "end": 18.708333333333332
+    },
+    "videos_with_exact_count": 4
+   },
+   "per_video": {
+    "asymmetry_01": {
+     "n_gt": 5,
+     "n_pred": 1,
+     "tp": 1,
+     "fp": 0,
+     "fn": 4,
+     "precision": 1.0,
+     "recall": 0.2,
+     "f1": 0.33333333333333337,
+     "mae_frames": {
+      "start": 11.0,
+      "pull": 10.0,
+      "end": 203.0
+     },
+     "pull_err_frac": 0.18181818181818182,
+     "signed_err_frames": {
+      "start": [
+       11
+      ],
+      "pull": [
+       -10
+      ],
+      "end": [
+       203
+      ]
+     },
+     "matched_pairs": [
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "asymmetry_02": {
+     "n_gt": 5,
+     "n_pred": 4,
+     "tp": 3,
+     "fp": 1,
+     "fn": 2,
+     "precision": 0.75,
+     "recall": 0.6,
+     "f1": 0.6666666666666665,
+     "mae_frames": {
+      "start": 9.333333333333334,
+      "pull": 6.0,
+      "end": 9.0
+     },
+     "pull_err_frac": 0.1807282913165266,
+     "signed_err_frames": {
+      "start": [
+       -4,
+       -20,
+       -4
+      ],
+      "pull": [
+       2,
+       -6,
+       10
+      ],
+      "end": [
+       19,
+       -1,
+       7
+      ]
+     },
+     "matched_pairs": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       3
+      ]
+     ]
+    },
+    "asymmetry_03": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 2.8,
+      "pull": 4.2,
+      "end": 6.2
+     },
+     "pull_err_frac": 0.09219449114185956,
+     "signed_err_frames": {
+      "start": [
+       1,
+       3,
+       0,
+       8,
+       2
+      ],
+      "pull": [
+       0,
+       3,
+       5,
+       6,
+       -7
+      ],
+      "end": [
+       -3,
+       -1,
+       8,
+       7,
+       -12
+      ]
+     },
+     "matched_pairs": [
+      [
+       3,
+       3
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       4,
+       4
+      ]
+     ]
+    },
+    "correct_01": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 1.6,
+      "pull": 4.6,
+      "end": 15.0
+     },
+     "pull_err_frac": 0.06297121598789757,
+     "signed_err_frames": {
+      "start": [
+       0,
+       4,
+       0,
+       0,
+       -4
+      ],
+      "pull": [
+       -2,
+       -3,
+       3,
+       -5,
+       -10
+      ],
+      "end": [
+       -8,
+       -18,
+       -1,
+       -18,
+       -30
+      ]
+     },
+     "matched_pairs": [
+      [
+       3,
+       3
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "correct_02": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 4.6,
+      "pull": 2.8,
+      "end": 8.2
+     },
+     "pull_err_frac": 0.040344624926535864,
+     "signed_err_frames": {
+      "start": [
+       2,
+       -1,
+       5,
+       1,
+       -14
+      ],
+      "pull": [
+       0,
+       0,
+       -1,
+       -5,
+       -8
+      ],
+      "end": [
+       -2,
+       -9,
+       -9,
+       -15,
+       -6
+      ]
+     },
+     "matched_pairs": [
+      [
+       1,
+       1
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "correct_03": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 7.0,
+      "pull": 4.6,
+      "end": 14.4
+     },
+     "pull_err_frac": 0.08580316742081448,
+     "signed_err_frames": {
+      "start": [
+       -3,
+       2,
+       4,
+       -3,
+       -23
+      ],
+      "pull": [
+       -3,
+       4,
+       4,
+       -5,
+       -7
+      ],
+      "end": [
+       15,
+       9,
+       36,
+       9,
+       3
+      ]
+     },
+     "matched_pairs": [
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    }
+   }
+  },
+  "iou_0.50": {
+   "rule": "iou",
+   "params": {
+    "iou_thr": 0.5
+   },
+   "pooled": {
+    "n_videos": 6,
+    "n_gt": 30,
+    "n_pred": 25,
+    "tp": 24,
+    "fp": 1,
+    "fn": 6,
+    "precision": 0.96,
+    "recall": 0.8,
+    "f1": 0.8727272727272728,
+    "mae_frames": {
+     "start": 4.583333333333333,
+     "pull": 5.083333333333333,
+     "end": 10.958333333333334
+    },
+    "videos_with_exact_count": 4
+   },
+   "per_video": {
+    "asymmetry_01": {
+     "n_gt": 5,
+     "n_pred": 1,
+     "tp": 0,
+     "fp": 1,
+     "fn": 5,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0,
+     "mae_frames": {
+      "start": null,
+      "pull": null,
+      "end": null
+     },
+     "pull_err_frac": null,
+     "signed_err_frames": {
+      "start": [],
+      "pull": [],
+      "end": []
+     },
+     "matched_pairs": []
+    },
+    "asymmetry_02": {
+     "n_gt": 5,
+     "n_pred": 4,
+     "tp": 4,
+     "fp": 0,
+     "fn": 1,
+     "precision": 1.0,
+     "recall": 0.8,
+     "f1": 0.888888888888889,
+     "mae_frames": {
+      "start": 7.5,
+      "pull": 10.25,
+      "end": 11.0
+     },
+     "pull_err_frac": 0.2909516238928004,
+     "signed_err_frames": {
+      "start": [
+       -4,
+       -2,
+       -20,
+       -4
+      ],
+      "pull": [
+       10,
+       23,
+       -6,
+       2
+      ],
+      "end": [
+       7,
+       17,
+       -1,
+       19
+      ]
+     },
+     "matched_pairs": [
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       4
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "asymmetry_03": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 2.8,
+      "pull": 4.2,
+      "end": 6.2
+     },
+     "pull_err_frac": 0.09219449114185956,
+     "signed_err_frames": {
+      "start": [
+       1,
+       3,
+       0,
+       2,
+       8
+      ],
+      "pull": [
+       0,
+       3,
+       5,
+       -7,
+       6
+      ],
+      "end": [
+       -3,
+       -1,
+       8,
+       -12,
+       7
+      ]
+     },
+     "matched_pairs": [
+      [
+       3,
+       3
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "correct_01": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 1.6,
+      "pull": 4.6,
+      "end": 15.0
+     },
+     "pull_err_frac": 0.06297121598789757,
+     "signed_err_frames": {
+      "start": [
+       0,
+       0,
+       0,
+       4,
+       -4
+      ],
+      "pull": [
+       3,
+       -2,
+       -5,
+       -3,
+       -10
+      ],
+      "end": [
+       -1,
+       -8,
+       -18,
+       -18,
+       -30
+      ]
+     },
+     "matched_pairs": [
+      [
+       4,
+       4
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    "correct_02": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 4.6,
+      "pull": 2.8,
+      "end": 8.2
+     },
+     "pull_err_frac": 0.040344624926535864,
+     "signed_err_frames": {
+      "start": [
+       2,
+       -1,
+       5,
+       -14,
+       1
+      ],
+      "pull": [
+       0,
+       0,
+       -1,
+       -8,
+       -5
+      ],
+      "end": [
+       -2,
+       -9,
+       -9,
+       -6,
+       -15
+      ]
+     },
+     "matched_pairs": [
+      [
+       1,
+       1
+      ],
+      [
+       4,
+       4
+      ],
+      [
+       3,
+       3
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       2,
+       2
+      ]
+     ]
+    },
+    "correct_03": {
+     "n_gt": 5,
+     "n_pred": 5,
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "mae_frames": {
+      "start": 7.0,
+      "pull": 4.6,
+      "end": 14.4
+     },
+     "pull_err_frac": 0.08580316742081448,
+     "signed_err_frames": {
+      "start": [
+       2,
+       -3,
+       -3,
+       -23,
+       4
+      ],
+      "pull": [
+       4,
+       -5,
+       -3,
+       -7,
+       4
+      ],
+      "end": [
+       9,
+       9,
+       15,
+       3,
+       36
+      ]
+     },
+     "matched_pairs": [
+      [
+       3,
+       3
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       4,
+       4
+      ]
+     ]
+    }
+   }
+  }
+ }
+}

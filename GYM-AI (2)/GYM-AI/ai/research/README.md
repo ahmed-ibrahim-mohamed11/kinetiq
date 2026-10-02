@@ -9,9 +9,10 @@ Improvements go in new files (`rep_segmentation_v3_*.py`) or, after Phase 1, in 
 | `rep_segmentation_v1_fsm.py` | Legacy baseline: same phase model + fused-phase FSM with return-to-rest | `~/Downloads/rep_segmentation_v1_fsm.py` (identical to `~/Downloads/rep_segmentation.py` except trailing newline) | `2d339ea14ff8f14862f32df39532e4ea` |
 | `eval_rep_segmentation.py` | The single evaluator (Phase 0). Rules: `pull_tol15` (default) + `iou_0.50` (= v2's internal rule). | written in-repo | — |
 | `legacy_2d_predictions.py` | Packages `ai/outputs/dataset_build/*/reps.csv` (legacy 2D pipeline) into a predictions CSV | written in-repo | — |
+| `extract_poses3d.py` | Path B rebuild of the MotionBERT stage: YOLO11n-pose → COCO→H36M → `crop_scale` → MotionBERT → `ai/data/poses3d/{video}.npy` (+ conf in `ai/data/poses3d_conf/`) | written in-repo 2026-10-02 (official `infer_wild.py` recipe, vendored `motionbert/` commit `705d3a95`) | — |
 
 ## Input contract (v1/v2)
-- `--poses_dir`: one `{video}.npy` per video, MotionBERT output in **H36M-17 order, shape (T, 17, 3)**, frame-aligned with the annotation CSV. ⚠️ **Not present as of 2026-10-02** (blocker B1 in `docs/PROJECT_STATE.md`). Target location: `ai/data/poses3d/`.
+- `--poses_dir`: one `{video}.npy` per video, MotionBERT output in **H36M-17 order, shape (T, 17, 3)**, frame-aligned with the annotation CSV. Present in `ai/data/poses3d/` (tracked in git), regenerated any time with `scripts\extract_poses3d.ps1` (B1 resolved via Path B).
 - `--annotations`: `ai/outputs/manual_rep_annotations.csv`. The `label` column is dropped on load.
 - `--conf_dir` (optional): `{video}.npy` of shape (T, 17) joint confidences.
 - `--videos_dir` (optional, FPS only) else `--fps` (default 30). `--groups_csv video,athlete` switches to leave-one-PERSON-out.
@@ -20,6 +21,7 @@ Improvements go in new files (`rep_segmentation_v3_*.py`) or, after Phase 1, in 
 ## Commands
 ```powershell
 scripts\eval_legacy_2d.ps1                       # legacy 2D sanity baseline
+scripts\extract_poses3d.ps1 [-Overwrite]         # rebuild 3D poses (YOLO -> MotionBERT), ~4 min CPU
 scripts\eval_v2.ps1 [-PosesDir ai\data\poses3d]  # v2 nested LOVO, then evaluator
 ```
 Evaluator directly:
@@ -27,4 +29,5 @@ Evaluator directly:
 .venv\Scripts\python ai\research\eval_rep_segmentation.py --gt ai\outputs\manual_rep_annotations.csv `
     --pred <predictions.csv> --match pull iou --name <run_name> --out ai\outputs\baselines\<run_name>.json
 ```
-Expected v2 result (claimed, IoU rule): `ai/outputs/baselines/v2_hsmm_nested_lovo_CLAIMED.json`.
+Measured v2 result (rebuilt poses, both rules): `ai/outputs/baselines/v2_hsmm_nested_lovo.json` — pooled F1 0.87.
+The old claimed numbers (`v2_hsmm_nested_lovo_CLAIMED.json`, F1 0.93) were produced on lost pose files and were never reproduced.

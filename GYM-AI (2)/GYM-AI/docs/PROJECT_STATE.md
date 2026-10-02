@@ -1,6 +1,6 @@
 # PROJECT_STATE.md — GYM-AI
 
-_Last update: 2026-10-02, Phase 0 (freeze) — two commits in. Update whenever the baseline, data, or blockers change._
+_Last update: 2026-10-02, Phase 0 COMPLETE (Path B rebuild, measured baseline F1 0.87). Update whenever the baseline, data, or blockers change._
 
 ## 1. What the project is
 Smart-gym computer-vision platform. Current MVP: **dual-handed seated row, rear camera**.
@@ -15,7 +15,8 @@ GYM-AI/                                  git repo (branch main) since 2026-10-02
 │  ├─ data/
 │  │  ├─ raw/seated_row_test.mp4                 early test clip (git-ignored)
 │  │  ├─ seated_row/{correct,asymmetry}/*.mp4    6 research videos, 13–25 MB each (git-ignored; back up separately)
-│  │  └─ poses3d/                                 ← DOES NOT EXIST YET: MotionBERT (T,17,3) H36M .npy go here (blocker B1)
+│  │  ├─ poses3d/{video}.npy                      MotionBERT (T,17,3) H36M poses, Path B rebuild (tracked in git)
+│  │  └─ poses3d_conf/{video}.npy                 (T,17) 2D keypoint confidences, H36M order (tracked in git)
 │  ├─ outputs/
 │  │  ├─ manual_rep_annotations.csv               ← rep-segmentation GROUND TRUTH (30 reps, 5 per video, 1-based frames)
 │  │  ├─ baselines/                               ← evaluator JSON + prediction CSVs (tracked)
@@ -28,11 +29,12 @@ GYM-AI/                                  git repo (branch main) since 2026-10-02
 │  │  ├─ rep_segmentation_v2_hsmm.py              ← CURRENT BASELINE (frozen, md5 in ai/research/README.md)
 │  │  ├─ rep_segmentation_v1_fsm.py               legacy baseline (frozen)
 │  │  ├─ eval_rep_segmentation.py                 ← the single evaluator (Phase 0)
+│  │  ├─ extract_poses3d.py                       Path B: YOLO → COCO→H36M → MotionBERT → poses3d/*.npy
 │  │  └─ legacy_2d_predictions.py                 packages dataset_build/*/reps.csv for the evaluator
 │  ├─ src/                                        legacy 2D YOLO-only pipeline (9 scripts, ~5.9k lines, untouched)
 │  └─ models/README.md                            artifact registry (weights are git-ignored)
-├─ scripts/eval_legacy_2d.ps1, eval_v2.ps1        one-command evaluations
-├─ motionbert/                                    EMPTY
+├─ scripts/eval_legacy_2d.ps1, eval_v2.ps1, extract_poses3d.ps1   one-command steps
+├─ motionbert/                                    vendored official MotionBERT (commit 705d3a95, Apache-2.0, see VENDORED.md)
 ├─ yolo11n-pose.pt                                YOLO11n-Pose weights (git-ignored, auto-downloaded by ultralytics)
 ├─ .venv/  Python 3.10.0 — torch 2.14.0 (CPU), ultralytics 8.4.155, scipy 1.15.3, numpy 2.2.6, pandas 2.3.3
 ├─ requirements.txt                               exact versions (pip freeze)
@@ -50,7 +52,7 @@ GYM-AI/                                  git repo (branch main) since 2026-10-02
 ## 3. Blockers
 | # | Blocker | Status |
 |---|---|---|
-| B1 | **MotionBERT 3D pose arrays missing.** No `{video}.npy` (T,17,3) H36M files, no MotionBERT code/checkpoint, no COCO→H36M + inference script anywhere on this machine (searched Desktop, Downloads, Documents, OneDrive, all PyCharm/Python project folders). | **OPEN — Step 0 question to owner** (Path A: files exist somewhere; Path B: rebuild from the official MotionBERT repo + pretrained checkpoint, new honest baseline). |
+| B1 | **MotionBERT 3D pose arrays missing.** No `{video}.npy` (T,17,3) H36M files, no MotionBERT code/checkpoint, no COCO→H36M + inference script anywhere on this machine. | **RESOLVED 2026-10-02 via Path B** (owner deferred to recommendation): official MotionBERT repo vendored at `motionbert/` (commit `705d3a95`), pose3d checkpoint downloaded (see `ai/models/README.md`), `ai/research/extract_poses3d.py` regenerated all 6 pose files → `ai/data/poses3d/*.npy` (tracked). New honest baseline **F1 0.87** replaces the claimed 0.93 (original poses lost, claim never reproduced). |
 | B2 | Video folders were swapped (`correct/` held `asymmetry_0x.mp4` and vice-versa) at the first audit. | **RESOLVED** — folders verified correct at the second audit (fixed by owner between audits). |
 | B3 | No git repo at `GYM-AI/` (stray zero-commit `.git` in `C:\Users\Lenovo`). | **RESOLVED** — `git init` in `GYM-AI/`, commits `3ccdc20` (freeze) and the Phase 0 evaluator commit. The stray home-dir `.git` is left for the owner to delete (outside the project). |
 
@@ -66,16 +68,17 @@ GYM-AI/                                  git repo (branch main) since 2026-10-02
 | Pipeline | Validation | Pull ±15 F1 | IoU ≥ 0.5 F1 | Status |
 |---|---|---|---|---|
 | Legacy 2D elbow-span FSM | none (transductive per-video percentiles; nothing learned) | **0.62** (TP 17 / FP 8 / FN 13) | **0.69** (TP 19 / FP 6 / FN 11) | MEASURED 2026-10-02, commit 3ccdc20 |
-| v1 ridge + FSM | nested LOVO | — | 0.87 | claimed |
-| v2 ridge + HSMM | nested LOVO | — | **0.93** (TP 27 / FP 1 / FN 3), MAE 3.5/3.3/6.6 | **claimed, not reproduced** |
+| v1 ridge + FSM | nested LOVO | — | 0.87 | claimed (original lost poses) |
+| v2 ridge + HSMM (original poses, lost) | nested LOVO | — | 0.93 (TP 27 / FP 1 / FN 3), MAE 3.5/3.3/6.6 | claimed, never reproduced — superseded |
+| **v2 ridge + HSMM on Path B rebuilt poses — CURRENT BASELINE** | nested LOVO | **0.87** (TP 24 / FP 1 / FN 6), MAE 5.0/4.5/18.7 | **0.87** (TP 24 / FP 1 / FN 6), MAE 4.6/5.1/11.0 | **MEASURED 2026-10-02** — `ai/outputs/baselines/v2_hsmm_nested_lovo.json`. All misses are asymmetry_01 (decoded as 1 giant rep) + 1 FN on asymmetry_02. |
 
 All of this is **same-athlete leave-one-video-out**, not new-person LOPO.
 
 ## 6. Phase status
 | Phase | Status |
 |---|---|
-| 0 Freeze | git ✔ · requirements ✔ · docs ✔ · single evaluator ✔ · legacy sanity baseline ✔ · **v2 reproduction ✘ (B1 / Step 0)** |
-| 1 Clean package | not started (needs reproduced baseline for the byte-identical check) |
-| 2 asymmetry_01 diagnosis | not started (needs poses) |
-| 3 Supabase · 4 Dashboard | not started — independent of B1, can run in parallel |
-| 5–9 | not started |
+| 0 Freeze | **COMPLETE 2026-10-02** — git ✔ · requirements ✔ · docs ✔ · single evaluator ✔ · legacy sanity baseline ✔ · Path B rebuild ✔ · measured v2 baseline (F1 0.87) ✔. One command regenerates poses (`scripts\extract_poses3d.ps1`), one command reproduces the baseline (`scripts\eval_v2.ps1`). |
+| 1 Clean package | next (regression target = `v2_hsmm_nested_lovo.json`, byte-identical) |
+| 2 asymmetry_01 diagnosis | queued (failure now: whole video decoded as 1 truncated rep) |
+| 3 Supabase · 4 Dashboard | can start; deploys blocked on owner (Supabase URL/keys, Vercel) |
+| 5–9 | not started (Phase 5 blocked on camera/edge hardware details) |

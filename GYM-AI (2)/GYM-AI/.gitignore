@@ -19,6 +19,7 @@ __pycache__/
 # --- arrays: only the small (T,17,3) pose inputs that the baseline needs are tracked ---
 *.npy
 !ai/data/poses3d/*.npy
+!ai/data/poses3d_conf/*.npy
 
 # --- evaluation plots / scratch outputs ---
 ai/outputs/rep_eval*/
