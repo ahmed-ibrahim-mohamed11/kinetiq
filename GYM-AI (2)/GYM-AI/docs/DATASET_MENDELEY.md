@@ -74,6 +74,28 @@ Deliberate properties: ≥6 people, 3 views, good+bad, slow+fast pacing, two mov
 Rep speed cannot be verified from metadata alone; the annotator confirms it during Phase 2.5B.
 `subject_013_back_good_side.mp4` (1.4 s) is deliberately excluded.
 
+## Duplicate files (found during Phase 2.5B, 2026-10-04)
+MD5 hashing of all 1,042 videos: **33 duplicate groups covering 67 files (~6.4%)**, list committed at
+`ai/outputs/mendeley_duplicate_groups.json`. Consequences, verified:
+- **21 groups span good AND bad** (same clip filed as both) → the binary form label is noisy.
+- Several duplicates cross **subjects** (005↔006, 010↔013, 014↔020, 015↔026, 019↔020) and even
+  **exercises** (`subject_007_back_bad_diagonal` = `subject_007_squat_good_diagonal`) → subject-wise
+  splits MUST keep each duplicate group's subjects on the same side (leakage risk), and exercise
+  labels cannot be trusted blindly for those files.
+- In our benchmark subset, 3 of 34 files were duplicate copies (subject_023) and are annotated once
+  under the kept video_id; `subject_019_back_bad_diagonal` equals subject_020's file, so its subject
+  identity is uncertain → subjects 019 and 020 are linked for all future splits.
+
+## Rep-boundary benchmark annotations (Phase 2.5B, 2026-10-04)
+`ai/data/mendeley_rep_annotations.csv` — **31 videos, 443 complete reps**, 0-BASED frames,
+columns `video_id, subject_id, exercise, camera_view, form_label, rep_id, start_frame, pull_frame,
+end_frame, fps`. Method: machine drafts (largest-box person selection → wrist-height signal → peak
+proposal) with **every video visually verified against raw frames** and corrections applied
+(`ai/research/mendeley_annotation/finalize_annotations.py` records every drop/fix with its reason).
+Censored edge reps and setup/put-down movements are not annotated. The person-selection audit and the
+aid's YOLO dependence (residual circularity risk for Phase 2.5C pose benchmarking) are documented in
+the Phase 2.5B report; boundary precision is ~±3 frames (±5 on plateau-style pulls).
+
 ## Risks / ambiguities (for planning, all verifiable later)
 - 15 fps halves temporal resolution vs our 30 fps clips; pull-timing MAE in frames is not comparable
   1:1 across datasets (1 frame = 66.7 ms here).

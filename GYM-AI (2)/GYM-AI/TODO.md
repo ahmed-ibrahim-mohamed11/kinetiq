@@ -11,7 +11,14 @@
 - [x] Proposed 2.5B annotation subset (`ai/data/mendeley_annotation_subset_PROPOSED.csv`, 34 videos)
 - [x] Manifest integrity tests; suite green (40 passed)
 
-## Phase 2.5B — rep annotation benchmark set (NOT STARTED — needs explicit owner approval)
+## Phase 2.5B — rep annotation benchmark set — DONE 2026-10-04 (awaiting approval for 2.5C)
+- [x] Visual definability check (side/diagonal/front × good/bad) — confirmed
+- [x] Person-selection audit — highest-conf rule UNSAFE (15/34 videos switch); baseline untouched
+- [x] Annotation tooling (cache / drafts / contact sheets / GUI annotator / validator)
+- [x] 31 videos, 443 reps annotated + visually verified; integrity checks + 4 tests green
+- [x] Duplicate-file scan of full dataset (33 groups; split-linkage rules documented)
+
+## Phase 2.5C — pretrained pose model benchmark (NOT STARTED — needs explicit owner approval)
 ## Phase 2.5C — pretrained pose model benchmark (NOT STARTED)
 ## Phase 2.6 — larger dataset, subject-wise splits (NOT STARTED)
 ## Phase 2.7 — train rep segmentation (NOT STARTED)

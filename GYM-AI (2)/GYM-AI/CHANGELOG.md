@@ -2,6 +2,24 @@
 
 All behaviour-changing changes to the AI, data, schema, or services are recorded here.
 
+## [Unreleased] — Phase 2.5B: rep-boundary benchmark annotations (2026-10-04)
+- **`ai/data/mendeley_rep_annotations.csv`: 31 videos, 443 complete reps** (START/PULL/END, 0-based
+  frames, fps column; required schema exactly). Complete-reps-only policy: censored edge reps and
+  setup/put-down movements excluded, each with a recorded reason.
+- Method: `ai/research/mendeley_annotation/` — 2D cache (top-3 YOLO candidates/frame), largest-box
+  person selection, wrist-height draft proposer with per-video verification images, dense contact
+  sheets; **every video visually verified against raw frames**; corrections (9 dropped-rep cases,
+  2 boundary fixes, 1 FP sway, 1 trailing partial) recorded in `finalize_annotations.py`.
+- Also adapted the legacy GUI annotator for this subset (`manual_annotator.py`, same keybindings).
+- **Person-selection audit (step 9):** the baseline "highest-confidence box" rule switches to
+  background people on 15/34 videos (up to 110 center jumps/video; margin as low as 0.04); visually
+  confirmed. Baseline NOT modified (frozen); finding recorded for Phase 2.5C/2.7.
+- **Dataset integrity finding:** MD5 scan of all 1,042 videos → 33 duplicate groups / 67 files,
+  21 spanning good↔bad, several spanning subjects (incl. 019↔020) and exercises
+  (`ai/outputs/mendeley_duplicate_groups.json`). 3 subset duplicates annotated once; split rules
+  for Phase 2.6 documented in `docs/DATASET_MENDELEY.md`.
+- Validation: `validate_annotations.py` (7 integrity checks) green; 4 new pytest tests.
+
 ## [Unreleased] — Phase 2.5A: baseline freeze + Mendeley dataset audit (2026-10-04)
 **Priorities changed by the owner (2026-10-04): Phase 4+ product work is PAUSED (preserved, untouched).
 New roadmap: 2.5A audit → 2.5B rep-annotation benchmark → 2.5C pretrained pose model benchmark →
