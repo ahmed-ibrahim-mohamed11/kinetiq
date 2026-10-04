@@ -18,7 +18,11 @@
 - [x] 31 videos, 443 reps annotated + visually verified; integrity checks + 4 tests green
 - [x] Duplicate-file scan of full dataset (33 groups; split-linkage rules documented)
 
-## Phase 2.5C — pretrained pose model benchmark (NOT STARTED — needs explicit owner approval)
+## Phase 2.5C — pretrained pose model benchmark — DONE 2026-10-05 (awaiting approval for 2.6)
+- [x] Benchmark tracker (deterministic, logged, visually verified); production baseline untouched
+- [x] All 6 pipelines integrated + run (MB, MB-Lite, AGFormer-B, PFv2, VideoPose3D, MediaPipe)
+- [x] Common LOSO downstream, stability + deployment metrics, breakdowns, docs/POSE_BENCHMARK_2.5C.md
+- [x] Winners to 2.7: MotionBERT-Lite, MotionBERT, PoseFormerV2
 ## Phase 2.5C — pretrained pose model benchmark (NOT STARTED)
 ## Phase 2.6 — larger dataset, subject-wise splits (NOT STARTED)
 ## Phase 2.7 — train rep segmentation (NOT STARTED)

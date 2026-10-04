@@ -30,3 +30,5 @@ ai/outputs/rep_eval*/
 node_modules/
 .next/
 .vercel/
+ai/outputs/pose_bench/poses/
+ai/outputs/pose_bench/tracked2d/

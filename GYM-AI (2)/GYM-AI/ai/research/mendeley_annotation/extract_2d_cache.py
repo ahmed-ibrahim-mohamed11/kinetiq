@@ -5,8 +5,9 @@ per-frame detection statistics for the person-selection audit (gym background cl
 
 Output per video (ai/outputs/mendeley_2d/{video_id}.npz, git-ignored):
   kpts     (T,17,3) COCO x,y,conf of the HIGHEST-CONF person (NaN row if none) [baseline rule, audited]
-  kpts_top (T,3,17,3) top-3-by-conf candidates (NaN-padded)   [for continuity-tracked selection]
-  boxes    (T,3,5)  top-3 candidate boxes as cx,cy,w,h,conf (NaN/0-padded)
+  kpts_top (T,K,17,3) up to K=8 candidates SORTED BY BOX AREA desc (NaN-padded)
+  boxes    (T,K,5)  candidate boxes as cx,cy,w,h,conf (NaN/0-padded), same area ordering
+  (K=8 by area since Phase 2.5C: top-3-by-conf sometimes excluded the subject in crowded gyms)
   n_det    (T,)   number of detected persons
   conf1    (T,)   box conf of the highest-conf person (0 if none)
   conf2    (T,)   box conf of the runner-up (0 if <2)
@@ -40,23 +41,24 @@ def main():
             print(f"{row.video_id}: cached, skip")
             continue
         vp = os.path.join(DATA_ROOT, row.video_path)
+        K = 8
         kpts, ktop, btop, n_det, c1, c2, cx, cy = [], [], [], [], [], [], [], []
         for r in model.predict(source=vp, stream=True, device="cpu", verbose=False):
-            kt = np.full((3, 17, 3), np.nan, dtype=np.float32)
-            bt = np.zeros((3, 5), dtype=np.float32)
+            kt = np.full((K, 17, 3), np.nan, dtype=np.float32)
+            bt = np.zeros((K, 5), dtype=np.float32)
             bt[:, :4] = np.nan
             if r.boxes is not None and len(r.boxes) > 0 and r.keypoints is not None:
                 conf = r.boxes.conf.cpu().numpy()
-                order = np.argsort(-conf)
-                best = int(order[0])
-                for s, i in enumerate(order[:3]):
+                xywh = r.boxes.xywh.cpu().numpy()
+                order = np.argsort(-(xywh[:, 2] * xywh[:, 3]))          # by AREA desc
+                best = int(np.argmax(conf))
+                for s, i in enumerate(order[:K]):
                     kt[s] = r.keypoints.data[int(i)].cpu().numpy()
-                    bx = r.boxes.xywh[int(i)].cpu().numpy()
-                    bt[s] = [bx[0], bx[1], bx[2], bx[3], conf[int(i)]]
-                kpts.append(kt[0])
+                    bt[s] = [*xywh[int(i)], conf[int(i)]]
+                kpts.append(r.keypoints.data[best].cpu().numpy())
                 n_det.append(len(conf))
                 c1.append(float(conf[best]))
-                c2.append(float(conf[order[1]]) if len(conf) > 1 else 0.0)
+                c2.append(float(np.sort(conf)[-2]) if len(conf) > 1 else 0.0)
                 box = r.boxes.xywh[best].cpu().numpy()
                 cx.append(float(box[0])); cy.append(float(box[1]))
             else:

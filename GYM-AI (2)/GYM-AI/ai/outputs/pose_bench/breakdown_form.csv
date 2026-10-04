@@ -1,0 +1,13 @@
+pipeline,form_label,tp,fp,fn,f1,pull_mae_frames
+mediapipe,bad,160,70,55,0.719,3.14
+mediapipe,good,126,57,69,0.667,2.39
+motionagformer,bad,166,34,49,0.8,1.04
+motionagformer,good,158,35,37,0.814,1.6
+motionbert,bad,189,27,26,0.877,1.6
+motionbert,good,165,31,30,0.844,1.41
+motionbert_lite,bad,188,26,27,0.876,1.63
+motionbert_lite,good,166,29,29,0.851,1.73
+poseformerv2,bad,179,33,36,0.838,2.64
+poseformerv2,good,155,35,40,0.805,2.12
+videopose3d,bad,153,40,62,0.75,2.84
+videopose3d,good,126,104,69,0.593,3.31

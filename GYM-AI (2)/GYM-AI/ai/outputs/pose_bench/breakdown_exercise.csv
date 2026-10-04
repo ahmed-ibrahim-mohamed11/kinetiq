@@ -1,0 +1,13 @@
+pipeline,exercise,tp,fp,fn,f1,pull_mae_frames
+mediapipe,back,286,127,124,0.695,2.81
+mediapipe,bicep_curl,6,70,27,0.11,4.5
+motionagformer,back,324,69,86,0.807,1.31
+motionagformer,bicep_curl,22,33,11,0.5,2.14
+motionbert,back,354,58,56,0.861,1.51
+motionbert,bicep_curl,20,23,13,0.526,3.1
+motionbert_lite,back,354,55,56,0.864,1.68
+motionbert_lite,bicep_curl,25,7,8,0.769,2.8
+poseformerv2,back,334,68,76,0.823,2.4
+poseformerv2,bicep_curl,22,10,11,0.677,3.68
+videopose3d,back,279,144,131,0.67,3.05
+videopose3d,bicep_curl,22,8,11,0.698,3.59
