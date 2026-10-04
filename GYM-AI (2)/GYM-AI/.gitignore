@@ -11,6 +11,8 @@ __pycache__/
 *.mp4
 *.mov
 *.avi
+*.zip
+ai/data/mendeley/
 *.pt
 *.pth
 *.bin

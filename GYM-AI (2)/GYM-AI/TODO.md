@@ -1,5 +1,22 @@
 # TODO
 
+## OWNER DIRECTIVE 2026-10-04: one phase at a time; report → STOP → wait for explicit approval.
+## Phase 4+ product work PAUSED (preserved). Baseline FROZEN: tag `baseline-v0.2.0-frozen`.
+
+## Phase 2.5A — Freeze + Mendeley audit — DONE 2026-10-04 (report delivered; awaiting approval for 2.5B)
+- [x] Freeze baseline (tag `baseline-v0.2.0-frozen` @ 60074c4)
+- [x] Download + verify dataset (size / SHA-256 / CRC), extract, verify real structure
+- [x] `ai/data/mendeley_manifest.csv` (1,042 videos probed) + `docs/DATASET_MENDELEY.md` audit
+- [x] Benchmark exercise recommendation (back primary, bicep_curl secondary)
+- [x] Proposed 2.5B annotation subset (`ai/data/mendeley_annotation_subset_PROPOSED.csv`, 34 videos)
+- [x] Manifest integrity tests; suite green (40 passed)
+
+## Phase 2.5B — rep annotation benchmark set (NOT STARTED — needs explicit owner approval)
+## Phase 2.5C — pretrained pose model benchmark (NOT STARTED)
+## Phase 2.6 — larger dataset, subject-wise splits (NOT STARTED)
+## Phase 2.7 — train rep segmentation (NOT STARTED)
+## Phase 2.8 — seated-row reference test (NOT STARTED)
+
 ## Phase 0 — Freeze (in progress)
 - [x] Read all files; reconstruct pipeline from code (`docs/ARCHITECTURE.md`)
 - [x] Freeze v1/v2 scripts in `ai/research/` with md5

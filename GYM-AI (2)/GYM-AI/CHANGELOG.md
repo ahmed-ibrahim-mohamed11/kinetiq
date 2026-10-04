@@ -2,6 +2,25 @@
 
 All behaviour-changing changes to the AI, data, schema, or services are recorded here.
 
+## [Unreleased] — Phase 2.5A: baseline freeze + Mendeley dataset audit (2026-10-04)
+**Priorities changed by the owner (2026-10-04): Phase 4+ product work is PAUSED (preserved, untouched).
+New roadmap: 2.5A audit → 2.5B rep-annotation benchmark → 2.5C pretrained pose model benchmark →
+2.6 larger dataset → 2.7 train rep segmentation → 2.8 seated-row reference test.**
+- **Baseline frozen:** git tag `baseline-v0.2.0-frozen` (commit 60074c4). No changes to the pose
+  pipeline, phase model, HSMM decoder, evaluation protocol, or baseline result files in this phase.
+- Downloaded + verified the Mendeley multi-view fitness dataset (doi 10.17632/kgbb3yn47p.3,
+  `Dataset Subject-wise.zip`, 3,113,825,556 B, SHA-256 match, 2,633 members all CRC-OK) →
+  `ai/data/mendeley/` (git-ignored, incl. new `*.zip` ignore).
+- `ai/research/build_mendeley_manifest.py` → `ai/data/mendeley_manifest.csv` (tracked): 1,042 videos,
+  26 subjects, 7 exercises × good/bad × 3 views, all probed with OpenCV (fps/frames/duration/resolution).
+- Audit findings in `docs/DATASET_MENDELEY.md`: raw MP4s ONLY — no rep boundaries, no joints, no
+  calibration, no error-type labels; all videos 15 fps; heterogeneous resolutions; 11 clips < 8 s;
+  subjects 025/026 incomplete; one filename typo (`subject_003_bicep_good_side`).
+- Benchmark recommendation: **back (bent-over dumbbell row)** primary, bicep_curl secondary stress test.
+- Proposed Phase 2.5B annotation subset (NOT annotated): `ai/data/mendeley_annotation_subset_PROPOSED.csv`
+  — 34 videos / 16.6 min: 6 subjects × good/bad × side/diagonal (back), front-view probe, alternating-curl probe.
+- Tests: `ai/tests/test_mendeley_manifest.py` (4 integrity tests on the committed CSVs). 40 fast tests green.
+
 ## [Unreleased] — Phase 3: Supabase foundation (2026-10-02, code complete; deploy awaits owner's project)
 - `supabase/migrations/20261002000001_core_schema.sql`: all MASTER_PROMPT §13 tables (organizations → evidence_assets), constraints, idempotency keys (`reps.event_uuid` unique, `(session_id, rep_index)` unique), heartbeat retention function.
 - `supabase/migrations/20261002000002_rls.sql`: RLS enabled on every table; organization scoping via `profiles` + `auth_org_id()`/`auth_role()`; admin-only config writes; coach alert/form review; anon sees nothing; edge devices use a secured ingestion endpoint (Phase 6), never direct table access.

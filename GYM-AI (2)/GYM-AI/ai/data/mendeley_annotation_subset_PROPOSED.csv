@@ -1,0 +1,35 @@
+video_id,subset_role,subject_id,exercise,camera_view,form_label,duration_sec,fps,width,height,video_path
+subject_001_back_bad_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_001,back,diagonal,bad,32.8,15.0,810,1440,Dataset Subject-wise/subject_001/back/bad/diagonal/subject_001_back_bad_diagonal.mp4
+subject_001_back_bad_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_001,back,side,bad,31.67,15.0,810,1440,Dataset Subject-wise/subject_001/back/bad/side/subject_001_back_bad_side.mp4
+subject_001_back_good_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_001,back,diagonal,good,34.0,15.0,810,1440,Dataset Subject-wise/subject_001/back/good/diagonal/subject_001_back_good_diagonal.mp4
+subject_001_back_good_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_001,back,side,good,31.73,15.0,810,1440,Dataset Subject-wise/subject_001/back/good/side/subject_001_back_good_side.mp4
+subject_005_back_bad_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_005,back,diagonal,bad,32.2,15.0,810,1440,Dataset Subject-wise/subject_005/back/bad/diagonal/subject_005_back_bad_diagonal.mp4
+subject_005_back_bad_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_005,back,side,bad,31.07,15.0,810,1440,Dataset Subject-wise/subject_005/back/bad/side/subject_005_back_bad_side.mp4
+subject_005_back_good_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_005,back,diagonal,good,32.2,15.0,810,1440,Dataset Subject-wise/subject_005/back/good/diagonal/subject_005_back_good_diagonal.mp4
+subject_005_back_good_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_005,back,side,good,33.53,15.0,810,1440,Dataset Subject-wise/subject_005/back/good/side/subject_005_back_good_side.mp4
+subject_009_back_bad_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_009,back,diagonal,bad,31.07,15.0,540,960,Dataset Subject-wise/subject_009/back/bad/diagonal/subject_009_back_bad_diagonal.mp4
+subject_009_back_bad_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_009,back,side,bad,30.0,15.0,810,1440,Dataset Subject-wise/subject_009/back/bad/side/subject_009_back_bad_side.mp4
+subject_009_back_good_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_009,back,diagonal,good,31.07,15.0,540,960,Dataset Subject-wise/subject_009/back/good/diagonal/subject_009_back_good_diagonal.mp4
+subject_009_back_good_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_009,back,side,good,30.93,15.0,810,1440,Dataset Subject-wise/subject_009/back/good/side/subject_009_back_good_side.mp4
+subject_014_back_bad_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_014,back,diagonal,bad,30.93,15.0,540,960,Dataset Subject-wise/subject_014/back/bad/diagonal/subject_014_back_bad_diagonal.mp4
+subject_014_back_bad_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_014,back,side,bad,31.67,15.0,810,1440,Dataset Subject-wise/subject_014/back/bad/side/subject_014_back_bad_side.mp4
+subject_014_back_good_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_014,back,diagonal,good,30.2,15.0,540,960,Dataset Subject-wise/subject_014/back/good/diagonal/subject_014_back_good_diagonal.mp4
+subject_014_back_good_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_014,back,side,good,30.73,15.0,810,1440,Dataset Subject-wise/subject_014/back/good/side/subject_014_back_good_side.mp4
+subject_019_back_bad_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_019,back,diagonal,bad,28.0,15.0,810,1440,Dataset Subject-wise/subject_019/back/bad/diagonal/subject_019_back_bad_diagonal.mp4
+subject_019_back_bad_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_019,back,side,bad,18.53,15.0,810,1440,Dataset Subject-wise/subject_019/back/bad/side/subject_019_back_bad_side.mp4
+subject_019_back_good_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_019,back,diagonal,good,23.33,15.0,810,1440,Dataset Subject-wise/subject_019/back/good/diagonal/subject_019_back_good_diagonal.mp4
+subject_019_back_good_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_019,back,side,good,24.0,15.0,810,1440,Dataset Subject-wise/subject_019/back/good/side/subject_019_back_good_side.mp4
+subject_023_back_bad_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_023,back,diagonal,bad,27.07,15.0,540,960,Dataset Subject-wise/subject_023/back/bad/diagonal/subject_023_back_bad_diagonal.mp4
+subject_023_back_bad_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_023,back,side,bad,27.07,15.0,540,960,Dataset Subject-wise/subject_023/back/bad/side/subject_023_back_bad_side.mp4
+subject_023_back_good_diagonal,"core: back, side+diagonal, good+bad, 6 subjects",subject_023,back,diagonal,good,27.07,15.0,540,960,Dataset Subject-wise/subject_023/back/good/diagonal/subject_023_back_good_diagonal.mp4
+subject_023_back_good_side,"core: back, side+diagonal, good+bad, 6 subjects",subject_023,back,side,good,25.93,15.0,540,960,Dataset Subject-wise/subject_023/back/good/side/subject_023_back_good_side.mp4
+subject_001_back_bad_front,"cross-view probe: back, front view",subject_001,back,front,bad,31.07,15.0,810,1440,Dataset Subject-wise/subject_001/back/bad/front/subject_001_back_bad_front.mp4
+subject_001_back_good_front,"cross-view probe: back, front view",subject_001,back,front,good,31.2,15.0,810,1440,Dataset Subject-wise/subject_001/back/good/front/subject_001_back_good_front.mp4
+subject_009_back_bad_front,"cross-view probe: back, front view",subject_009,back,front,bad,30.47,15.0,810,1440,Dataset Subject-wise/subject_009/back/bad/front/subject_009_back_bad_front.mp4
+subject_009_back_good_front,"cross-view probe: back, front view",subject_009,back,front,good,31.0,15.0,810,1440,Dataset Subject-wise/subject_009/back/good/front/subject_009_back_good_front.mp4
+subject_019_back_bad_front,"cross-view probe: back, front view",subject_019,back,front,bad,19.4,15.0,358,636,Dataset Subject-wise/subject_019/back/bad/front/subject_019_back_bad_front.mp4
+subject_019_back_good_front,"cross-view probe: back, front view",subject_019,back,front,good,26.07,15.0,358,636,Dataset Subject-wise/subject_019/back/good/front/subject_019_back_good_front.mp4
+subject_005_bicep_curl_bad_side,"transfer probe: alternating bicep curl, side",subject_005,bicep_curl,side,bad,31.53,15.0,810,1440,Dataset Subject-wise/subject_005/bicep_curl/bad/side/subject_005_bicep_curl_bad_side.mp4
+subject_005_bicep_curl_good_side,"transfer probe: alternating bicep curl, side",subject_005,bicep_curl,side,good,32.73,15.0,810,1440,Dataset Subject-wise/subject_005/bicep_curl/good/side/subject_005_bicep_curl_good_side.mp4
+subject_023_bicep_curl_bad_side,"transfer probe: alternating bicep curl, side",subject_023,bicep_curl,side,bad,28.87,15.0,540,960,Dataset Subject-wise/subject_023/bicep_curl/bad/side/subject_023_bicep_curl_bad_side.mp4
+subject_023_bicep_curl_good_side,"transfer probe: alternating bicep curl, side",subject_023,bicep_curl,side,good,28.87,15.0,540,960,Dataset Subject-wise/subject_023/bicep_curl/good/side/subject_023_bicep_curl_good_side.mp4
