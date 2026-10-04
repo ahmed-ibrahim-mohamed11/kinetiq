@@ -1,0 +1,244 @@
+{
+ "total_videos": 165,
+ "total_reps": 2472,
+ "unique_subjects": 24,
+ "reps_per_subject": {
+  "subject_001": 99,
+  "subject_002": 145,
+  "subject_003": 133,
+  "subject_004": 77,
+  "subject_005": 120,
+  "subject_006": 131,
+  "subject_007": 168,
+  "subject_008": 82,
+  "subject_009": 93,
+  "subject_010": 104,
+  "subject_011": 139,
+  "subject_012": 77,
+  "subject_013": 71,
+  "subject_014": 95,
+  "subject_015": 51,
+  "subject_016": 157,
+  "subject_017": 117,
+  "subject_018": 93,
+  "subject_019": 74,
+  "subject_020": 123,
+  "subject_021": 73,
+  "subject_022": 94,
+  "subject_023": 32,
+  "subject_024": 124
+ },
+ "videos_per_subject": {
+  "subject_001": 6,
+  "subject_002": 10,
+  "subject_003": 6,
+  "subject_004": 6,
+  "subject_005": 8,
+  "subject_006": 6,
+  "subject_007": 10,
+  "subject_008": 6,
+  "subject_009": 6,
+  "subject_010": 6,
+  "subject_011": 10,
+  "subject_012": 6,
+  "subject_013": 5,
+  "subject_014": 6,
+  "subject_015": 6,
+  "subject_016": 10,
+  "subject_017": 6,
+  "subject_018": 6,
+  "subject_019": 6,
+  "subject_020": 9,
+  "subject_021": 6,
+  "subject_022": 6,
+  "subject_023": 4,
+  "subject_024": 9
+ },
+ "reps_by_exercise": {
+  "back": 2109,
+  "bicep_curl": 363
+ },
+ "reps_by_view": {
+  "diagonal": 885,
+  "front": 715,
+  "side": 872
+ },
+ "videos_by_view": {
+  "diagonal": 58,
+  "front": 47,
+  "side": 60
+ },
+ "subjects_by_view": {
+  "diagonal": 24,
+  "front": 24,
+  "side": 24
+ },
+ "reps_by_form": {
+  "bad": 1310,
+  "good": 1162
+ },
+ "rep_duration_frames": {
+  "mean": 24.8,
+  "median": 24.0,
+  "min": 6,
+  "max": 56
+ },
+ "rep_duration_seconds": {
+  "mean": 1.65,
+  "median": 1.6,
+  "min": 0.4,
+  "max": 3.73
+ },
+ "annotation_quality": {
+  "auto": 1412,
+  "uncertain": 617,
+  "verified": 443
+ },
+ "uncertain_notes": {
+  "weak": 423,
+  "weak|spike": 162,
+  "spike": 17,
+  "gap": 8,
+  "weak|gap": 7
+ },
+ "excluded_videos": {
+  "duplicate_copies": 3,
+  "short_or_truncated": "excluded at selection (<8s): 4 back videos incl. subject_013_back_good_side 1.4s",
+  "no_cache": 0
+ },
+ "auto_dropped_censored_edge_reps": 95,
+ "manual_drops": {
+  "subject_017_back_good_front": "P46 passer-by occlusion (visual)"
+ },
+ "duplicate_linked_groups": [
+  [
+   "subject_005",
+   "subject_006"
+  ],
+  [
+   "subject_010",
+   "subject_013"
+  ],
+  [
+   "subject_014",
+   "subject_019",
+   "subject_020"
+  ],
+  [
+   "subject_015",
+   "subject_026"
+  ],
+  [
+   "subject_003 (internal)"
+  ],
+  [
+   "subject_016 (internal)"
+  ],
+  [
+   "subject_017 (internal)"
+  ],
+  [
+   "subject_007 (cross-exercise internal)"
+  ]
+ ],
+ "split": {
+  "train": {
+   "subjects": [
+    "subject_001",
+    "subject_003",
+    "subject_005",
+    "subject_006",
+    "subject_007",
+    "subject_010",
+    "subject_012",
+    "subject_013",
+    "subject_014",
+    "subject_016",
+    "subject_018",
+    "subject_019",
+    "subject_020",
+    "subject_023"
+   ],
+   "n_subjects": 14,
+   "n_videos": 94,
+   "n_reps": 1477,
+   "reps_by_view": {
+    "diagonal": 515,
+    "front": 430,
+    "side": 532
+   },
+   "reps_by_form": {
+    "bad": 770,
+    "good": 707
+   },
+   "reps_by_exercise": {
+    "back": 1252,
+    "bicep_curl": 225
+   },
+   "quality": {
+    "auto": 764,
+    "uncertain": 363,
+    "verified": 350
+   }
+  },
+  "val": {
+   "subjects": [
+    "subject_002",
+    "subject_008",
+    "subject_015",
+    "subject_017",
+    "subject_022"
+   ],
+   "n_subjects": 5,
+   "n_videos": 34,
+   "n_reps": 489,
+   "reps_by_view": {
+    "diagonal": 169,
+    "front": 149,
+    "side": 171
+   },
+   "reps_by_form": {
+    "bad": 265,
+    "good": 224
+   },
+   "reps_by_exercise": {
+    "back": 448,
+    "bicep_curl": 41
+   },
+   "quality": {
+    "auto": 337,
+    "uncertain": 152
+   }
+  },
+  "test": {
+   "subjects": [
+    "subject_004",
+    "subject_009",
+    "subject_011",
+    "subject_021",
+    "subject_024"
+   ],
+   "n_subjects": 5,
+   "n_videos": 37,
+   "n_reps": 506,
+   "reps_by_view": {
+    "diagonal": 201,
+    "front": 136,
+    "side": 169
+   },
+   "reps_by_form": {
+    "bad": 275,
+    "good": 231
+   },
+   "reps_by_exercise": {
+    "back": 409,
+    "bicep_curl": 97
+   },
+   "quality": {
+    "auto": 311,
+    "uncertain": 102,
+    "verified": 93
+   }
+  }
+ }
+}

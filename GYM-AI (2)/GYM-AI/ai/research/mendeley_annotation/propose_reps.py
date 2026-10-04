@@ -189,3 +189,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# Phase 2.6 alias: signal builder reused on externally tracked keypoints
+build_signal_from_kpts = build_signal

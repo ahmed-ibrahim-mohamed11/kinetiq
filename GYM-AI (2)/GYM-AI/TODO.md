@@ -24,7 +24,9 @@
 - [x] Common LOSO downstream, stability + deployment metrics, breakdowns, docs/POSE_BENCHMARK_2.5C.md
 - [x] Winners to 2.7: MotionBERT-Lite, MotionBERT, PoseFormerV2
 ## Phase 2.5C — pretrained pose model benchmark (NOT STARTED)
-## Phase 2.6 — larger dataset, subject-wise splits (NOT STARTED)
+## Phase 2.6 — expanded dataset + FROZEN split — DONE 2026-10-05 (awaiting approval for 2.7)
+- [x] 165 videos / 2,472 reps / 24 subjects; quality tiers verified-auto-uncertain(dont-care)
+- [x] FROZEN subject split 14/5/5 honoring duplicate-linked components; 6 new tests green
 ## Phase 2.7 — train rep segmentation (NOT STARTED)
 ## Phase 2.8 — seated-row reference test (NOT STARTED)
 

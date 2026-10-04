@@ -25,7 +25,9 @@ import pandas as pd
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 sys.path.insert(0, REPO_ROOT)
 
-SUBSET = os.path.join(REPO_ROOT, "ai", "data", "mendeley_annotation_subset_PROPOSED.csv")
+import argparse as _ap
+_p = _ap.ArgumentParser(); _p.add_argument("--subset", default=os.path.join(REPO_ROOT, "ai", "data", "mendeley_annotation_subset_PROPOSED.csv"))
+SUBSET = _p.parse_args().subset
 DATA_ROOT = os.path.join(REPO_ROOT, "ai", "data", "mendeley")
 OUT = os.path.join(REPO_ROOT, "ai", "outputs", "mendeley_2d")
 
