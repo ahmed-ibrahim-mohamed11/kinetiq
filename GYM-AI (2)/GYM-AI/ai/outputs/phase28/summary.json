@@ -1,0 +1,26 @@
+{
+ "poseformerv2_iou": {
+  "tp": 10,
+  "fp": 26,
+  "fn": 20,
+  "f1": 0.303
+ },
+ "poseformerv2_pull": {
+  "tp": 13,
+  "fp": 23,
+  "fn": 17,
+  "f1": 0.394
+ },
+ "motionbert_lite_iou": {
+  "tp": 29,
+  "fp": 10,
+  "fn": 1,
+  "f1": 0.841
+ },
+ "motionbert_lite_pull": {
+  "tp": 29,
+  "fp": 9,
+  "fn": 1,
+  "f1": 0.853
+ }
+}
