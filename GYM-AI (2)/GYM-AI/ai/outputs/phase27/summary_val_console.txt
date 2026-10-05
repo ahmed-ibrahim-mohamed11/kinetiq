@@ -1,0 +1,87 @@
+C:\Users\Lenovo\Desktop\GYM-AI\ai\research\phase27\aggregate27.py:94: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  t = back.groupby(["pipeline", "tag", col]).apply(
+C:\Users\Lenovo\Desktop\GYM-AI\ai\research\phase27\aggregate27.py:94: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  t = back.groupby(["pipeline", "tag", col]).apply(
+C:\Users\Lenovo\Desktop\GYM-AI\ai\research\phase27\aggregate27.py:94: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  t = back.groupby(["pipeline", "tag", col]).apply(
+C:\Users\Lenovo\Desktop\GYM-AI\ai\research\phase27\aggregate27.py:94: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  t = back.groupby(["pipeline", "tag", col]).apply(
+=== pooled BACK (val, iou) ===
+       pipeline       tag  gt  pred  tp  fp  fn  ignored     P     R    F1  start_mae_f  start_mae_s  pull_mae_f  pull_mae_s  end_mae_f  end_mae_s
+   poseformerv2     fixed 312   453 289  25  23      139 0.920 0.926 0.923         2.25        0.150        2.06       0.137       2.14      0.143
+     motionbert     fixed 312   464 291  30  21      143 0.907 0.933 0.919         1.53        0.102        1.21       0.081       1.46      0.098
+motionbert_lite     fixed 312   454 286  28  26      140 0.911 0.917 0.914         1.74        0.116        1.19       0.079       1.85      0.124
+motionbert_lite verifonly 312   450 283  27  29      140 0.913 0.907 0.910         1.95        0.130        1.35       0.090       1.86      0.124
+motionbert_lite    conf05 312   470 284  41  28      145 0.874 0.910 0.892         1.91        0.127        1.42       0.095       1.90      0.127
+   poseformerv2  baseline 312   453 289  52  23      112 0.848 0.926 0.885         2.25        0.150        2.06       0.137       2.14      0.143
+     motionbert  baseline 312   464 291  85  21       88 0.774 0.933 0.846         1.53        0.102        1.21       0.081       1.46      0.098
+motionbert_lite  baseline 312   454 286  94  26       74 0.753 0.917 0.827         1.74        0.116        1.19       0.079       1.85      0.124
+
+=== F1 by view (BACK) ===
+view                       diagonal  front   side
+pipeline        tag                              
+motionbert      baseline      0.947  0.934  0.667
+                fixed         0.990  0.966  0.794
+motionbert_lite baseline      0.957  0.938  0.603
+                conf05        1.000  0.974  0.690
+                fixed         1.000  0.966  0.760
+                verifonly     1.000  0.962  0.749
+poseformerv2    baseline      0.957  0.947  0.736
+                fixed         1.000  0.979  0.775
+
+=== F1 by form (BACK) ===
+form                         bad   good
+pipeline        tag                    
+motionbert      baseline   0.831  0.860
+                fixed      0.941  0.900
+motionbert_lite baseline   0.817  0.836
+                conf05     0.879  0.904
+                fixed      0.939  0.892
+                verifonly  0.949  0.875
+poseformerv2    baseline   0.903  0.870
+                fixed      0.952  0.898
+
+=== F1 by tempo (BACK) ===
+tempo                       fast  medium   slow
+pipeline        tag                            
+motionbert      baseline   0.975   0.885  0.811
+                fixed      0.991   0.920  0.845
+motionbert_lite baseline   0.935   0.881  0.830
+                conf05     0.936   0.923  0.818
+                fixed      0.954   0.923  0.859
+                verifonly  0.951   0.893  0.864
+poseformerv2    baseline   0.942   0.881  0.814
+                fixed      0.963   0.923  0.842
+
+=== F1 by subject (BACK) ===
+subject                    subject_002  subject_008  subject_015  subject_017  subject_022
+pipeline        tag                                                                       
+motionbert      baseline         0.190        0.754        0.787        0.975        0.924
+                fixed            0.727        0.817        0.831        0.987        0.955
+motionbert_lite baseline         0.167        0.797        0.796        0.953        0.872
+                conf05           0.615        0.955        0.713        0.966        0.878
+                fixed            0.615        0.919        0.822        0.966        0.911
+                verifonly        0.667        0.909        0.844        0.952        0.905
+poseformerv2    baseline         0.500        0.867        0.800        0.979        0.853
+                fixed            1.000        0.899        0.826        0.996        0.890
+
+=== curl transfer (secondary) ===
+       pipeline       tag  gt  pred  tp  fp  fn  ignored     P    R    F1  start_mae_f  start_mae_s  pull_mae_f  pull_mae_s  end_mae_f  end_mae_s
+     motionbert  baseline  25    70  18  41   7       11 0.305 0.72 0.429         4.94        0.330        3.50       0.233       4.17      0.278
+     motionbert     fixed  25    70  18  28   7       24 0.391 0.72 0.507         4.94        0.330        3.50       0.233       4.17      0.278
+motionbert_lite  baseline  25    73  21  42   4       10 0.333 0.84 0.477         4.10        0.273        1.71       0.114       4.57      0.305
+motionbert_lite    conf05  25    58  18  17   7       23 0.514 0.72 0.600         5.50        0.367        3.06       0.204       6.89      0.459
+motionbert_lite     fixed  25    73  21  23   4       29 0.477 0.84 0.609         4.10        0.273        1.71       0.114       4.57      0.305
+motionbert_lite verifonly  25    56  19  13   6       24 0.594 0.76 0.667         5.37        0.358        3.74       0.249       5.53      0.368
+   poseformerv2  baseline  25    79  12  63  13        4 0.160 0.48 0.240         3.83        0.256        3.58       0.239      10.75      0.717
+   poseformerv2     fixed  25    79  12  44  13       23 0.214 0.48 0.296         3.83        0.256        3.58       0.239      10.75      0.717
+
+=== annotation-tier recall (BACK) ===
+motionbert/baseline: verified: 0/0 (0.000)  auto: 291/312 (0.933)
+motionbert/fixed: verified: 0/0 (0.000)  auto: 291/312 (0.933)
+motionbert_lite/baseline: verified: 0/0 (0.000)  auto: 286/312 (0.917)
+motionbert_lite/conf05: verified: 0/0 (0.000)  auto: 284/312 (0.910)
+motionbert_lite/fixed: verified: 0/0 (0.000)  auto: 286/312 (0.917)
+motionbert_lite/verifonly: verified: 0/0 (0.000)  auto: 283/312 (0.907)
+poseformerv2/baseline: verified: 0/0 (0.000)  auto: 289/312 (0.926)
+poseformerv2/fixed: verified: 0/0 (0.000)  auto: 289/312 (0.926)

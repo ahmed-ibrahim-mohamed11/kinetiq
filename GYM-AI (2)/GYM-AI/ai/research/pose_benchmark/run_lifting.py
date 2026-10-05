@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 TRACKED = os.path.join(REPO_ROOT, "ai", "outputs", "pose_bench", "tracked2d")
 OUT = os.path.join(REPO_ROOT, "ai", "outputs", "pose_bench", "poses")
-ANN = os.path.join(REPO_ROOT, "ai", "data", "mendeley_rep_annotations.csv")
+ANN = os.environ.get("PB_ANNOTATIONS", os.path.join(REPO_ROOT, "ai", "data", "mendeley_rep_annotations.csv"))
 MAN = os.path.join(REPO_ROOT, "ai", "data", "mendeley_manifest.csv")
 DATA_ROOT = os.path.join(REPO_ROOT, "ai", "data", "mendeley")
 

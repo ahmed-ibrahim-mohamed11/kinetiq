@@ -1,0 +1,4 @@
+pipeline,tag,bad,good
+motionbert,final,0.798,0.854
+motionbert_lite,final,0.749,0.881
+poseformerv2,final,0.925,0.953

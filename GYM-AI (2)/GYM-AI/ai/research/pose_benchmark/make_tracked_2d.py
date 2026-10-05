@@ -20,7 +20,9 @@ from tracking import track_subject  # noqa: E402
 
 CACHE = os.path.join(REPO_ROOT, "ai", "outputs", "mendeley_2d")
 OUT = os.path.join(REPO_ROOT, "ai", "outputs", "pose_bench", "tracked2d")
-ANN = os.path.join(REPO_ROOT, "ai", "data", "mendeley_rep_annotations.csv")
+import argparse as _ap
+_a = _ap.ArgumentParser(); _a.add_argument("--annotations", default=os.path.join(REPO_ROOT, "ai", "data", "mendeley_rep_annotations.csv"))
+ANN = _a.parse_args().annotations
 MAN = os.path.join(REPO_ROOT, "ai", "data", "mendeley_manifest.csv")
 
 

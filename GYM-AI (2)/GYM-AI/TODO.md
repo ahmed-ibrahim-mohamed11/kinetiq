@@ -27,7 +27,11 @@
 ## Phase 2.6 — expanded dataset + FROZEN split — DONE 2026-10-05 (awaiting approval for 2.7)
 - [x] 165 videos / 2,472 reps / 24 subjects; quality tiers verified-auto-uncertain(dont-care)
 - [x] FROZEN subject split 14/5/5 honoring duplicate-linked components; 6 new tests green
-## Phase 2.7 — train rep segmentation (NOT STARTED)
+## Phase 2.7 — frozen-backbone training + diagnosis — DONE 2026-10-05 (awaiting review)
+- [x] Baselines frozen; protocol v2 (evidence-based) + supervision policy validated by ablation
+- [x] TEST (once, locked): PFv2 0.939 / MB 0.825 / MB-Lite 0.812; PFv2 solves side view (0.924)
+- [x] fps robustness verified; tracking exonerated; side view = pose problem; conf_thr fix rejected
+- [x] PRIMARY: PoseFormerV2 · FALLBACK: MotionBERT-Lite · docs/REP_SEGMENTATION_PHASE_2_7.md
 ## Phase 2.8 — seated-row reference test (NOT STARTED)
 
 ## Phase 0 — Freeze (in progress)

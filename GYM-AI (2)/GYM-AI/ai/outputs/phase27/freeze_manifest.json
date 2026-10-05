@@ -1,0 +1,22 @@
+{
+ "checked": "2026-10-05",
+ "n_videos": 165,
+ "n_reps": 2472,
+ "split_counts": {
+  "test": 506,
+  "train": 1477,
+  "val": 489
+ },
+ "supervision_policy": "verified+auto supervise; uncertain MASKED from all fitting (frames excluded)",
+ "dontcare_policy": "unmatched prediction may absorb at most ONE uncertain GT (one-to-one, same rule); extras are FP",
+ "hashes": {
+  "annotations": "ad9de0cee9c507de4b9a34659c877d991f7423076b397b9c80bea931b76dfbc3",
+  "subject_split": "810db167aa7e276b0e45637c48db047302a4465a26ddb8b4e1f48df601021829",
+  "duplicate_groups": "45b5487a5660d7b3c37e761b104d2838ff57f0f95548a5bb60fe0bf5b38bd704",
+  "core_config": "7d566940ef1408b228b6281f300876af0fb6b5cb9e07950a2d5e006008804d88",
+  "core_decoder": "4aa705b827814c3fe3e5e17c337e7813989aa29868ea9322433a53055ca34e97",
+  "core_features": "aaee297eff7d769e0789f9ab29e4cd46296ccfad87b1c47b53bf56e34bf258fb",
+  "core_phase_model": "193b59172cad1388b8f036af534aa1c597606d5c88b028d3782fce3dd663ca78",
+  "tracker": "90b86c051fdf43da389b1858bcbaa1f2206e6a58095eb2a956d42d27a0e014ca"
+ }
+}

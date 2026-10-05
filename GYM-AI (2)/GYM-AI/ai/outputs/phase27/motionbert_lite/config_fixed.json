@@ -1,0 +1,21 @@
+{
+ "pipeline": "motionbert_lite",
+ "tag": "fixed",
+ "split": "val",
+ "supervision": "certain",
+ "cfg": {
+  "smooth_hz": 2.0,
+  "detrend_s": 10.0,
+  "alpha": 0.03,
+  "conf_thr": 0.3,
+  "dur_weight": 1.0,
+  "dur_sigma_floor": 0.3,
+  "tempo_norm": true,
+  "emis_var_floor": 0.001,
+  "min_dur_frac": 0.5,
+  "direct_gap_frac": 0.25,
+  "cens_q": 0.1,
+  "peak_sd_floor": 0.05
+ },
+ "val_score": 0.6336669410768546
+}

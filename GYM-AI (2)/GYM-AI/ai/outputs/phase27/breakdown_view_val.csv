@@ -1,0 +1,9 @@
+pipeline,tag,diagonal,front,side
+motionbert,baseline,0.947,0.934,0.667
+motionbert,fixed,0.99,0.966,0.794
+motionbert_lite,baseline,0.957,0.938,0.603
+motionbert_lite,conf05,1.0,0.974,0.69
+motionbert_lite,fixed,1.0,0.966,0.76
+motionbert_lite,verifonly,1.0,0.962,0.749
+poseformerv2,baseline,0.957,0.947,0.736
+poseformerv2,fixed,1.0,0.979,0.775

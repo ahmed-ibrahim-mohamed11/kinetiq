@@ -1,0 +1,4 @@
+pipeline,tag,gt,pred,tp,fp,fn,ignored,P,R,F1,start_mae_f,start_mae_s,pull_mae_f,pull_mae_s,end_mae_f,end_mae_s
+poseformerv2,final,318,419,299,20,19,100,0.937,0.94,0.939,2.88,0.192,2.03,0.135,3.25,0.217
+motionbert,final,318,467,281,82,37,104,0.774,0.884,0.825,2.31,0.154,1.81,0.121,2.37,0.158
+motionbert_lite,final,318,445,268,74,50,103,0.784,0.843,0.812,1.96,0.131,1.41,0.094,2.27,0.151

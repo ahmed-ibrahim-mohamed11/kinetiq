@@ -1,0 +1,9 @@
+pipeline,tag,bad,good
+motionbert,baseline,0.831,0.86
+motionbert,fixed,0.941,0.9
+motionbert_lite,baseline,0.817,0.836
+motionbert_lite,conf05,0.879,0.904
+motionbert_lite,fixed,0.939,0.892
+motionbert_lite,verifonly,0.949,0.875
+poseformerv2,baseline,0.903,0.87
+poseformerv2,fixed,0.952,0.898

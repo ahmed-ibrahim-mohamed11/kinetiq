@@ -1,0 +1,9 @@
+pipeline,tag,subject_002,subject_008,subject_015,subject_017,subject_022
+motionbert,baseline,0.19,0.754,0.787,0.975,0.924
+motionbert,fixed,0.727,0.817,0.831,0.987,0.955
+motionbert_lite,baseline,0.167,0.797,0.796,0.953,0.872
+motionbert_lite,conf05,0.615,0.955,0.713,0.966,0.878
+motionbert_lite,fixed,0.615,0.919,0.822,0.966,0.911
+motionbert_lite,verifonly,0.667,0.909,0.844,0.952,0.905
+poseformerv2,baseline,0.5,0.867,0.8,0.979,0.853
+poseformerv2,fixed,1.0,0.899,0.826,0.996,0.89

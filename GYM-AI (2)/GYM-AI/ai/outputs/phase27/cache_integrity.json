@@ -1,0 +1,23 @@
+{
+ "motionbert_lite": {
+  "videos": 165,
+  "present": 165,
+  "subjects": 24,
+  "errors": [],
+  "n_errors": 0
+ },
+ "motionbert": {
+  "videos": 165,
+  "present": 165,
+  "subjects": 24,
+  "errors": [],
+  "n_errors": 0
+ },
+ "poseformerv2": {
+  "videos": 165,
+  "present": 165,
+  "subjects": 24,
+  "errors": [],
+  "n_errors": 0
+ }
+}

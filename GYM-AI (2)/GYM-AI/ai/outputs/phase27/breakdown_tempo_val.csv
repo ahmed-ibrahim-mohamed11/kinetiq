@@ -1,0 +1,9 @@
+pipeline,tag,fast,medium,slow
+motionbert,baseline,0.975,0.885,0.811
+motionbert,fixed,0.991,0.92,0.845
+motionbert_lite,baseline,0.935,0.881,0.83
+motionbert_lite,conf05,0.936,0.923,0.818
+motionbert_lite,fixed,0.954,0.923,0.859
+motionbert_lite,verifonly,0.951,0.893,0.864
+poseformerv2,baseline,0.942,0.881,0.814
+poseformerv2,fixed,0.963,0.923,0.842

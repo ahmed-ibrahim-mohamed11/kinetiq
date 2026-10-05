@@ -1,0 +1,4 @@
+pipeline,tag,diagonal,front,side
+motionbert,final,0.975,0.974,0.473
+motionbert_lite,final,0.979,0.974,0.383
+poseformerv2,final,0.934,0.953,0.924
