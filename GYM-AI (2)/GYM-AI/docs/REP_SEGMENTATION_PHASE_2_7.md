@@ -24,6 +24,9 @@ VALIDATION (back, unseen subjects, IoU≥0.5): MB-Lite **0.827** (P .753/R .917)
    sub-0.25 s frame-anchored constants. **Temporal design is sound — no fix required.**
 4. **Tracking** (Problem 3/4): expanded-set totals 1,359/74,047 lost (1.8%), 195 jumps; failure
    attribution assigns just 1–8 errors to TRACK_NAN. **Tracking is not a material error source.**
+4b. **Tracking-degraded TRAIN video**: `subject_007_back_bad_side` lost 42% of frames (heavy
+   occlusion); TRAIN-only, frames interpolated, reps QC-flagged in 2.6 — tolerated and covered
+   by a documented test exception.
 5. **3D validity proxies** (no mocap GT — proxies only): bone CV / LR asym / accel-outliers /
    torso jitter: PFv2 .066/.046/.0005/.015 ≪ MB .116/.118/.027/.016 ≈ MB-Lite. PFv2 produces the
    most rigid, temporally stable skeletons; MotionBERT-family bone lengths wobble ~12%.
