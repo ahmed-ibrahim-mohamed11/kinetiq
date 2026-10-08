@@ -7,6 +7,14 @@ baseline-regression tests). Every number in this report was re-read from committ
 during this audit; where documentation and artifacts disagree the artifact wins and the
 contradiction is flagged (Section 16 contains one such flag).
 
+> **Addendum 2026-10-08 (post-audit, commit `bc3472e`)** — two changes after this report was
+> frozen: (1) the EXTERNAL_WILD_STRESS_TEST completed: frozen MB-Lite zero-shot on curated
+> Instagram units scored pull-rule F1 0.842 / IoU F1 0.632 over 10 certain GT reps → verdict
+> **PARTIAL EXTERNAL TRANSFER** (full report: docs/EXTERNAL_REAL_WORLD_STRESS_TEST.md; suite now
+> **98 passed** with its 8 integrity tests). (2) The Section-16 contradiction was resolved in
+> docs/SEATED_ROW_TRANSFER_2_8.md per the artifact (the 2.8 FN is in asymmetry_01; asymmetry_02
+> is clean). Body text below is preserved as written at audit time.
+
 ---
 
 ## SECTION 1 — EXECUTIVE TECHNICAL STATUS

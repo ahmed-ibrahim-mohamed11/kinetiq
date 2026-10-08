@@ -1,58 +1,75 @@
 # PROJECT_STATE.md — GYM-AI
 
-_Last update: 2026-10-05 (technical-lead mode). Live roadmap: PROJECT_ROADMAP.md · decisions:
-DECISION_LOG.md · changes: CHANGELOG.md. Historical Phase-0 state preserved in git history._
+_Last update: 2026-10-08 (technical-lead mode). Live roadmap: PROJECT_ROADMAP.md · decisions:
+DECISION_LOG.md · changes: CHANGELOG.md · full audits: TECHNICAL_MASTER_REPORT.md +
+CURRENT_HANDOFF_REPORT.md. Historical Phase-0 state preserved in git history._
 
 ## Dual status (never conflated)
-- **GRADUATION DEMO READY: NOT YET** — AI core validated + form v1 exists, but no integrated
-  demo (backend undeployed, no dashboard, no end-to-end flow).
+- **GRADUATION DEMO READY: NOT YET** — AI core near freeze (segmentation validated, form v1
+  directional, external stress test done), but no integrated demo (backend undeployed, no
+  dashboard, no end-to-end flow) and realtime feasibility unmeasured.
 - **PRODUCTION READY: NO** — fresh unseen-athlete validation BLOCKED (owner recording),
-  no deployment verification, no real-world robustness evidence.
+  realtime unmeasured, seated-row form thresholds provisional, YOLO AGPL decision pending.
 
 ## Status labels
-DONE+VALIDATED: rep segmentation (Phases 0–2.8), result-schema fix, dataset gate tooling.
-PARTIAL: form-analysis v1 (rom_proxy validated-directional; 3 indicators partial; seated-row
-thresholds provisional). BLOCKED: unseen-athlete validation (owner), Supabase deploy (keys),
-Vercel (account). NOT STARTED: dashboard UI, edge agent, realtime path, Unreal.
+DONE+VALIDATED: rep segmentation in-domain (Phases 0–2.8), result-schema fix, dataset gate
+tooling, external wild stress test (Domain B, PARTIAL EXTERNAL TRANSFER). PARTIAL: form v1
+(rom_proxy directional; 3 indicators partial; seated-row thresholds provisional), seated-row
+generalization (zero-shot + 3 wild athletes; no fresh-athlete evidence). BLOCKED: unseen-athlete
+validation (owner recording), Supabase deploy (keys), Vercel (account). IN PROGRESS: realtime/
+causal feasibility (approved 2026-10-08). NOT STARTED: dashboard UI, edge agent, Unreal.
 
 ## Current milestone
-**Phase 2.8 DONE — seated-row zero-shot transfer.** MB-Lite F1 0.85 (R 0.97, pull MAE 0.13 s);
-PFv2 collapsed (0.30, fps ruled out) -> **MB-Lite is the seated-row product primary**. Next:
-form-analysis v1 DONE (PARTIAL validation; docs/FORM_ANALYSIS_V1.md). Next: integration spine (gated on ML-core sign-off + owner keys).
+**External Instagram stress test DONE (commit bc3472e): PARTIAL EXTERNAL TRANSFER.** Frozen
+MB-Lite zero-shot on 10 manually-annotated wild reps (3 videos/3 athletes/4 views): pull-rule
+F1 0.842 (internal ref 0.853), pull MAE 0.282 s, no spurious reps; IoU F1 0.632 (ref 0.841) —
+window extent degrades on paused-tempo reps; 1 rear-view miss. No model change (frozen rule).
+**Now: realtime/causal feasibility prototype** (owner-approved order; no new data needed).
 
 ## Primary model + current metrics (frozen evidence)
 | what | result |
 |---|---|
-| PRIMARY (product / seated row) | **MotionBERT-Lite** (zero-shot seated row F1 0.85) |
-| PRIMARY (in-domain benchmark) | PoseFormerV2 (unseen-subject back F1 0.939; brittle cross-exercise) |
-| FALLBACK / speed / timing | MotionBERT-Lite (87.9 fps lift CPU, 64 MB, pull MAE 0.094 s) |
-| Unseen-subject TEST (back, 5 subjects, IoU) | PFv2 **F1 0.939** (side 0.924, bad-form 0.925) · MB 0.825 · MB-Lite 0.812 |
-| Same-athlete seated-row baseline (tag `baseline-v0.2.0-frozen`) | F1 0.93 / 0.97 (LOVO, trained on those videos — reference only) |
-| Dataset | 165 videos / 2,472 reps / 24 subjects, frozen subject split 14/5/5 (Phase 2.6) |
-| fps robustness | verified: ≤1 native frame pull shift across 7.5/15/30 fps |
+| PRIMARY (product / seated row) | **MotionBERT-Lite** (zero-shot seated row F1 0.841/0.853) |
+| PRIMARY (in-domain benchmark) | PoseFormerV2 (unseen-subject back F1 0.939; brittle cross-exercise/zero-shot) |
+| Unseen-subject TEST (back, 5 subjects, protocol v2) | PFv2 **0.939** (side 0.924, bad 0.925) · MB 0.825 · MB-Lite 0.812 (pull MAE **0.094 s**) |
+| Seated-row zero-shot (Domain A, 30 reps) | MB-Lite F1 0.841 IoU / 0.853 pull, R 0.97, pull MAE 0.128 s; PFv2 collapsed 0.303 |
+| External wild (Domain B, 10 reps, Instagram) | MB-Lite pull F1 0.842 / IoU 0.632, pull MAE 0.282 s → **PARTIAL EXTERNAL TRANSFER** |
+| Form v1 | rom_proxy AUC 0.778 (VALIDATED-directional); lr_amp 0.634, lr_lag, trunk PARTIAL; lr_onset REMOVED |
+| Dataset | 165 videos / 2,472 reps / 24 subjects, frozen split 14/5/5 (Phase 2.6) |
+| Speed/size (offline lifting, NOT realtime) | MB-Lite 87.9 fps CPU / 64 MB; fps robustness ≤1 native frame @7.5/30 |
 
 ## What is COMPLETE
-- Reproducible pipelines: YOLO top-8 cache → deterministic tracker → {PFv2, MB, MB-Lite} lifting →
-  masked-supervision phase model + duration HSMM → don't-care evaluation (10 guard tests).
-- Datasets/annotations/split (frozen, hashed), benchmark + training artifacts, 65-test suite.
+- Reproducible pipelines: YOLO top-8 cache → deterministic tracker → {PFv2, MB, MB-Lite} lifting
+  → masked-supervision phase model + duration HSMM → don't-care evaluation v1/v2 (10 guard
+  tests) → canonical result schema (6 tests).
+- Datasets/annotations/splits (frozen, hashed); unseen-athlete dataset gate (7 tests); form v1
+  indicators (9 tests); external stress-test track incl. GT, metrics, taxonomy (8 tests).
+- **98-test suite** (3 slow regression tests included).
 - Supabase schema + RLS + seed + tests; shared event contract v1.0 (undeployed, code-complete).
 
 ## What is PARTIAL / UNVALIDATED
-- Seated-row transfer (2.8 in flight). True metric 3D accuracy (proxies only — no mocap).
-- Form analysis: features exist per rep (lag/amp/trunk) but no validated indicator thresholds yet.
+- Form analysis v1: directional evidence only; seated-row thresholds PROVISIONAL (15 reps,
+  1 athlete); per-deviation accuracy unclaimable until fresh dataset.
+- Rep-window extent under paused tempo (wild finding: holds absorbed into windows); rear/side
+  depth-dominant views for the MB family (Mendeley side 0.383; 1 wild rear miss).
+- True metric 3D accuracy (proxies only — no mocap). Realtime path (nothing measured).
 
 ## What is BLOCKED (owner actions)
-- Fresh unseen-athlete recordings (CRITICAL; spec in 2.6/2.7 docs). Supabase project keys +
-  Vercel account (for integration restart). Camera/edge hardware details (realtime phase).
+- Fresh ≥10-athlete recordings (CRITICAL; spec UNSEEN_ATHLETE_DATASET_SPEC.md — add one
+  slow/paused-tempo set + rear view per stress-test findings). Supabase keys + Vercel account
+  (integration phase). Realtime target-hardware decision. YOLO AGPL-3.0 product decision.
 
 ## What is OBSOLETE
 - Legacy 2D elbow-span pipeline (reference only), MediaPipe/VideoPose3D paths (eliminated 2.5C),
-  original PHASE_PLAN.md ordering (superseded by PROJECT_ROADMAP.md).
+  original PHASE_PLAN.md ordering (superseded), ai/models/form_thresholds_v1.json (deleted
+  2026-10-08; superseded by exercise-scoped _back/_seated_row files).
 
 ## Active blocker & next action
-Transfer result → then: form-analysis v1 (rule-based coach-attention indicators) and integration
-restart (Supabase deploy → dashboard → edge agent → end-to-end demo), per roadmap.
+Realtime/causal feasibility prototype (causal audit → streaming variant → latency benchmark →
+accuracy-vs-offline comparison) on this laptop; offline system stays the reference. Then: fresh
+dataset gate on arrival of recordings; integration spine after ML sign-off + owner keys.
 
 ## Known limitations (carry into every report)
-One public 15 fps dataset dominates training; seated-row evidence is same-athlete or zero-shot;
-3D is estimated monocular (no medical/injury claims — "coach-attention indicators" only).
+One public 15 fps dataset dominates training; seated-row evidence is same-athlete zero-shot +
+10 wild reps; 3D is estimated monocular (no medical/injury claims — "coach-attention
+indicators" only); external wild n is small and never substitutes Domain C validation.

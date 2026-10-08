@@ -1,38 +1,45 @@
 # PROJECT_ROADMAP.md — evidence-driven roadmap (owned by the technical lead; updated when results demand)
 
-_Last update: 2026-10-05. History of superseded plans: PHASE_PLAN.md (original), DECISION_LOG.md._
+_Last update: 2026-10-08. History of superseded plans: PHASE_PLAN.md (original), DECISION_LOG.md._
 
 ## Done (validated, committed, frozen)
 - **AI foundation**: honest baselines (Phase 0–2, tag `baseline-v0.2.0-frozen`), dataset audit +
   443-rep verified benchmark (2.5A/B), 6-pipeline pose benchmark (2.5C), 2,472-rep / 24-subject
   dataset + frozen subject split (2.6), frozen-backbone training with locked unseen-subject TEST
-  (2.7): **PoseFormerV2 primary (F1 0.939), MotionBERT-Lite fallback**.
+  (2.7), seated-row zero-shot transfer (2.8): **MB-Lite product primary / PFv2 in-domain
+  benchmark primary**.
+- **Phase A–C**: canonical result schema (root-cause fix), unseen-athlete dataset gate,
+  form-analysis v1 (interpretable indicators; rom_proxy directional AUC 0.778; exercise-scoped
+  thresholds; seated-row set PROVISIONAL).
+- **External wild stress test (Domain B, commit bc3472e)**: frozen MB-Lite zero-shot on curated
+  Instagram units → **PARTIAL EXTERNAL TRANSFER** (pull F1 0.842 / IoU 0.632 over 10 certain
+  reps; window-extent degradation on paused tempo; one rear-view miss; editing/cuts are the
+  dominant wild obstacle). docs/EXTERNAL_REAL_WORLD_STRESS_TEST.md.
 - **Backend groundwork** (code-complete, undeployed): Supabase schema + RLS + seed + RLS tests;
   shared event contract v1.0 (JSON Schema + pydantic + TS, sync-tested).
 
 ## Now
-- **2.8 DONE**: MB-Lite transfers (F1 0.85, R 0.97); PFv2 collapses zero-shot (0.30; fps ruled out) -> MB-Lite is the seated-row product primary (docs/SEATED_ROW_TRANSFER_2_8.md). **Now: form-analysis v1 on MB-Lite windows.**
+- **Realtime/causal feasibility prototype** (owner-approved 2026-10-08; no new data needed):
+  causal audit of the offline pipeline → streaming variant (sliding window / chunked / bounded
+  look-ahead) kept SEPARATE from the offline reference → true end-to-end FPS + latency on this
+  laptop → accuracy-vs-offline comparison. Output: REALTIME_FEASIBILITY.md + benchmark artifacts.
 - **Owner-blocked, requested in parallel**: record the fresh unseen-athlete validation set
-  (spec: DATASET_PHASE_2_6.md §readiness + REP_SEGMENTATION_PHASE_2_7.md §E). CRITICAL for any
-  production claim; development continues without it.
+  (spec: UNSEEN_ATHLETE_DATASET_SPEC.md; per stress-test findings add ≥1 slow/paused-tempo set
+  and a rear view). CRITICAL for any production claim; development continues without it.
 
 ## Next (ordered; reorder only with evidence)
-1. **Form-analysis v1 (seated row + back), rule-based, interpretable** — per-rep features inside
-   decoded windows (lag_pull, lag_onset, amp_ratio, trunk-lean proxy, ROM proxy) → "coach-attention
-   indicator" events with provisional thresholds; NO correct/incorrect classifier (6 seated-row
-   videos / 1 athlete cannot support one); evaluate feature separability good-vs-bad on Mendeley
-   back (subject-wise). Language: movement-quality / coach-attention only.
-2. **Integration restart (graduation spine)**: deploy Supabase (needs owner keys) → minimal coach
-   dashboard (Next.js) on simulated events → edge agent (video-file camera, PFv2 offline path,
-   outbox) → end-to-end demo: video → reps+indicators → DB → dashboard.
-3. **Realtime feasibility measurement** (REALTIME_EDGE): causal variants, chunked lifting, true
-   end-to-end FPS/latency budget on target hardware; decide demo hardware.
-4. **Exercise library step** (after 1–3): bent-over row + seated row + bicep curl as the 3-exercise
-   demo set (curl needs per-exercise phase model — evidence: transfer F1 ≤ 0.65); exercise
-   recognition gate only after modules are reliable.
-5. **Final validation on fresh athletes** (once recorded; single evaluation) + graduation
-   deliverables (FINAL_RESULTS, architecture, demo script).
-- **Unreal visualization**: optional after 2; consumes stored 3D sequences; never a dependency.
+1. **Realtime/causal feasibility** (in progress — see Now).
+2. **Fresh-athlete validation gate** the moment recordings arrive: validate dataset → freeze →
+   single locked evaluation against pre-registered criteria (either outcome reported).
+3. **Integration restart (graduation spine)**: deploy Supabase (needs owner keys) → minimal coach
+   dashboard (Next.js) on simulated events → edge agent (video-file camera, MB-Lite offline
+   path, outbox) → end-to-end demo: video → reps+indicators → DB → dashboard.
+4. **Exercise library step** (after 1–3): bent-over row + seated row + bicep curl as the
+   3-exercise demo set (curl needs per-exercise phase model — evidence: transfer F1 ≤ 0.65);
+   exercise recognition gate only after modules are reliable.
+5. **Final validation on fresh athletes** + graduation deliverables (FINAL_RESULTS,
+   architecture, demo script).
+- **Unreal visualization**: optional after 3; consumes stored 3D sequences; never a dependency.
 
 ## Deferred / rejected for now
 - Pose-backbone fine-tuning (frozen representations suffice; revisit only if form-analysis
@@ -43,9 +50,10 @@ _Last update: 2026-10-05. History of superseded plans: PHASE_PLAN.md (original),
 ## Risk register
 | risk | rank | status / evidence | mitigation / next experiment |
 |---|---|---|---|
-| Seated-row domain gap | HIGH (was CRITICAL) | MB-Lite transfers 0.85 zero-shot; PFv2 fails | new-athlete seated-row proof still needs fresh recordings |
-| No fresh unseen-athlete data | CRITICAL | spec written; needs owner | record per spec; single locked evaluation |
-| MB-family side view / PFv2 fast reps | HIGH | TEST breakdowns | per-view/tempo routing ablation if form-analysis needs it |
+| Seated-row domain gap | MEDIUM (was HIGH) | MB-Lite 0.85 zero-shot + wild pull F1 0.842 (Domain B) | new-athlete seated-row proof still needs fresh recordings |
+| No fresh unseen-athlete data | CRITICAL | spec written; needs owner | record per spec (+ paused-tempo set, rear view); single locked evaluation |
+| MB-family side/rear (depth-dominant) views | HIGH | TEST side 0.383; 1 wild rear-view FN | per-view routing ablation if needed; Domain C includes rear view |
+| Window extent under paused tempo | MEDIUM (new, Domain B) | wild IoU 0.632 vs 0.841: holds absorbed into windows, pulls still correct | any fix developed on TRAIN/VAL only, validated on Mendeley + Domain C, never on the reels |
 | True 3D accuracy unproven | HIGH | proxies only (no mocap) | constrained-skeleton post-processing; label limitations in all outputs |
 | Realtime budget unknown | HIGH | all offline today | roadmap item 3 measurement |
 | Cross-exercise transfer weak | MEDIUM | best 0.650 (curl) | per-exercise modules (roadmap 4) |

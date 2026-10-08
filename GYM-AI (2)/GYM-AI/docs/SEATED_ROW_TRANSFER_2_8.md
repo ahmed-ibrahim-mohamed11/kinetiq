@@ -32,7 +32,10 @@ Context (different protocol — same-athlete LOVO *trained on these videos*, tag
   in-domain unseen-subject F1 does not predict cross-exercise transfer.
 
 ## MB-Lite residual errors (actionable for form-analysis phase)
-1 FN (asymmetry_02 rep under heavy 2D dropout — the known 51-frame no-detection stretch);
+1 FN (asymmetry_01 under the IoU rule — fastest-tempo video, 0.6 s reps; asymmetry_02 is CLEAN
+despite its 51-frame 2D dropout. Corrected 2026-10-08 against the artifact
+`ai/outputs/phase28/seated_row_motionbert_lite.csv` after the master-report audit flagged the
+original mis-attribution);
 10 FP = extra shallow/partial movements, mostly around set boundaries on correct_01 and
 asymmetry_01 — the same censored-edge/partial class seen on Mendeley; acceptable for rep counting
 (count MAE ≤ 2 per video), relevant when form analysis consumes windows.

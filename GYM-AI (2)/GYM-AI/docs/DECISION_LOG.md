@@ -1,5 +1,26 @@
 # DECISION_LOG.md — major technical decisions (newest first)
 
+## 2026-10-08 — External wild stress test: PARTIAL EXTERNAL TRANSFER; no model change
+- **Decision**: the Instagram Domain-B result (frozen MB-Lite zero-shot: pull-rule F1 0.842 /
+  IoU F1 0.632 over 10 certain reps, 3 athletes) is recorded as **PARTIAL EXTERNAL TRANSFER**;
+  per the pre-declared frozen-model rule NOTHING in the pipeline changes because of it.
+- **Evidence**: ai/outputs/external_stress_test/{metrics,predictions,diagnostics,summary};
+  docs/EXTERNAL_REAL_WORLD_STRESS_TEST.md. Failure attribution: 6/7 IoU-rule errors = window
+  extent under paused tempo (TEMPORAL MODEL, decoded tempo 4.2 s vs 1.65 s train median);
+  1 rear-view FN (CAMERA VIEW); 1 pull-rule error = annotation ambiguity inside a 1 s hold.
+  Tracking/2D/lifting clean on all units despite phone compression, dark footage, overlays.
+- **Consequences**: Domain C spec gains two requirements (≥1 slow/paused-tempo set; rear view);
+  new MEDIUM risk "window extent under paused tempo" in the register; any future extent fix is
+  developed on TRAIN/VAL only and validated on Mendeley + Domain C, never on the reels.
+  The three domains (A internal / B wild / C hardware validation) stay unmerged.
+
+## 2026-10-08 — Form Analysis v1 controlled decisions (mirrored from FORM_ANALYSIS_V1.md)
+- Signal-xcorr lag REPLACED phase-peak lag (0/15 → 3/15 asymmetry hits at equal false rate);
+  `lr_onset_lag` REMOVED (degenerate, p95 = 0.0); thresholds are EXERCISE-SCOPED (back
+  thresholds on seated row inverted the sanity check); seated-row thresholds PROVISIONAL
+  (15 reps, 1 athlete) until the fresh dataset. Legacy pre-scoping file
+  ai/models/form_thresholds_v1.json deleted 2026-10-08 (superseded; nothing references it).
+
 ## 2026-10-05b — MotionBERT-Lite becomes PRIMARY for the seated-row product path
 - **Decision**: deployment/product primary = MotionBERT-Lite; PoseFormerV2 demoted to in-domain
   benchmark primary / future candidate pending in-domain seated-row training data.
