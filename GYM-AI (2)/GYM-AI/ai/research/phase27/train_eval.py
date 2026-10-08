@@ -44,6 +44,8 @@ from ai.core.decoder import Decoder, estimate_tempo, fit_decoder, predict_video 
 from ai.core.features import (get_design, local_peak, obs_features,  # noqa: E402
                               phase_target, prepare_video, state_labels)
 from ai.core.phase_model import PhaseModel, predict_phase  # noqa: E402
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from result_schema import make_row  # noqa: E402
 
 POSES = os.path.join(REPO_ROOT, "ai", "outputs", "pose_bench", "poses")
 ANN = os.path.join(REPO_ROOT, "ai", "data", "mendeley_rep_annotations_expanded.csv")
@@ -241,7 +243,7 @@ def evaluate_dontcare(pred, gt_certain, gt_uncertain, rule, protocol="v1"):
                 used.add(j)
     fp_idx = [i for i in rest if i not in ignored]
     tp, fn = len(pairs), len(gt_certain) - len(pairs)
-    m = dict(rule=rule, n_gt=len(gt_certain), n_unc=len(gt_uncertain), n_pred=len(pred),
+    m = dict(n_gt=len(gt_certain), n_unc=len(gt_uncertain), n_pred=len(pred),
              tp=tp, fp=len(fp_idx), fn=fn, n_ignored=len(ignored),
              matched=[(i, j) for i, j in pairs])
     for k in ("start", "pull", "end"):
@@ -334,9 +336,10 @@ def main():
                 idx = [j for j, t in enumerate(v["gt_tier"]) if t == tier]
                 mj = {j for _, j in m["matched"]}
                 tiers[tier] = dict(n=len(idx), matched=len([j for j in idx if j in mj]))
-            rows.append(dict(video_id=v["name"], subject=v["subject"], view=v["view"], form=v["form"],
-                             exercise=v["exercise"], tier_match=json.dumps(tiers),
-                             **{k: vv for k, vv in m.items() if k != "matched"}))
+            rows.append(make_row(
+                dict(video_id=v["name"], subject=v["subject"], view=v["view"], form=v["form"],
+                     exercise=v["exercise"], rule=rule, tier_match=json.dumps(tiers)),
+                {k: vv for k, vv in m.items() if k != "matched"}))
     pd.DataFrame(preds).to_csv(os.path.join(odir, f"predictions_{args.split}_{args.tag}.csv"), index=False)
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(odir, f"videos_{args.split}_{args.tag}.csv"), index=False)

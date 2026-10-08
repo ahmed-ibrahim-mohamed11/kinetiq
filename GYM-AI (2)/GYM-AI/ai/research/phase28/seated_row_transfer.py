@@ -35,6 +35,7 @@ from ai.core.features import prepare_video  # noqa: E402
 from lifters import LIFTERS  # noqa: E402
 from tracking import track_subject  # noqa: E402
 import train_eval as te  # noqa: E402
+from result_schema import make_row  # noqa: E402
 
 OUT = os.path.join(REPO_ROOT, "ai", "outputs", "phase28")
 SR_FPS = 30.0
@@ -115,8 +116,8 @@ def main():
             te.PULL_TOL_F = int(round(PULL_TOL_S * SR_FPS))      # seconds-defined tolerance @30fps
             for rule in ("iou", "pull"):
                 m = te.evaluate_dontcare(pred, g, [], rule, protocol="v2")
-                rows.append(dict(video=name, tempo_s=res["tempo_s"],
-                                 **{k: vv for k, vv in m.items() if k != "matched"}))
+                rows.append(make_row(dict(video=name, rule=rule, tempo_s=res["tempo_s"]),
+                                     {k: vv for k, vv in m.items() if k != "matched"}))
             print(f"  {pipeline} {name}: GT {len(g)} pred {len(pred)} "
                   f"(track lost {tlog['lost']}, jumps {tlog['jumps']})")
         df = pd.DataFrame(rows)
