@@ -1,0 +1,12 @@
+unit,video,pred_idx,start,pull,end,status_v2_iou,status_v2_pull
+ext_02_full,ext_02,1,0,68,136,FP,TP(gt1)
+ext_02_full,ext_02,2,136,209,310,FP,TP(gt2)
+ext_02_full,ext_02,3,310,357,409,TP(gt3),TP(gt3)
+ext_02_full,ext_02,4,409,475,534,TP(gt4),TP(gt4)
+ext_02_full,ext_02,5,534,597,668,TP(gt5),TP(gt5)
+ext_02_full,ext_02,6,668,724,800,FP,TP(gt6)
+ext_03_segA,ext_03,1,237,265,309,TP(gt1),TP(gt1)
+ext_03_segB,ext_03,1,406,442,470,IGNORED_UNCERTAIN(u1),IGNORED_UNCERTAIN(u1)
+ext_08_segB,ext_08,1,160,181,215,TP(gt1),FP
+ext_08_segC,ext_08,1,349,373,398,TP(gt1),TP(gt1)
+ext_08_segC,ext_08,2,398,420,435,IGNORED_UNCERTAIN(u1),IGNORED_UNCERTAIN(u1)

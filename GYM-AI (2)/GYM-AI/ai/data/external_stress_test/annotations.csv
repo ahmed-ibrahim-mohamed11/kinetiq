@@ -1,0 +1,15 @@
+video_id,source_url,segment_id,rep_id,fps,start_frame,pull_frame,end_frame,start_time_s,pull_time_s,end_time_s,gt_tier,annotation_confidence,partial_rep,ambiguous_rep,occluded_rep,edited_cut,unusable_rep,notes
+ext_02,https://www.instagram.com/reel/DcHmnMZDxoL/,full,1,30.0,46,78,110,1.533,2.600,3.667,certain,high,0,0,0,0,0,slow controlled rep; ~1.4s squeeze hold 58-100; pull=hold center (stride-2 verified)
+ext_02,https://www.instagram.com/reel/DcHmnMZDxoL/,full,2,30.0,188,218,250,6.267,7.267,8.333,certain,high,0,0,0,0,0,squeeze hold ~196-240; pull=hold center
+ext_02,https://www.instagram.com/reel/DcHmnMZDxoL/,full,3,30.0,318,344,372,10.600,11.467,12.400,certain,high,0,0,0,0,0,squeeze hold ~324-364; pull=hold center
+ext_02,https://www.instagram.com/reel/DcHmnMZDxoL/,full,4,30.0,446,482,516,14.867,16.067,17.200,certain,high,0,0,0,0,0,squeeze hold ~456-508; pull=hold center
+ext_02,https://www.instagram.com/reel/DcHmnMZDxoL/,full,5,30.0,574,608,641,19.133,20.267,21.367,certain,high,0,0,0,0,0,squeeze hold ~584-632; pull=hold center
+ext_02,https://www.instagram.com/reel/DcHmnMZDxoL/,full,6,30.0,702,732,766,23.400,24.400,25.533,certain,high,0,0,0,0,0,squeeze hold ~708-756; pull=hold center
+ext_03,https://www.instagram.com/reel/C5gFNP_Iega/,segA_237_330,1,25.0,245,261,299,9.800,10.440,11.960,certain,high,0,0,0,0,0,front-oblique V-handle low row; contraction 251-271
+ext_03,https://www.instagram.com/reel/C5gFNP_Iega/,segA_237_330,2,25.0,303,319,330,12.120,12.760,13.200,uncertain,low,1,1,0,1,0,second pull reached ~315-319; END CENSORED by shot cut at 330; do not score as certain
+ext_03,https://www.instagram.com/reel/C5gFNP_Iega/,segB_361_470,1,25.0,372,395,428,14.880,15.800,17.120,certain,high,0,0,0,0,0,rear view; scapular squeeze hold 383-407; pull=hold center
+ext_03,https://www.instagram.com/reel/C5gFNP_Iega/,segB_361_470,2,25.0,444,463,470,17.760,18.520,18.800,uncertain,low,1,1,0,1,0,contraction reached ~461; WINDOW CUT at 470 during squeeze; do not score as certain
+ext_08,https://www.instagram.com/reel/DWxZgCbyYHY/,segB_160_250,1,30.0,172,206,237,5.733,6.867,7.900,certain,medium,0,1,0,0,0,dark footage + neon overlay; squeeze hold ~192-222; pull=hold center; pull instant ambiguous within hold
+ext_08,https://www.instagram.com/reel/DWxZgCbyYHY/,segB_160_250,2,30.0,238,246,250,7.933,8.200,8.333,uncertain,low,1,1,0,1,0,possible second pull onset 238-250; WINDOW CUT at 250; do not score as certain
+ext_08,https://www.instagram.com/reel/DWxZgCbyYHY/,segC_310_435,1,30.0,356,368,402,11.867,12.267,13.400,certain,medium,0,1,0,0,0,side view; contraction 362-388 (dark clothing blurs hold edge); pull near hold onset-center
+ext_08,https://www.instagram.com/reel/DWxZgCbyYHY/,segC_310_435,2,30.0,406,418,435,13.533,13.933,14.500,uncertain,low,1,1,0,1,0,contraction 414-434; WINDOW CUT at 435 before return; do not score as certain

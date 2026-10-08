@@ -34,3 +34,6 @@ ai/outputs/pose_bench/poses/
 ai/outputs/pose_bench/tracked2d/
 third_party/*
 !third_party/README.md
+ai/data/external_stress_test/raw/
+ai/outputs/external_stress_test/sheets/
+ai/outputs/external_stress_test/drafts/

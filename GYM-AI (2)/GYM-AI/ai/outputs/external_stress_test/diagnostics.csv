@@ -1,0 +1,6 @@
+unit,video,frames,track_nan_frames,track_nan_frac,video_lost,video_jumps,kpt_conf_mean,lift_conf_mean,lift_conf_low_frac,tempo_s,n_pred
+ext_02_full,ext_02,801,0,0.0,0,0,0.856,0.937,0.0,4.2,6
+ext_03_segA,ext_03,94,15,0.1596,15,3,0.925,0.819,0.1596,2.44,1
+ext_03_segB,ext_03,110,0,0.0,15,3,0.703,0.799,0.0,2.72,1
+ext_08_segB,ext_08,91,0,0.0,1,0,0.9,0.969,0.0,1.6666666666666667,1
+ext_08_segC,ext_08,126,0,0.0,1,0,0.87,0.944,0.0,1.5666666666666667,2

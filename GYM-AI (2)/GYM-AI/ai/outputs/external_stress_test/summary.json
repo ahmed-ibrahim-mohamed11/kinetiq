@@ -1,0 +1,94 @@
+{
+ "motionbert_lite_v2_iou": {
+  "tp": 6,
+  "fp": 3,
+  "fn": 4,
+  "precision": 0.667,
+  "recall": 0.6,
+  "f1": 0.632,
+  "start_mae_s": 0.631,
+  "pull_mae_s": 0.365,
+  "end_mae_s": 0.666
+ },
+ "motionbert_lite_v2_pull": {
+  "tp": 8,
+  "fp": 1,
+  "fn": 2,
+  "precision": 0.889,
+  "recall": 0.8,
+  "f1": 0.842,
+  "start_mae_s": 0.974,
+  "pull_mae_s": 0.282,
+  "end_mae_s": 0.908
+ },
+ "motionbert_lite_v1_iou": {
+  "tp": 6,
+  "fp": 4,
+  "fn": 4,
+  "precision": 0.6,
+  "recall": 0.6,
+  "f1": 0.6,
+  "start_mae_s": 0.631,
+  "pull_mae_s": 0.365,
+  "end_mae_s": 0.666
+ },
+ "motionbert_lite_v1_pull": {
+  "tp": 8,
+  "fp": 2,
+  "fn": 2,
+  "precision": 0.8,
+  "recall": 0.8,
+  "f1": 0.8,
+  "start_mae_s": 0.974,
+  "pull_mae_s": 0.282,
+  "end_mae_s": 0.908
+ },
+ "n_certain_gt": 10,
+ "n_uncertain_gt": 4,
+ "units": {
+  "ext_02_full": {
+   "video": "ext_02",
+   "window": [
+    0,
+    800
+   ],
+   "fps": 30.0
+  },
+  "ext_03_segA": {
+   "video": "ext_03",
+   "window": [
+    237,
+    330
+   ],
+   "fps": 25.0
+  },
+  "ext_03_segB": {
+   "video": "ext_03",
+   "window": [
+    361,
+    470
+   ],
+   "fps": 25.0
+  },
+  "ext_08_segB": {
+   "video": "ext_08",
+   "window": [
+    160,
+    250
+   ],
+   "fps": 30.0
+  },
+  "ext_08_segC": {
+   "video": "ext_08",
+   "window": [
+    310,
+    435
+   ],
+   "fps": 30.0
+  }
+ },
+ "verdict": "PARTIAL EXTERNAL TRANSFER",
+ "verdict_basis": "n=10 certain reps / 3 videos / 3 athletes; pull-rule F1 0.842 (internal ref 0.853); IoU F1 0.632 (ref 0.841) - window-extent degradation on paused-tempo reps; 1 rear-view FN; counting 10 pred vs 10 certain GT",
+ "model": "motionbert_lite (frozen Phase 2.7 system, zero-shot)",
+ "protocol_primary": "v2"
+}
