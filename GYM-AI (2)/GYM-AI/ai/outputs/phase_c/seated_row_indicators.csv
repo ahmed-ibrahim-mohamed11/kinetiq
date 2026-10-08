@@ -1,0 +1,189 @@
+video,rep,indicator,value,normalized,threshold,severity,message,confidence
+correct_01,1,lr_lag,0.3,1.059,0.2833,attention,Left and right sides move noticeably out of sync.,medium
+correct_01,1,lr_amplitude_ratio,0.8588,0.363,0.3114,ok,Within typical range.,medium
+correct_01,1,trunk_motion,0.0089,0.327,0.0272,ok,Within typical range.,medium
+correct_01,1,rom_proxy,0.0308,1.879,0.0578,attention,Reduced range of motion compared to typical form.,medium
+correct_01,2,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+correct_01,2,lr_amplitude_ratio,0.7084,0.44,0.3114,ok,Within typical range.,high
+correct_01,2,trunk_motion,0.0151,0.555,0.0272,ok,Within typical range.,high
+correct_01,2,rom_proxy,0.0724,0.799,0.0578,ok,Within typical range.,high
+correct_01,3,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+correct_01,3,lr_amplitude_ratio,0.339,0.919,0.3114,ok,Within typical range.,high
+correct_01,3,trunk_motion,0.0041,0.151,0.0272,ok,Within typical range.,high
+correct_01,3,rom_proxy,0.0326,1.772,0.0578,attention,Reduced range of motion compared to typical form.,high
+correct_01,4,lr_lag,0.1,0.353,0.2833,ok,Within typical range.,high
+correct_01,4,lr_amplitude_ratio,0.3317,0.939,0.3114,ok,Within typical range.,high
+correct_01,4,trunk_motion,0.0137,0.504,0.0272,ok,Within typical range.,high
+correct_01,4,rom_proxy,0.0552,1.047,0.0578,attention,Reduced range of motion compared to typical form.,high
+correct_01,5,lr_lag,0.0,0.0,0.2833,ok,Within typical range.,high
+correct_01,5,lr_amplitude_ratio,0.268,1.162,0.3114,attention,Noticeable asymmetry between left and right pull amplitude.,high
+correct_01,5,trunk_motion,0.0075,0.277,0.0272,ok,Within typical range.,high
+correct_01,5,rom_proxy,0.0227,2.544,0.0578,attention,Reduced range of motion compared to typical form.,high
+correct_01,6,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+correct_01,6,lr_amplitude_ratio,0.456,0.683,0.3114,ok,Within typical range.,high
+correct_01,6,trunk_motion,0.0089,0.326,0.0272,ok,Within typical range.,high
+correct_01,6,rom_proxy,0.0563,1.026,0.0578,attention,Reduced range of motion compared to typical form.,high
+correct_01,7,lr_lag,0.5,1.765,0.2833,attention,Left and right sides move noticeably out of sync.,high
+correct_01,7,lr_amplitude_ratio,0.7423,0.42,0.3114,ok,Within typical range.,high
+correct_01,7,trunk_motion,0.0047,0.172,0.0272,ok,Within typical range.,high
+correct_01,7,rom_proxy,0.0228,2.539,0.0578,attention,Reduced range of motion compared to typical form.,high
+correct_01,8,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+correct_01,8,lr_amplitude_ratio,0.4308,0.723,0.3114,ok,Within typical range.,high
+correct_01,8,trunk_motion,0.012,0.442,0.0272,ok,Within typical range.,high
+correct_01,8,rom_proxy,0.0646,0.894,0.0578,ok,Within typical range.,high
+correct_01,9,lr_lag,0.0,0.0,0.2833,ok,Within typical range.,high
+correct_01,9,lr_amplitude_ratio,0.6991,0.445,0.3114,ok,Within typical range.,high
+correct_01,9,trunk_motion,0.0139,0.512,0.0272,ok,Within typical range.,high
+correct_01,9,rom_proxy,0.0452,1.279,0.0578,attention,Reduced range of motion compared to typical form.,high
+correct_01,10,lr_lag,0.2,0.706,0.2833,ok,Within typical range.,high
+correct_01,10,lr_amplitude_ratio,0.6046,0.515,0.3114,ok,Within typical range.,high
+correct_01,10,trunk_motion,0.0115,0.424,0.0272,ok,Within typical range.,high
+correct_01,10,rom_proxy,0.0729,0.793,0.0578,ok,Within typical range.,high
+correct_01,11,lr_lag,0.2667,0.941,0.2833,ok,Within typical range.,high
+correct_01,11,lr_amplitude_ratio,0.7484,0.416,0.3114,ok,Within typical range.,high
+correct_01,11,trunk_motion,0.0082,0.301,0.0272,ok,Within typical range.,high
+correct_01,11,rom_proxy,0.0465,1.244,0.0578,attention,Reduced range of motion compared to typical form.,high
+correct_02,1,lr_lag,0.1,0.353,0.2833,ok,Within typical range.,medium
+correct_02,1,lr_amplitude_ratio,0.8606,0.362,0.3114,ok,Within typical range.,medium
+correct_02,1,trunk_motion,0.0292,1.072,0.0272,attention,Large trunk movement during the repetition.,medium
+correct_02,1,rom_proxy,0.1005,0.575,0.0578,ok,Within typical range.,medium
+correct_02,2,lr_lag,0.1333,0.471,0.2833,ok,Within typical range.,high
+correct_02,2,lr_amplitude_ratio,0.5116,0.609,0.3114,ok,Within typical range.,high
+correct_02,2,trunk_motion,0.0251,0.922,0.0272,ok,Within typical range.,high
+correct_02,2,rom_proxy,0.1138,0.508,0.0578,ok,Within typical range.,high
+correct_02,3,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+correct_02,3,lr_amplitude_ratio,0.5987,0.52,0.3114,ok,Within typical range.,high
+correct_02,3,trunk_motion,0.0317,1.165,0.0272,attention,Large trunk movement during the repetition.,high
+correct_02,3,rom_proxy,0.1171,0.494,0.0578,ok,Within typical range.,high
+correct_02,4,lr_lag,0.1667,0.588,0.2833,ok,Within typical range.,high
+correct_02,4,lr_amplitude_ratio,0.736,0.423,0.3114,ok,Within typical range.,high
+correct_02,4,trunk_motion,0.0264,0.972,0.0272,ok,Within typical range.,high
+correct_02,4,rom_proxy,0.101,0.572,0.0578,ok,Within typical range.,high
+correct_02,5,lr_lag,0.0667,0.235,0.2833,ok,Within typical range.,high
+correct_02,5,lr_amplitude_ratio,0.4044,0.77,0.3114,ok,Within typical range.,high
+correct_02,5,trunk_motion,0.0224,0.825,0.0272,ok,Within typical range.,high
+correct_02,5,rom_proxy,0.0974,0.593,0.0578,ok,Within typical range.,high
+correct_03,1,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+correct_03,1,lr_amplitude_ratio,0.492,0.633,0.3114,ok,Within typical range.,high
+correct_03,1,trunk_motion,0.0252,0.927,0.0272,ok,Within typical range.,high
+correct_03,1,rom_proxy,0.0814,0.71,0.0578,ok,Within typical range.,high
+correct_03,2,lr_lag,0.1,0.353,0.2833,ok,Within typical range.,high
+correct_03,2,lr_amplitude_ratio,0.4944,0.63,0.3114,ok,Within typical range.,high
+correct_03,2,trunk_motion,0.0226,0.829,0.0272,ok,Within typical range.,high
+correct_03,2,rom_proxy,0.0805,0.718,0.0578,ok,Within typical range.,high
+correct_03,3,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+correct_03,3,lr_amplitude_ratio,0.6252,0.498,0.3114,ok,Within typical range.,high
+correct_03,3,trunk_motion,0.0163,0.599,0.0272,ok,Within typical range.,high
+correct_03,3,rom_proxy,0.076,0.76,0.0578,ok,Within typical range.,high
+correct_03,4,lr_lag,0.0,0.0,0.2833,ok,Within typical range.,high
+correct_03,4,lr_amplitude_ratio,0.2863,1.087,0.3114,attention,Noticeable asymmetry between left and right pull amplitude.,high
+correct_03,4,trunk_motion,0.0161,0.593,0.0272,ok,Within typical range.,high
+correct_03,4,rom_proxy,0.0601,0.961,0.0578,ok,Within typical range.,high
+correct_03,5,lr_lag,0.1667,0.588,0.2833,ok,Within typical range.,high
+correct_03,5,lr_amplitude_ratio,0.6436,0.484,0.3114,ok,Within typical range.,high
+correct_03,5,trunk_motion,0.0123,0.451,0.0272,ok,Within typical range.,high
+correct_03,5,rom_proxy,0.0342,1.692,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,1,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+asymmetry_01,1,lr_amplitude_ratio,0.9793,0.318,0.3114,ok,Within typical range.,high
+asymmetry_01,1,trunk_motion,0.0353,1.298,0.0272,attention,Large trunk movement during the repetition.,high
+asymmetry_01,1,rom_proxy,0.0536,1.078,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,2,lr_lag,0.3333,1.177,0.2833,attention,Left and right sides move noticeably out of sync.,high
+asymmetry_01,2,lr_amplitude_ratio,0.17,1.831,0.3114,attention,Noticeable asymmetry between left and right pull amplitude.,high
+asymmetry_01,2,trunk_motion,0.0068,0.249,0.0272,ok,Within typical range.,high
+asymmetry_01,2,rom_proxy,0.0246,2.346,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,3,lr_lag,0.1333,0.471,0.2833,ok,Within typical range.,high
+asymmetry_01,3,lr_amplitude_ratio,0.2409,1.292,0.3114,attention,Noticeable asymmetry between left and right pull amplitude.,high
+asymmetry_01,3,trunk_motion,0.0045,0.164,0.0272,ok,Within typical range.,high
+asymmetry_01,3,rom_proxy,0.0265,2.179,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,4,lr_lag,0.1333,0.471,0.2833,ok,Within typical range.,high
+asymmetry_01,4,lr_amplitude_ratio,0.2716,1.147,0.3114,attention,Noticeable asymmetry between left and right pull amplitude.,high
+asymmetry_01,4,trunk_motion,0.0048,0.177,0.0272,ok,Within typical range.,high
+asymmetry_01,4,rom_proxy,0.0133,4.336,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,5,lr_lag,0.3333,1.177,0.2833,attention,Left and right sides move noticeably out of sync.,high
+asymmetry_01,5,lr_amplitude_ratio,0.8746,0.356,0.3114,ok,Within typical range.,high
+asymmetry_01,5,trunk_motion,0.0018,0.066,0.0272,ok,Within typical range.,high
+asymmetry_01,5,rom_proxy,0.0218,2.655,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,6,lr_lag,0.0,0.0,0.2833,ok,Within typical range.,high
+asymmetry_01,6,lr_amplitude_ratio,0.3802,0.819,0.3114,ok,Within typical range.,high
+asymmetry_01,6,trunk_motion,0.0025,0.091,0.0272,ok,Within typical range.,high
+asymmetry_01,6,rom_proxy,0.0304,1.899,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,7,lr_lag,0.2,0.706,0.2833,ok,Within typical range.,high
+asymmetry_01,7,lr_amplitude_ratio,0.2335,1.333,0.3114,attention,Noticeable asymmetry between left and right pull amplitude.,high
+asymmetry_01,7,trunk_motion,0.003,0.109,0.0272,ok,Within typical range.,high
+asymmetry_01,7,rom_proxy,0.0148,3.904,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,8,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+asymmetry_01,8,lr_amplitude_ratio,0.5783,0.538,0.3114,ok,Within typical range.,high
+asymmetry_01,8,trunk_motion,0.0048,0.177,0.0272,ok,Within typical range.,high
+asymmetry_01,8,rom_proxy,0.0417,1.385,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,9,lr_lag,0.1333,0.471,0.2833,ok,Within typical range.,high
+asymmetry_01,9,lr_amplitude_ratio,0.3859,0.807,0.3114,ok,Within typical range.,high
+asymmetry_01,9,trunk_motion,0.0024,0.089,0.0272,ok,Within typical range.,high
+asymmetry_01,9,rom_proxy,0.0235,2.464,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,10,lr_lag,0.0,0.0,0.2833,ok,Within typical range.,high
+asymmetry_01,10,lr_amplitude_ratio,0.9363,0.333,0.3114,ok,Within typical range.,high
+asymmetry_01,10,trunk_motion,0.0018,0.065,0.0272,ok,Within typical range.,high
+asymmetry_01,10,rom_proxy,0.0541,1.068,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,11,lr_lag,0.0667,0.235,0.2833,ok,Within typical range.,high
+asymmetry_01,11,lr_amplitude_ratio,0.9158,0.34,0.3114,ok,Within typical range.,high
+asymmetry_01,11,trunk_motion,0.0017,0.062,0.0272,ok,Within typical range.,high
+asymmetry_01,11,rom_proxy,0.0297,1.946,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,12,lr_lag,0.2667,0.941,0.2833,ok,Within typical range.,high
+asymmetry_01,12,lr_amplitude_ratio,0.4925,0.632,0.3114,ok,Within typical range.,high
+asymmetry_01,12,trunk_motion,0.001,0.036,0.0272,ok,Within typical range.,high
+asymmetry_01,12,rom_proxy,0.0216,2.676,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,13,lr_lag,0.3667,1.294,0.2833,attention,Left and right sides move noticeably out of sync.,high
+asymmetry_01,13,lr_amplitude_ratio,0.7625,0.408,0.3114,ok,Within typical range.,high
+asymmetry_01,13,trunk_motion,0.0084,0.307,0.0272,ok,Within typical range.,high
+asymmetry_01,13,rom_proxy,0.0262,2.203,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,14,lr_lag,0.2,0.706,0.2833,ok,Within typical range.,high
+asymmetry_01,14,lr_amplitude_ratio,0.7025,0.443,0.3114,ok,Within typical range.,high
+asymmetry_01,14,trunk_motion,0.0024,0.087,0.0272,ok,Within typical range.,high
+asymmetry_01,14,rom_proxy,0.0097,5.957,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_01,15,lr_lag,0.2333,0.824,0.2833,ok,Within typical range.,high
+asymmetry_01,15,lr_amplitude_ratio,0.3864,0.806,0.3114,ok,Within typical range.,high
+asymmetry_01,15,trunk_motion,0.0341,1.253,0.0272,attention,Large trunk movement during the repetition.,high
+asymmetry_01,15,rom_proxy,0.0565,1.024,0.0578,attention,Reduced range of motion compared to typical form.,high
+asymmetry_02,1,lr_lag,0.0,0.0,0.2833,ok,Within typical range.,high
+asymmetry_02,1,lr_amplitude_ratio,0.9088,0.343,0.3114,ok,Within typical range.,high
+asymmetry_02,1,trunk_motion,0.0477,1.754,0.0272,attention,Large trunk movement during the repetition.,high
+asymmetry_02,1,rom_proxy,0.0666,0.868,0.0578,ok,Within typical range.,high
+asymmetry_02,2,lr_lag,0.0,0.0,0.2833,ok,Within typical range.,medium
+asymmetry_02,2,lr_amplitude_ratio,0.8844,0.352,0.3114,ok,Within typical range.,medium
+asymmetry_02,2,trunk_motion,0.0189,0.694,0.0272,ok,Within typical range.,medium
+asymmetry_02,2,rom_proxy,0.1098,0.526,0.0578,ok,Within typical range.,medium
+asymmetry_02,3,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,medium
+asymmetry_02,3,lr_amplitude_ratio,0.6289,0.495,0.3114,ok,Within typical range.,medium
+asymmetry_02,3,trunk_motion,0.0127,0.465,0.0272,ok,Within typical range.,medium
+asymmetry_02,3,rom_proxy,0.0976,0.592,0.0578,ok,Within typical range.,medium
+asymmetry_02,4,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,medium
+asymmetry_02,4,lr_amplitude_ratio,0.792,0.393,0.3114,ok,Within typical range.,medium
+asymmetry_02,4,trunk_motion,0.0213,0.782,0.0272,ok,Within typical range.,medium
+asymmetry_02,4,rom_proxy,0.1026,0.564,0.0578,ok,Within typical range.,medium
+asymmetry_02,5,lr_lag,0.0,0.0,0.2833,ok,Within typical range.,medium
+asymmetry_02,5,lr_amplitude_ratio,0.4178,0.745,0.3114,ok,Within typical range.,medium
+asymmetry_02,5,trunk_motion,0.0203,0.745,0.0272,ok,Within typical range.,medium
+asymmetry_02,5,rom_proxy,0.0765,0.755,0.0578,ok,Within typical range.,medium
+asymmetry_02,6,lr_lag,0.5,1.765,0.2833,attention,Left and right sides move noticeably out of sync.,medium
+asymmetry_02,6,lr_amplitude_ratio,0.8387,0.371,0.3114,ok,Within typical range.,medium
+asymmetry_02,6,trunk_motion,0.0071,0.263,0.0272,ok,Within typical range.,medium
+asymmetry_02,6,rom_proxy,0.0404,1.431,0.0578,attention,Reduced range of motion compared to typical form.,medium
+asymmetry_03,1,lr_lag,0.5,1.765,0.2833,attention,Left and right sides move noticeably out of sync.,high
+asymmetry_03,1,lr_amplitude_ratio,0.67,0.465,0.3114,ok,Within typical range.,high
+asymmetry_03,1,trunk_motion,0.0555,2.039,0.0272,attention,Large trunk movement during the repetition.,high
+asymmetry_03,1,rom_proxy,0.106,0.545,0.0578,ok,Within typical range.,high
+asymmetry_03,2,lr_lag,0.0,0.0,0.2833,ok,Within typical range.,high
+asymmetry_03,2,lr_amplitude_ratio,0.5474,0.569,0.3114,ok,Within typical range.,high
+asymmetry_03,2,trunk_motion,0.0281,1.031,0.0272,attention,Large trunk movement during the repetition.,high
+asymmetry_03,2,rom_proxy,0.0908,0.636,0.0578,ok,Within typical range.,high
+asymmetry_03,3,lr_lag,0.0333,0.118,0.2833,ok,Within typical range.,high
+asymmetry_03,3,lr_amplitude_ratio,0.4275,0.728,0.3114,ok,Within typical range.,high
+asymmetry_03,3,trunk_motion,0.0617,2.269,0.0272,attention,Large trunk movement during the repetition.,high
+asymmetry_03,3,rom_proxy,0.1218,0.475,0.0578,ok,Within typical range.,high
+asymmetry_03,4,lr_lag,0.1333,0.471,0.2833,ok,Within typical range.,high
+asymmetry_03,4,lr_amplitude_ratio,0.3739,0.833,0.3114,ok,Within typical range.,high
+asymmetry_03,4,trunk_motion,0.0567,2.085,0.0272,attention,Large trunk movement during the repetition.,high
+asymmetry_03,4,rom_proxy,0.1183,0.489,0.0578,ok,Within typical range.,high
+asymmetry_03,5,lr_lag,0.1,0.353,0.2833,ok,Within typical range.,high
+asymmetry_03,5,lr_amplitude_ratio,0.6048,0.515,0.3114,ok,Within typical range.,high
+asymmetry_03,5,trunk_motion,0.0393,1.445,0.0272,attention,Large trunk movement during the repetition.,high
+asymmetry_03,5,rom_proxy,0.1312,0.44,0.0578,ok,Within typical range.,high

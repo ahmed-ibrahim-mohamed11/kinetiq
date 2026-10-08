@@ -1,0 +1,5 @@
+indicator,auc_pooled,attention_rate_bad,attention_rate_good
+lr_lag,0.529,0.048,0.06
+lr_amplitude_ratio,0.634,0.171,0.03
+trunk_motion,0.379,0.014,0.036
+rom_proxy,0.778,0.295,0.018

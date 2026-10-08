@@ -1,0 +1,14 @@
+{
+ "version": "v1",
+ "method": "p95 (high-is-attention) / p05 (low-is-attention) over TRAIN-split GOOD-form certain reps, GT windows, MB-Lite poses, Mendeley back",
+ "n_reps": 450,
+ "n_videos": 36,
+ "created": "2026-10-08",
+ "thresholds": {
+  "lr_pull_lag": 0.8367,
+  "lr_onset_lag": 0.6,
+  "lr_amplitude_ratio": 0.5011,
+  "trunk_motion": 0.1126,
+  "rom_proxy": 0.161
+ }
+}

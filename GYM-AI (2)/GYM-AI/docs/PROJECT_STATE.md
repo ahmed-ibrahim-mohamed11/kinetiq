@@ -3,10 +3,22 @@
 _Last update: 2026-10-05 (technical-lead mode). Live roadmap: PROJECT_ROADMAP.md · decisions:
 DECISION_LOG.md · changes: CHANGELOG.md. Historical Phase-0 state preserved in git history._
 
+## Dual status (never conflated)
+- **GRADUATION DEMO READY: NOT YET** — AI core validated + form v1 exists, but no integrated
+  demo (backend undeployed, no dashboard, no end-to-end flow).
+- **PRODUCTION READY: NO** — fresh unseen-athlete validation BLOCKED (owner recording),
+  no deployment verification, no real-world robustness evidence.
+
+## Status labels
+DONE+VALIDATED: rep segmentation (Phases 0–2.8), result-schema fix, dataset gate tooling.
+PARTIAL: form-analysis v1 (rom_proxy validated-directional; 3 indicators partial; seated-row
+thresholds provisional). BLOCKED: unseen-athlete validation (owner), Supabase deploy (keys),
+Vercel (account). NOT STARTED: dashboard UI, edge agent, realtime path, Unreal.
+
 ## Current milestone
 **Phase 2.8 DONE — seated-row zero-shot transfer.** MB-Lite F1 0.85 (R 0.97, pull MAE 0.13 s);
 PFv2 collapsed (0.30, fps ruled out) -> **MB-Lite is the seated-row product primary**. Next:
-form-analysis v1 on MB-Lite rep windows; integration restart queued.
+form-analysis v1 DONE (PARTIAL validation; docs/FORM_ANALYSIS_V1.md). Next: integration spine (gated on ML-core sign-off + owner keys).
 
 ## Primary model + current metrics (frozen evidence)
 | what | result |

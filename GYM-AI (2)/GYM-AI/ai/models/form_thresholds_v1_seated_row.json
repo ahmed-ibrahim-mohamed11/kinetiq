@@ -1,0 +1,13 @@
+{
+ "version": "v1",
+ "exercise": "seated_row",
+ "method": "PROVISIONAL demo calibration: 15 GT reps from the 3 development 'correct' videos; replace with fresh-dataset calibration",
+ "n_reps": 15,
+ "created": "2026-10-08",
+ "thresholds": {
+  "lr_lag": 0.2833,
+  "lr_amplitude_ratio": 0.3114,
+  "trunk_motion": 0.0272,
+  "rom_proxy": 0.0578
+ }
+}
