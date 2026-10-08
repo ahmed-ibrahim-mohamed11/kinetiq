@@ -1,0 +1,4 @@
+variant,p50_chunk_ms,p95_chunk_ms
+V1_low_latency,3184.3,4478.9
+V2_quality,3377.6,4035.4
+V3_budget_15fps,1073.6,1343.8

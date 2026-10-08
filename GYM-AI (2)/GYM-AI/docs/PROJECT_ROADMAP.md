@@ -19,27 +19,36 @@ _Last update: 2026-10-08. History of superseded plans: PHASE_PLAN.md (original),
   shared event contract v1.0 (JSON Schema + pydantic + TS, sync-tested).
 
 ## Now
-- **Realtime/causal feasibility prototype** (owner-approved 2026-10-08; no new data needed):
-  causal audit of the offline pipeline → streaming variant (sliding window / chunked / bounded
-  look-ahead) kept SEPARATE from the offline reference → true end-to-end FPS + latency on this
-  laptop → accuracy-vs-offline comparison. Output: REALTIME_FEASIBILITY.md + benchmark artifacts.
-- **Owner-blocked, requested in parallel**: record the fresh unseen-athlete validation set
+- **Awaiting owner inputs for the two remaining tracks**: (a) fresh unseen-athlete recordings
   (spec: UNSEEN_ATHLETE_DATASET_SPEC.md; per stress-test findings add ≥1 slow/paused-tempo set
-  and a rear view). CRITICAL for any production claim; development continues without it.
+  and a rear view) — CRITICAL for any production claim; (b) Supabase keys + Vercel account +
+  live-demo hardware decision (GPU vs 15 fps budget mode vs after-set mode; evidence in
+  REALTIME_FEASIBILITY.md §6).
+- Technical-lead work available without owner input: incremental tracker/decoder ports and a
+  sliding decode buffer for the causal variant (production engineering of the validated
+  streaming design); graduation deliverables drafting.
+
+## Done 2026-10-08 (was "Now")
+- **Realtime/causal feasibility**: causal audit + streaming prototype (V1/V2/V3). V2 (5.4 s
+  look-ahead): F1 0.806 vs offline 0.841, 44/47 offline reps reproduced, rep events ~5 s after
+  rep end. Compute on CPU laptop: 0.26–0.66× realtime (YOLO 88 ms/frame dominant) → live demo
+  needs GPU or budget mode; after-set processing feasible today. docs/REALTIME_FEASIBILITY.md.
 
 ## Next (ordered; reorder only with evidence)
-1. **Realtime/causal feasibility** (in progress — see Now).
-2. **Fresh-athlete validation gate** the moment recordings arrive: validate dataset → freeze →
+1. **Fresh-athlete validation gate** the moment recordings arrive: validate dataset → freeze →
    single locked evaluation against pre-registered criteria (either outcome reported).
-3. **Integration restart (graduation spine)**: deploy Supabase (needs owner keys) → minimal coach
+2. **Integration restart (graduation spine)**: deploy Supabase (needs owner keys) → minimal coach
    dashboard (Next.js) on simulated events → edge agent (video-file camera, MB-Lite offline
    path, outbox) → end-to-end demo: video → reps+indicators → DB → dashboard.
+3. **Live-demo engineering** per owner hardware decision: GPU port of YOLO+MB-Lite, incremental
+   tracker/decode, sliding decode buffer (design already validated; accuracy gates = match V2
+   numbers on dev videos).
 4. **Exercise library step** (after 1–3): bent-over row + seated row + bicep curl as the
    3-exercise demo set (curl needs per-exercise phase model — evidence: transfer F1 ≤ 0.65);
    exercise recognition gate only after modules are reliable.
 5. **Final validation on fresh athletes** + graduation deliverables (FINAL_RESULTS,
    architecture, demo script).
-- **Unreal visualization**: optional after 3; consumes stored 3D sequences; never a dependency.
+- **Unreal visualization**: optional after 2; consumes stored 3D sequences; never a dependency.
 
 ## Deferred / rejected for now
 - Pose-backbone fine-tuning (frozen representations suffice; revisit only if form-analysis
@@ -55,7 +64,7 @@ _Last update: 2026-10-08. History of superseded plans: PHASE_PLAN.md (original),
 | MB-family side/rear (depth-dominant) views | HIGH | TEST side 0.383; 1 wild rear-view FN | per-view routing ablation if needed; Domain C includes rear view |
 | Window extent under paused tempo | MEDIUM (new, Domain B) | wild IoU 0.632 vs 0.841: holds absorbed into windows, pulls still correct | any fix developed on TRAIN/VAL only, validated on Mendeley + Domain C, never on the reels |
 | True 3D accuracy unproven | HIGH | proxies only (no mocap) | constrained-skeleton post-processing; label limitations in all outputs |
-| Realtime budget unknown | HIGH | all offline today | roadmap item 3 measurement |
+| Realtime compute gap | MEDIUM (was HIGH "unknown") | MEASURED: 0.26–0.66× realtime on CPU laptop; YOLO 88 ms/f dominant; causal design itself validated (V2 F1 0.806) | owner hardware decision; GPU port or budget mode; after-set mode available now |
 | Cross-exercise transfer weak | MEDIUM | best 0.650 (curl) | per-exercise modules (roadmap 4) |
 | Annotation noise ceiling | LOW | tier recalls consistent | verify uncertain sample if needed |
 | Supabase/web undeployed | MEDIUM | code-complete | roadmap 2; needs owner keys |

@@ -15,16 +15,22 @@ CURRENT_HANDOFF_REPORT.md. Historical Phase-0 state preserved in git history._
 DONE+VALIDATED: rep segmentation in-domain (Phases 0–2.8), result-schema fix, dataset gate
 tooling, external wild stress test (Domain B, PARTIAL EXTERNAL TRANSFER). PARTIAL: form v1
 (rom_proxy directional; 3 indicators partial; seated-row thresholds provisional), seated-row
-generalization (zero-shot + 3 wild athletes; no fresh-athlete evidence). BLOCKED: unseen-athlete
-validation (owner recording), Supabase deploy (keys), Vercel (account). IN PROGRESS: realtime/
-causal feasibility (approved 2026-10-08). NOT STARTED: dashboard UI, edge agent, Unreal.
+generalization (zero-shot + 3 wild athletes; no fresh-athlete evidence), realtime (causal
+streaming design VALIDATED on dev videos — V2 F1 0.806 vs offline 0.841, rep events ~5 s after
+rep end — but live operation NOT FEASIBLE on this CPU: 0.26–0.66× realtime, GPU or budget mode
+needed; docs/REALTIME_FEASIBILITY.md). BLOCKED: unseen-athlete validation (owner recording),
+Supabase deploy (keys), Vercel (account), live-demo hardware decision (owner). NOT STARTED:
+dashboard UI, edge agent, Unreal.
 
 ## Current milestone
-**External Instagram stress test DONE (commit bc3472e): PARTIAL EXTERNAL TRANSFER.** Frozen
-MB-Lite zero-shot on 10 manually-annotated wild reps (3 videos/3 athletes/4 views): pull-rule
-F1 0.842 (internal ref 0.853), pull MAE 0.282 s, no spurious reps; IoU F1 0.632 (ref 0.841) —
-window extent degrades on paused-tempo reps; 1 rear-view miss. No model change (frozen rule).
-**Now: realtime/causal feasibility prototype** (owner-approved order; no new data needed).
+**Realtime/causal feasibility DONE.** Causal audit (offline system hides ±5 s detrend look-ahead,
+whole-video tempo/Viterbi, bidirectional lifting) + streaming prototype with commit-once
+semantics: V2 (5.4 s look-ahead) reproduces 44/47 offline rep events, F1 0.806 vs 0.841, rep
+emitted ~5 s after rep end; compute on this CPU laptop is 0.26–0.66× realtime (YOLO 88 ms/frame
+is the bottleneck) → live demo needs a GPU or the 15 fps/no-TTA budget mode (fast-tempo weakness
+measured); after-set processing already feasible today. Before that, same day: external stress
+test (bc3472e, PARTIAL EXTERNAL TRANSFER) + docs hygiene (ea71ccd).
+**Next: fresh-dataset gate on recording arrival; integration spine after keys (owner).**
 
 ## Primary model + current metrics (frozen evidence)
 | what | result |

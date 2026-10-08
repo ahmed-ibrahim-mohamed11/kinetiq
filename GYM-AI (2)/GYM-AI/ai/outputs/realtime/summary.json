@@ -1,0 +1,81 @@
+{
+ "yolo_ms": {
+  "median": 87.90180005598813,
+  "p95": 109.26352997776121
+ },
+ "hardware": "CPU-only laptop (torch CPU), Windows 11",
+ "variants": {
+  "V1_low_latency": {
+   "tp": 27,
+   "fp": 16,
+   "fn": 3,
+   "f1": 0.74,
+   "median_event_latency_s": 3.78,
+   "timing": {
+    "variant": "V1_low_latency",
+    "proc_fps": 30.0,
+    "yolo_ms_per_frame": 87.9,
+    "track_ms_per_chunk": 13.4,
+    "track_ms_last_chunk": 38.5,
+    "lift_ms_per_chunk": 3095.6,
+    "feat_decode_ms_per_chunk": 75.4,
+    "feat_decode_ms_last_chunk": 156.8,
+    "form_ms_per_rep": 9.4,
+    "per_frame_budget_ms": 127.2,
+    "sustainable_fps": 7.9,
+    "realtime_factor": 0.26,
+    "lookahead_s": 2.7,
+    "warmup_s": 8.1,
+    "rss_mb": 461.0
+   }
+  },
+  "V2_quality": {
+   "tp": 27,
+   "fp": 10,
+   "fn": 3,
+   "f1": 0.806,
+   "median_event_latency_s": 5.04,
+   "timing": {
+    "variant": "V2_quality",
+    "proc_fps": 30.0,
+    "yolo_ms_per_frame": 87.9,
+    "track_ms_per_chunk": 14.3,
+    "track_ms_last_chunk": 22.3,
+    "lift_ms_per_chunk": 3305.3,
+    "feat_decode_ms_per_chunk": 57.9,
+    "feat_decode_ms_last_chunk": 116.7,
+    "form_ms_per_rep": 9.8,
+    "per_frame_budget_ms": 129.6,
+    "sustainable_fps": 7.7,
+    "realtime_factor": 0.26,
+    "lookahead_s": 5.4,
+    "warmup_s": 8.1,
+    "rss_mb": 466.0
+   }
+  },
+  "V3_budget_15fps": {
+   "tp": 26,
+   "fp": 8,
+   "fn": 4,
+   "f1": 0.812,
+   "median_event_latency_s": 4.93,
+   "timing": {
+    "variant": "V3_budget_15fps",
+    "proc_fps": 15.0,
+    "yolo_ms_per_frame": 87.9,
+    "track_ms_per_chunk": 7.1,
+    "track_ms_last_chunk": 10.6,
+    "lift_ms_per_chunk": 1037.4,
+    "feat_decode_ms_per_chunk": 29.0,
+    "feat_decode_ms_last_chunk": 42.1,
+    "form_ms_per_rep": 5.0,
+    "per_frame_budget_ms": 101.2,
+    "sustainable_fps": 9.9,
+    "realtime_factor": 0.66,
+    "lookahead_s": 5.4,
+    "warmup_s": 16.2,
+    "rss_mb": 552.0
+   }
+  }
+ }
+}

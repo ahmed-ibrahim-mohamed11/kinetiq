@@ -1,0 +1,4 @@
+variant,proc_fps,yolo_ms_per_frame,track_ms_per_chunk,track_ms_last_chunk,lift_ms_per_chunk,feat_decode_ms_per_chunk,feat_decode_ms_last_chunk,form_ms_per_rep,per_frame_budget_ms,sustainable_fps,realtime_factor,lookahead_s,warmup_s,rss_mb
+V1_low_latency,30.0,87.9,13.4,38.5,3095.6,75.4,156.8,9.4,127.2,7.9,0.26,2.7,8.1,461.0
+V2_quality,30.0,87.9,14.3,22.3,3305.3,57.9,116.7,9.8,129.6,7.7,0.26,5.4,8.1,466.0
+V3_budget_15fps,15.0,87.9,7.1,10.6,1037.4,29.0,42.1,5.0,101.2,9.9,0.66,5.4,16.2,552.0
