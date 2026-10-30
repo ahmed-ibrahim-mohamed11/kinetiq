@@ -31,6 +31,25 @@ interface Tenant {
   member: SupabaseClient;
   memberId: string;
   sessionId: string;
+  userIds: string[];
+}
+
+/**
+ * Tear a tenant down in FK order. Branch-scoped tables use ON DELETE RESTRICT on purpose
+ * (deleting a branch must never silently erase attendance history), so the org row cannot
+ * be deleted first. Auth users are removed through the admin API.
+ */
+async function destroyTenant(admin: SupabaseClient, t: Tenant): Promise<void> {
+  await admin.from('attendance_sessions').delete().eq('branch_id', t.branchId).throwOnError();
+  await admin.from('members').delete().eq('organization_id', t.orgId).throwOnError();
+  for (const table of ['edge_devices', 'cameras', 'equipment'] as const) {
+    await admin.from(table).delete().eq('branch_id', t.branchId).throwOnError();
+  }
+  await admin.from('organizations').delete().eq('id', t.orgId).throwOnError();
+  for (const id of t.userIds) {
+    const { error } = await admin.auth.admin.deleteUser(id);
+    if (error) throw error;
+  }
 }
 
 const stamp = Date.now().toString(36);
@@ -70,7 +89,7 @@ async function makeTenant(admin: SupabaseClient, tag: string): Promise<Tenant> {
   await admin.from('workout_reports').insert({ attendance_session_id: s!.id, member_id: m!.id, summary: { schema_version: 1 } }).throwOnError();
   await admin.from('edge_devices').insert({ branch_id: branch!.id, name: `dev-${tag}` }).throwOnError();
   await admin.from('cameras').insert({ branch_id: branch!.id, name: `cam-${tag}`, stream_url: 'rtsp://192.0.2.1/x' }).throwOnError();
-  return { orgId: org!.id, branchId: branch!.id, staff: staff.client, member: member.client, memberId: m!.id, sessionId: s!.id };
+  return { orgId: org!.id, branchId: branch!.id, staff: staff.client, member: member.client, memberId: m!.id, sessionId: s!.id, userIds: [staff.id, member.id] };
 }
 
 d('Row Level Security', () => {
@@ -86,8 +105,9 @@ d('Row Level Security', () => {
 
   afterAll(async () => {
     if (!admin) return;
-    await admin.from('organizations').delete().in('id', [A.orgId, B.orgId]);
-  });
+    // Fails loudly: leftover fixtures in a shared project are a real problem, not a warning.
+    for (const t of [A, B]) if (t) await destroyTenant(admin, t);
+  }, 60_000);
 
   it('member sees only their own sessions and reports', async () => {
     const { data: sessions } = await A.member.from('attendance_sessions').select('id');
