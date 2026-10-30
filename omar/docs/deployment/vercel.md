@@ -17,4 +17,13 @@ Rules:
 
 Smoke test after deploy: `GET https://<domain>/api/health` returns `{status:"ok"}`; sign in as a staff user and confirm `/dashboard` renders with the branch's cameras.
 
-> Status: no Vercel account is connected in this environment, so no deployment has been performed. The configuration above is complete; the first deployment is a manual step for the account owner and is tracked as a blocker in `PROGRESS.md`.
+## Import flow (GitHub → Vercel)
+
+Repository: `github.com/omarahmedvibe210-droid/ai-smart-gym` (private). In the Vercel dashboard, **Add New → Project → Import** that repository **twice**:
+
+1. Project `smartgym-admin`: Root Directory `apps/admin-web`, Framework Next.js, enable *Include source files outside of the Root Directory*. Environment variables (Production + Preview): `NEXT_PUBLIC_SUPABASE_URL=https://vpwudyxfsbyrbpwqdmew.supabase.co`, `NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key from `supabase projects api-keys`>`, `NEXT_PUBLIC_APP_ENV=production`.
+2. Project `smartgym-member`: Root Directory `apps/member-web`, same variables plus `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (generate with `npx web-push generate-vapid-keys`; the private half goes to the notification worker only).
+
+After the first deployment add both Vercel URLs to Supabase **Auth → URL Configuration** (Site URL = member app; redirect allow-list = both), replacing the localhost entries declared in `supabase/config.toml`.
+
+> Status 2026-10-30: Supabase project exists and is linked; the GitHub repository and Vercel projects are the next steps (tracked in `PROGRESS.md`).

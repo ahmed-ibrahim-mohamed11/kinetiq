@@ -28,14 +28,20 @@ supabase db push                                   # applies supabase/migrations
 
 Do **not** run `supabase/seed.sql` against production — it creates a DEMO tenant and a dev device secret. For the first real tenant run the onboarding SQL in `docs/deployment/edge-device.md`.
 
+Notes verified 2026-10-30 against project `vpwudyxfsbyrbpwqdmew` (eu-west-2, Postgres 17.11):
+- `supabase link` and `db push` no longer need the database password; CLI ≥ 2.122 provisions a temporary login role through the Management API ("Initialising login role…").
+- `db push --dry-run` listed the six migrations and nothing else (no seed, no roles).
+- `supabase config diff` showed the intended changes (signups off, redirect URLs, storage limit) plus `db.major_version`, so `config.toml` now declares 17.
+- `infrastructure/scripts/deploy-cloud.ps1` runs sections 2–3 (and the GitHub push) end to end with a stop-on-first-error policy.
+
 ## 3. Edge Functions
 
 ```bash
 supabase secrets set QR_TOKEN_SECRET="$(openssl rand -base64 32)"
 supabase secrets set INGEST_CLOCK_SKEW_SECONDS=300
-supabase functions deploy ingest-events --no-verify-jwt
-supabase functions deploy device-sync --no-verify-jwt
-supabase functions deploy qr-token
+supabase functions deploy ingest-events --use-api --no-verify-jwt   # --use-api bundles server-side (no Docker)
+supabase functions deploy device-sync --use-api --no-verify-jwt
+supabase functions deploy qr-token --use-api
 ```
 
 Type-check before deploying: `cd supabase/functions && deno check --config deno.json ingest-events/index.ts qr-token/index.ts device-sync/index.ts`.

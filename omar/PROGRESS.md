@@ -52,9 +52,8 @@ Fixes made during this round of verification: time-aware rep smoothing; `interfa
 
 | Blocker | Needed for | Owner action |
 | --- | --- | --- |
-| Supabase project **authentication** (project exists: ref `vpwudyxfsbyrbpwqdmew`, created by the owner 2026-10-30; MCP server registered in `.mcp.json`) | Auth/PostgREST/Edge Runtime execution, `tests/security/rls.test.ts`, `tests/integration/ingest-smoke.mjs`, clicking through the apps | Owner completes the browser OAuth: `claude` → `/mcp` → supabase → Authenticate; and `supabase login && supabase link --project-ref vpwudyxfsbyrbpwqdmew`. **Nothing has been pushed to the project yet.** |
-| Vercel account linked to the GitHub repo | Deploy admin-web / member-web | Connect repo per `docs/deployment/vercel.md` |
-| GitHub remote | CI execution (incl. the embedded-DB job and backup drill), gitleaks | `git remote add origin … && git push` (local repo initialised with the full history) |
+| **Permission to deploy** (Supabase project linked and CLI/MCP/GitHub all authenticated, but the agent's permission policy denies `db push`, `secrets set`, function deploys and `gh repo create --push`) | Migrations/functions/secrets on `vpwudyxfsbyrbpwqdmew`; GitHub repo + CI; then `tests/security/rls.test.ts`, click-through | Owner runs `infrastructure/scripts/deploy-cloud.ps1`, **or** adds a permission rule so the agent can run `npx supabase *`, `gh *`, `git push *` |
+| Vercel account + GitHub App | Deploy admin-web / member-web from the repo | After the push: import the repo twice per `docs/deployment/vercel.md` (root dirs `apps/admin-web`, `apps/member-web`); `vercel login` is a browser step |
 | Authorised camera access (RTSP URLs, credentials, positions) | Phase 0 probe evidence, Phase 2 soak + GPU benchmark | Gym IT / owner |
 | Floor plan, equipment inventory, occupancy data | Phase 0/5 configuration | Gym management |
 | Model weight licences (detector/pose/ReID/face/PAD) | Phase 2/3/4 model wiring + thresholds | Product owner after benchmarks |
@@ -63,7 +62,12 @@ Fixes made during this round of verification: time-aware rep smoothing; `interfa
 
 ## Current work
 
-**Connecting to the Supabase project `vpwudyxfsbyrbpwqdmew`.** Done: project-scope MCP server config (`.mcp.json`), deployment doc updated with the ref. Pending on the owner's browser login (cannot be done by the agent): MCP OAuth and `supabase link`. Once authenticated, in order: `supabase db push` (migrations 0001–0006, **no** seed on production) → `supabase secrets set QR_TOKEN_SECRET=…` → deploy `ingest-events`, `device-sync`, `qr-token` → fetch project URL + anon key → write `apps/*/.env.local` → run `tests/security/rls.test.ts` with a throwaway service key → sign in and click through both apps → record results here.
+**Cloud connection, 2026-10-30.** Verified by execution:
+- Supabase MCP server (`.mcp.json`) authenticated via OAuth — `claude mcp list` reports **Connected**. Official Supabase skills installed under `.claude/skills/`.
+- Supabase CLI logged in; project **linked** (`vpwudyxfsbyrbpwqdmew`, eu-west-2, Postgres 17.11, ACTIVE_HEALTHY). `db push --dry-run` lists exactly migrations 0001–0006, no seed. API keys fetched; gitignored `apps/*/.env.local` (public values) and root `.env` (server-only) written. Remote state checked read-only: **0 migrations, 0 functions, 0 secrets** — nothing has been deployed yet.
+- GitHub CLI logged in as `omarahmedvibe210-droid` (scopes repo, read:org, gist). No repository created yet.
+
+Blocked by the agent's permission policy (auto-mode classifier denied: migration push = production deploy, `secrets set` = secret-store write, `gh repo create … --push` = data upload). Owner options: run `infrastructure/scripts/deploy-cloud.ps1` from a terminal (does all of the below, stop-on-first-error), or grant the agent a permission rule for those commands. Remaining order: `db push` → `secrets set` → deploy 3 functions → `config push` → GitHub repo + push → CI green → Vercel import (two projects, `docs/deployment/vercel.md`) → live RLS suite → click-through.
 
 ## Next engineering tasks (in order)
 
