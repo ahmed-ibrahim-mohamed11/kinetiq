@@ -1,0 +1,43 @@
+{
+  "name": "ai-smart-gym",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered smart gym management and computer vision platform (edge AI + Supabase + Next.js)",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "services/notification-worker",
+    "tests/security",
+    "tests/db"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:unit": "npm run test -w packages/api-contracts -w packages/validation -w packages/shared-config -w services/notification-worker",
+    "dev:admin": "npm run dev -w apps/admin-web",
+    "dev:member": "npm run dev -w apps/member-web",
+    "db:reset": "supabase db reset",
+    "db:push": "supabase db push",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json,yml,yaml}\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "prettier": "^3.4.2",
+    "supabase": "^2.122.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "allowScripts": {
+    "@embedded-postgres/windows-x64@18.4.0-beta.17": true,
+    "esbuild@0.21.5": true,
+    "esbuild@0.28.2": true
+  }
+}

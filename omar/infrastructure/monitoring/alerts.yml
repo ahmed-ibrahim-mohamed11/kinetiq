@@ -1,0 +1,60 @@
+groups:
+  - name: smartgym-edge
+    rules:
+      - alert: EdgeCameraOffline
+        expr: edge_camera_online == 0
+        for: 2m
+        labels: { severity: warning }
+        annotations:
+          summary: "Camera {{ $labels.name }} offline for 2 minutes"
+          runbook: docs/operations/runbook.md#camera-offline
+
+      - alert: EdgeQueueBacklog
+        expr: edge_queue_depth > 5000
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "Event queue backlog {{ $value }} — cloud sync failing?"
+          runbook: docs/operations/runbook.md#sync-backlog
+
+      - alert: EdgeQueueCritical
+        expr: edge_queue_depth > 100000
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "Event queue critical ({{ $value }}); disk pressure imminent"
+
+      - alert: EdgePipelineLatencyHigh
+        expr: edge_p95_latency_ms > 400
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "p95 frame latency {{ $value }} ms (budget 400 ms) — reduce cameras or inference fps"
+
+      - alert: EdgeNoFramesProcessed
+        expr: rate(edge_frames_processed_total[5m]) == 0
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "Edge pipeline processed no frames in 5 minutes"
+
+      - alert: EdgeIdentityMergesRefusedSpike
+        expr: increase(edge_identity_merges_refused_total[15m]) > 20
+        for: 0m
+        labels: { severity: info }
+        annotations:
+          summary: "Many ambiguous identity matches — check ReID thresholds / camera overlap"
+
+      - alert: GpuMemoryNearFull
+        expr: DCGM_FI_DEV_FB_USED / (DCGM_FI_DEV_FB_USED + DCGM_FI_DEV_FB_FREE) > 0.92
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "GPU memory above 92%"
+
+      - alert: HostDiskLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.10
+        for: 10m
+        labels: { severity: critical }
+        annotations:
+          summary: "Root filesystem below 10% free"

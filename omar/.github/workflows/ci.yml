@@ -1,0 +1,155 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    name: TypeScript — typecheck, unit tests, builds
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-dummy-anon-key-not-a-secret-0000000000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run test:unit
+      - run: npm run test -w tests/security
+      - run: npm run build -w apps/admin-web
+      - run: npm run build -w apps/member-web
+      - name: Dependency audit (high+)
+        run: npm audit --audit-level=high || (echo "::warning::npm audit found high severity issues" && exit 0)
+
+  edge:
+    name: Python — edge-ai lint, typecheck, tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/edge-ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]" opencv-python-headless onnxruntime onnx scipy defusedxml
+      - run: ruff check .
+      - run: mypy edge_ai --ignore-missing-imports || (echo "::warning::mypy reported issues" && exit 0)
+      - run: pytest -q --cov=edge_ai --cov-report=term-missing
+
+  database-embedded:
+    name: Database — migrations, ingest, RLS, backup drill (embedded PostgreSQL, no Docker)
+    runs-on: ubuntu-latest
+    needs: [web]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: PostgreSQL 18 client tools (pg_dump/psql for the restore drill)
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc > /dev/null
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-18
+          echo "PG_TOOLS_BIN=/usr/lib/postgresql/18/bin" >> "$GITHUB_ENV"
+      - run: npm ci --no-audit --no-fund
+      - run: npm run test -w tests/db
+
+  database:
+    name: Database — Supabase local stack (Edge Functions + RLS via PostgREST)
+    runs-on: ubuntu-latest
+    needs: [web]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: npm ci --no-audit --no-fund
+      - name: Start local Supabase (applies migrations + seed)
+        run: supabase start -x studio,imgproxy,inbucket,logflare,vector
+      - name: Export local keys
+        run: |
+          supabase status -o env | sed 's/^/export /' > .supabase.env
+          cat .supabase.env | grep -E 'API_URL|ANON_KEY|SERVICE_ROLE_KEY' | sed 's/export //' >> "$GITHUB_ENV"
+      - name: RLS and authorization tests
+        env:
+          RUN_RLS_TESTS: "1"
+          SUPABASE_URL: ${{ env.API_URL }}
+          SUPABASE_ANON_KEY: ${{ env.ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SERVICE_ROLE_KEY }}
+        run: npm run test:rls -w tests/security
+      - name: Edge Function contract check (ingest-events signature path)
+        env:
+          SUPABASE_URL: ${{ env.API_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SERVICE_ROLE_KEY }}
+        run: |
+          supabase functions serve ingest-events --no-verify-jwt &
+          sleep 8
+          node tests/integration/ingest-smoke.mjs
+      - run: supabase stop
+
+  edge-functions:
+    name: Edge Functions — Deno type-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check --config deno.json ingest-events/index.ts qr-token/index.ts device-sync/index.ts
+        working-directory: supabase/functions
+
+  security:
+    name: Security — secret scan, SAST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bandit (Python SAST)
+        run: pip install bandit && bandit -q -r services/edge-ai/edge_ai -ll
+
+  docker:
+    name: Docker — build edge-ai image
+    runs-on: ubuntu-latest
+    needs: [edge]
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infrastructure/docker/edge-ai.Dockerfile
+          push: false
+          tags: smartgym/edge-ai:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

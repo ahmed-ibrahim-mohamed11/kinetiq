@@ -1,0 +1,56 @@
+# Camera inventory for this edge device. Copy to cameras.yaml.
+# Ids MUST match rows in public.cameras / public.camera_zones / public.equipment.
+# NO credentials here — they go in camera-credentials.yaml (gitignored), keyed by camera id.
+cameras:
+  - id: c0000000-0000-4000-8000-000000000001
+    name: CAM-ENTRANCE (test)
+    purpose: entrance
+    url: rtsp://192.0.2.10:554/Streaming/Channels/101
+    inference_fps: 10
+    zones:
+      - id: f0000000-0000-4000-8000-000000000001
+        type: entrance
+        equipment_id: null
+        polygon: [[600, 200], [1300, 200], [1300, 1000], [600, 1000]]
+
+  - id: c0000000-0000-4000-8000-000000000002
+    name: CAM-FLOOR-A (test)
+    purpose: floor
+    url: rtsp://192.0.2.11:554/Streaming/Channels/101
+    inference_fps: 10
+    zones:
+      - id: f0000000-0000-4000-8000-000000000002
+        type: equipment
+        equipment_id: e0000000-0000-4000-8000-000000000001
+        exercise_slug: lat-pulldown
+        polygon: [[100, 300], [700, 300], [700, 1000], [100, 1000]]
+      - id: f0000000-0000-4000-8000-000000000003
+        type: equipment
+        equipment_id: e0000000-0000-4000-8000-000000000002
+        exercise_slug: leg-press
+        polygon: [[800, 300], [1500, 300], [1500, 1000], [800, 1000]]
+
+  - id: c0000000-0000-4000-8000-000000000003
+    name: CAM-FLOOR-B (test)
+    purpose: floor
+    url: rtsp://192.0.2.12:554/Streaming/Channels/101
+    inference_fps: 10
+    zones:
+      # Same leg press seen from a second camera → fusion must dedupe reps.
+      - id: f0000000-0000-4000-8000-000000000004
+        type: equipment
+        equipment_id: e0000000-0000-4000-8000-000000000002
+        exercise_slug: leg-press
+        polygon: [[200, 250], [900, 250], [900, 1050], [200, 1050]]
+      - id: f0000000-0000-4000-8000-000000000005
+        type: equipment
+        equipment_id: e0000000-0000-4000-8000-000000000003
+        exercise_slug: chest-press-machine
+        polygon: [[1000, 250], [1800, 250], [1800, 1050], [1000, 1050]]
+
+# Exercise ids must match public.exercise_catalog; the edge caches the catalog from the cloud
+# at startup and falls back to this file when offline.
+exercise_ids:
+  lat-pulldown: 88888888-8888-4888-8888-888888888888
+  leg-press: 88888888-8888-4888-8888-888888888889
+  chest-press-machine: 88888888-8888-4888-8888-888888888890
