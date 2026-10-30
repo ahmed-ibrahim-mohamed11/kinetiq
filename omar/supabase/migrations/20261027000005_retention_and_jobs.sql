@@ -134,10 +134,16 @@ revoke all on function public.release_stale_notification_locks() from public, an
 do $$
 begin
   if exists (select 1 from pg_available_extensions where name = 'pg_cron') then
-    create extension if not exists pg_cron;
-    perform cron.schedule('smartgym-abandon-stale-sessions', '*/15 * * * *', $job$ select public.abandon_stale_sessions(6) $job$);
-    perform cron.schedule('smartgym-apply-retention', '30 3 * * *', $job$ select * from public.apply_retention() $job$);
-    perform cron.schedule('smartgym-release-notification-locks', '*/5 * * * *', $job$ select public.release_stale_notification_locks() $job$);
+    begin
+      create extension if not exists pg_cron;
+      perform cron.schedule('smartgym-abandon-stale-sessions', '*/15 * * * *', $job$ select public.abandon_stale_sessions(6) $job$);
+      perform cron.schedule('smartgym-apply-retention', '30 3 * * *', $job$ select * from public.apply_retention() $job$);
+      perform cron.schedule('smartgym-release-notification-locks', '*/5 * * * *', $job$ select public.release_stale_notification_locks() $job$);
+    exception when others then
+      -- Hosted Postgres may require enabling pg_cron from the dashboard first. Do not fail the
+      -- migration; the runbook's post-deploy check verifies `select jobname from cron.job`.
+      raise warning 'pg_cron available but not enabled/scheduled here (%). Enable it, then re-run this block.', sqlerrm;
+    end;
   else
     raise notice 'pg_cron not available: schedule abandon_stale_sessions, apply_retention and release_stale_notification_locks externally';
   end if;

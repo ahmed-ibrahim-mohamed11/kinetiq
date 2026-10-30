@@ -10,8 +10,11 @@
 --   * RLS is enabled here and policies are defined in 0002.
 -- ============================================================================
 
-create extension if not exists "pgcrypto";
-create extension if not exists "citext";
+-- Extensions live in the `extensions` schema (Supabase convention). Migrations run under a
+-- role whose search_path may not include it, so every extension object below is qualified.
+create schema if not exists extensions;
+create extension if not exists "pgcrypto" with schema extensions;
+create extension if not exists "citext" with schema extensions;
 
 -- ----------------------------------------------------------------------------
 -- Enums
@@ -50,7 +53,7 @@ end $$;
 create table public.organizations (
   id            uuid primary key default gen_random_uuid(),
   name          text not null check (length(name) between 2 and 120),
-  slug          citext not null unique check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
+  slug          extensions.citext not null unique check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
   country_code  char(2) not null default 'EG',
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
@@ -113,10 +116,10 @@ create table public.members (
   organization_id  uuid not null references public.organizations(id) on delete cascade,
   branch_id        uuid not null references public.branches(id) on delete restrict,
   user_id          uuid unique references auth.users(id) on delete set null,
-  member_code      citext not null check (member_code ~ '^[A-HJ-NP-Z2-9-]{4,32}$'),
+  member_code      extensions.citext not null check (member_code ~ '^[A-HJ-NP-Z2-9-]{4,32}$'),
   full_name        text not null check (length(full_name) between 2 and 120),
   phone            text check (phone is null or phone ~ '^\+[1-9][0-9]{7,14}$'),
-  email            citext,
+  email            extensions.citext,
   status           public.membership_status not null default 'active',
   created_at       timestamptz not null default now(),
   updated_at       timestamptz not null default now(),
@@ -213,7 +216,7 @@ create trigger trg_cameras_updated before update on public.cameras for each row 
 
 create table public.exercise_catalog (
   id                uuid primary key default gen_random_uuid(),
-  slug              citext not null unique,
+  slug              extensions.citext not null unique,
   name              text not null,
   movement_pattern  public.movement_pattern not null,
   primary_signal    text not null,   -- e.g. 'left_elbow_angle'
@@ -392,7 +395,7 @@ create table public.workout_reports (
   member_id              uuid not null references public.members(id) on delete cascade,
   generated_at           timestamptz not null default now(),
   summary                jsonb not null,
-  share_token            text not null unique default encode(gen_random_bytes(24), 'hex'),
+  share_token            text not null unique default encode(extensions.gen_random_bytes(24), 'hex'),
   share_expires_at       timestamptz not null default now() + interval '30 days',
   viewed_at              timestamptz
 );

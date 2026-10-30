@@ -324,11 +324,11 @@ begin
   if not public.has_branch_role(v_branch, 'owner', 'admin') then
     raise exception 'not authorized' using errcode = '42501';
   end if;
-  v_secret := encode(gen_random_bytes(32), 'base64');
+  v_secret := encode(extensions.gen_random_bytes(32), 'base64');
   update public.edge_device_secrets set retired_at = now() + interval '24 hours'
    where edge_device_id = p_device_id and retired_at is null;
   insert into public.edge_device_secrets (edge_device_id, secret_hash, secret)
-  values (p_device_id, encode(digest(v_secret, 'sha256'), 'hex'), v_secret);
+  values (p_device_id, encode(extensions.digest(v_secret, 'sha256'), 'hex'), v_secret);
   return v_secret;
 end $$;
 
