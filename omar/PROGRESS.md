@@ -15,8 +15,8 @@ Legend: ✅ verified by execution · 🟡 implemented, not fully verifiable here
 | 4 — Multi-camera tracking | 🟡 | Per-camera tracker, global identity registry (ReID + spatial/temporal gating, refuse-ambiguous), ReID ONNX embedder wired into the worker (first sighting + periodic), uncertainty events, cross-camera handoff — all unit-tested on synthetic data. **Missing**: ReID weights and crowded-scene footage. |
 | 5 — Exercise & equipment recognition | 🟡 | Equipment registry, zone editor, floor map, zone-dwell association, v1 exercise classification (equipment default), catalogue/zone config synced from the cloud. **Missing**: temporal exercise classifier (needs labelled footage). |
 | 6 — Rep & set intelligence | 🟡 | Time-aware rep state machine, set segmentation, rest detection, cross-camera dedup, confidence/unverified handling, pose adapter → joint angles verified; evaluation harness ready. **Missing**: labelled-footage precision/recall. |
-| 7 — Reporting & member experience | ✅ (software) | Member app (QR, live workout, history, report, share link, consents, push), admin app (dashboard, live sessions, members, consents, equipment, cameras/zones, devices, audit, kiosk), worker with Web Push + Resend email fallback. Report generation verified on a real database from real pipeline events. **Not** exercised against Supabase Auth/PostgREST (needs a project). |
-| 8 — Production hardening | 🟡 | RLS + authorization tests executed; ingest idempotency/replay verified; abandon-stale-sessions, retention, notification backoff/dead-letter verified; backup/restore drill implemented (skipped locally — needs `pg_dump` 18, runs in CI); monitoring alerts written. **Missing**: 24 h soak on real cameras, internet-outage drill on the real stack, third-party review. |
+| 7 — Reporting & member experience | ✅ software, **deployed** | Member app (QR, live workout, history, report, share link, consents, push) and admin app (dashboard, live sessions, members, consents, equipment, cameras/zones, devices, audit, kiosk) are live on Vercel against the real Supabase project — https://smartgym-member.vercel.app, https://smartgym-admin.vercel.app; `/api/health` 200, login pages render; authorization verified through Auth + PostgREST on the live project. Worker (Web Push + Resend email fallback) exists but has **no host yet**. Owner click-through pending the one-command owner bootstrap. |
+| 8 — Production hardening | 🟡 | RLS + authorization tests executed on embedded PostgreSQL **and** against the hosted project through Auth/PostgREST (17 passed, fixtures torn down); ingest idempotency/replay verified; abandon-stale-sessions, retention, notification backoff/dead-letter verified; backup/restore drill implemented (skipped locally — needs `pg_dump` 18, runs in CI); monitoring alerts written. **Missing**: 24 h soak on real cameras, internet-outage drill on the real stack, third-party review. |
 | 9 — Form analysis roadmap | 🟡 design only | Schema hooks (`form_rules`, `quality_label` constrained NULL), reserved event field, ADR. Intentionally not implemented. |
 
 ## Verification evidence (executed on the dev machine: Windows 11, Node 24.20, npm 11.19, Python 3.10.11, Deno 2.9.8, embedded PostgreSQL 18.4)
@@ -36,6 +36,11 @@ Legend: ✅ verified by execution · 🟡 implemented, not fully verifiable here
 | admin-web / member-web production builds | `npm run build -w apps/…` | exit 0, 15 + 13 routes (admin now includes `/kiosk`) |
 | Python lint / strict types | `ruff check .` · `mypy edge_ai` | clean / clean (52+ files) |
 | Python tests | `pytest -q` (services/edge-ai) | **79 passed**: contracts (shared fixtures incl. biometric events), rep counter, set segmenter, dedup, queue+sync (signature vectors, backoff, poison handling), geometry+tracker, global identity, zones, face store, device sync + enrollment + entrance identifier, ONVIF parser, **ONNX adapters through ONNX Runtime**, **real video decode**, pipeline simulation, pipeline entrance + config sync |
+| **Live Supabase: migrations** (`vpwudyxfsbyrbpwqdmew`, eu-west-2, PG 17.11) | `npx supabase db push --linked --yes` · `migration list --linked` · SQL checks | 7/7 applied; 30 public tables, **0 without RLS**; exercise catalog 13 rows; pgcrypto/citext in `extensions`; pg_cron jobs ×3 scheduled (`cron.job`) |
+| **Live Supabase: Edge Functions** | `functions deploy --use-api` ×3 · unauthenticated HTTPS probes | all ACTIVE; `ingest-events` → 405 `method_not_allowed`, `device-sync` → 401 `invalid device credentials`, `qr-token` → 401 missing auth header (our own error bodies ⇒ functions execute) |
+| **Live Supabase: secrets + config** | `secrets set` · `config push --yes` ×4 | `QR_TOKEN_SECRET` + `INGEST_CLOCK_SKEW_SECONDS` set; public sign-ups off, email provider on, `site_url` + redirect allow-list = Vercel apps + localhost, storage limit 10 MiB |
+| **Live RLS through Auth + PostgREST** | `RUN_RLS_TESTS=1 npm run test -w tests/security` | **17 passed** on the hosted project (member isolation, cross-org staff isolation, hidden device secrets, privileged RPCs denied, anon = catalog only, share token); teardown leaves 0 orgs / 0 users (SQL-verified) |
+| **Vercel production** | `npx vercel deploy --prod --yes` from the repo root ×2 | `smartgym-admin.vercel.app`, `smartgym-member.vercel.app` READY; `/api/health` 200 `{"status":"ok"}`; `/login` 200 on both |
 
 Fixes made during this round of verification: time-aware rep smoothing; `interface`→`type` Rows then full type generation; `@supabase/ssr` upgraded 0.5→0.12 (its generics lagged supabase-js 2.118 and typed every query as `never`), after which all app-side Supabase type wrappers were deleted; four SQL defects found statically (`base64url`, forced RLS on secrets, pgcrypto search_path, ambiguous seed code) all confirmed fixed by execution; JS/Python JSON number normalisation (integral-after-rounding); detector layout heuristic for small anchor counts; OpenCV pinned `<5` (Haar cascades removed in 5.0); e2e shim must not block the event loop.
 
@@ -43,17 +48,20 @@ Fixes made during this round of verification: time-aware rep smoothing; `interfa
 
 - **No RTSP camera has been opened**; the decode path was exercised on a locally generated video file only.
 - **No model weights, benchmark numbers or accuracy figures exist.** Adapters are verified with synthetic ONNX graphs, which proves plumbing, not recognition quality.
-- **Supabase Auth / PostgREST / Edge Runtime have not executed** (no Supabase project or Docker). RLS was verified with role switching on PostgreSQL, which is what PostgREST does, but the HTTP layer itself (JWT verification, `qr-token`, the Deno functions at runtime) is only type-checked.
-- **Web apps have not been clicked through against a live backend**; they build, type-check against the generated schema types, and their server actions call the verified RPCs.
-- **No deployment** to Vercel or Supabase cloud; no Docker image built here (no Docker).
+- **Edge Functions were only probed unauthenticated** on the live project (correct 401/405 bodies). A signed device batch and a real `qr-token` round-trip against the hosted functions still need a registered device: `tests/integration/ingest-smoke.mjs` after `issue_device_secret`.
+- **Web apps have not been clicked through by a human.** They are deployed, health endpoints and login pages respond, and their server actions call RPCs covered by the live RLS suite. The owner account must be bootstrapped first (see Current work).
+- **No Docker image built here** (no Docker locally; CI builds it). The notification worker and the edge AI service are not deployed anywhere (no host).
+- Preview deployments on Vercel have no Supabase variables on purpose (no staging project yet).
 - Backup/restore drill skipped locally (see above).
 
 ## Blocked work
 
 | Blocker | Needed for | Owner action |
 | --- | --- | --- |
-| **Permission to deploy** (Supabase project linked and CLI/MCP/GitHub all authenticated, but the agent's permission policy denies `db push`, `secrets set`, function deploys and `gh repo create --push`) | Migrations/functions/secrets on `vpwudyxfsbyrbpwqdmew`; GitHub repo + CI; then `tests/security/rls.test.ts`, click-through | Owner runs `infrastructure/scripts/deploy-cloud.ps1`, **or** adds a permission rule so the agent can run `npx supabase *`, `gh *`, `git push *` |
-| Vercel account + GitHub App | Deploy admin-web / member-web from the repo | After the push: import the repo twice per `docs/deployment/vercel.md` (root dirs `apps/admin-web`, `apps/member-web`); `vercel login` is a browser step |
+| GitHub token lacks the `workflow` scope (push rejected because `.github/workflows/ci.yml` is in the tree) | First push of `main`, CI run | Owner enters the `gh auth refresh -s workflow` device code in the browser; the agent then runs `git push -u origin main` and watches CI |
+| Owner account bootstrap (agent policy denies "permission grant" actions) | Signing in to the deployed admin app, click-through, device registration | Owner runs `node infrastructure/scripts/bootstrap-owner.mjs --email <owner e-mail> --org "<gym name>" --branch "<branch>"` from the repo root; the password is appended to the local `.env` only |
+| Vercel GitHub App not installed | Auto-deploy on push (`vercel git connect` fails until then) | Install https://github.com/apps/vercel/installations/new for `omarahmedvibe210-droid` with access to `ai-smart-gym`; then `npx vercel git connect --yes --cwd apps/admin-web` and the same for `apps/member-web` |
+| Host for the notification worker (later also the edge AI node) | Push/e-mail delivery; camera pipeline | Any always-on machine with Docker; compose files under `infrastructure/docker/` |
 | Authorised camera access (RTSP URLs, credentials, positions) | Phase 0 probe evidence, Phase 2 soak + GPU benchmark | Gym IT / owner |
 | Floor plan, equipment inventory, occupancy data | Phase 0/5 configuration | Gym management |
 | Model weight licences (detector/pose/ReID/face/PAD) | Phase 2/3/4 model wiring + thresholds | Product owner after benchmarks |
@@ -62,18 +70,17 @@ Fixes made during this round of verification: time-aware rep smoothing; `interfa
 
 ## Current work
 
-**Cloud connection, 2026-10-30.** Verified by execution:
-- Supabase MCP server (`.mcp.json`) authenticated via OAuth — `claude mcp list` reports **Connected**. Official Supabase skills installed under `.claude/skills/`.
-- Supabase CLI logged in; project **linked** (`vpwudyxfsbyrbpwqdmew`, eu-west-2, Postgres 17.11, ACTIVE_HEALTHY). `db push --dry-run` lists exactly migrations 0001–0006, no seed. API keys fetched; gitignored `apps/*/.env.local` (public values) and root `.env` (server-only) written. Remote state checked read-only: **0 migrations, 0 functions, 0 secrets** — nothing has been deployed yet.
-- GitHub CLI logged in as `omarahmedvibe210-droid` (scopes repo, read:org, gist). No repository created yet.
+**Cloud deployment, 2026-10-30 — done and verified (see the evidence table):** Supabase project `vpwudyxfsbyrbpwqdmew` migrated (0001–0007), 3 Edge Functions live, secrets set, auth/storage config pushed; live RLS suite green. Private GitHub repository `omarahmedvibe210-droid/ai-smart-gym` created with `origin` configured (nothing pushed yet, see blockers). Vercel projects `smartgym-admin` / `smartgym-member` configured (Root Directory, Next.js preset, outside-root files, Vercel Authentication on previews only, production env vars) and **deployed**: https://smartgym-admin.vercel.app and https://smartgym-member.vercel.app. Supabase MCP server authenticated (`claude mcp list` → Connected); official Supabase skills installed under `.claude/skills/`.
 
-Blocked by the agent's permission policy (auto-mode classifier denied: migration push = production deploy, `secrets set` = secret-store write, `gh repo create … --push` = data upload). Owner options: run `infrastructure/scripts/deploy-cloud.ps1` from a terminal (does all of the below, stop-on-first-error), or grant the agent a permission rule for those commands. Remaining order: `db push` → `secrets set` → deploy 3 functions → `config push` → GitHub repo + push → CI green → Vercel import (two projects, `docs/deployment/vercel.md`) → live RLS suite → click-through.
+**Waiting on the owner (one browser step or one command each):** GitHub `workflow` scope → push + CI; Vercel GitHub App → `git connect`; `bootstrap-owner.mjs` → first login and click-through.
+
+Fixes made while deploying, each verified by re-running the embedded suite and the live checks: extension objects schema-qualified (`extensions.gen_random_bytes/citext/digest`) because the CLI's temporary login role does not have `extensions` on its search_path; `[auth.email] enable_signup` restored to `true` (it disables the whole email provider, which broke every login); exercise catalog moved from the seed into migration 0007 (production had 0 rows); RLS suite teardown rewritten in FK order incl. auth users (it had been failing silently and leaving tenants behind); secrets scan limited to files git would commit.
 
 ## Next engineering tasks (in order)
 
-1. Push to GitHub; confirm all CI jobs green (including `database-embedded` with the backup drill and the Deno check).
-2. Finish the Supabase connection (see Current work): `supabase db push`; deploy the three functions; run `tests/security/rls.test.ts` and `tests/integration/ingest-smoke.mjs` against it; sign in and click through both apps.
-3. Deploy both apps to Vercel (staging first).
+1. Owner enters the GitHub device code → `git push -u origin main`; confirm every CI job green (`database-embedded` incl. the backup drill, Deno check, docker) and fix anything red.
+2. Owner installs the Vercel GitHub App → `npx vercel git connect --yes --cwd apps/admin-web` and `… apps/member-web`; from then on pushes to `main` deploy automatically.
+3. Owner runs `bootstrap-owner.mjs`, signs in at https://smartgym-admin.vercel.app, clicks through both apps, registers the first edge device (`issue_device_secret`) and runs `tests/integration/ingest-smoke.mjs` against the live project with that device; create a staging Supabase project for preview deployments.
 4. On the GPU edge node: `pip install -e ".[cv]"`, `edge-ai discover` + `edge-ai probe` on the first authorised camera; commit the JSON under `docs/phase0/`.
 5. Phase 2: choose and benchmark the detector (`edge_ai.tools.benchmark`), 10-minute RTSP soak with forced disconnect.
 6. Phase 3: choose face embedding + PAD models under acceptable licences; enrol staff volunteers; calibrate `FaceMatcher` thresholds; decide Haar vs YuNet for the entrance camera.
