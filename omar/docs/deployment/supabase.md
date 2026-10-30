@@ -4,7 +4,7 @@
 
 1. Create a Supabase project. **Region**: decide with legal counsel (see `docs/security/privacy-egypt.md`); default proposal `eu-central-1` (Frankfurt).
 2. Enable **Point-in-time recovery** (Pro plan) — this is the primary backup mechanism; daily backups are on by default. Record the retention window in `docs/operations/runbook.md`.
-3. Auth settings: disable public sign-ups (`enable_signup = false`, mirrored in `supabase/config.toml`); enable email confirmations; configure the SMTP provider; set Site URL to the member app and add both app URLs to redirect allow-list.
+3. Auth settings: disable public sign-ups (`[auth] enable_signup = false`, mirrored in `supabase/config.toml`); enable email confirmations; configure the SMTP provider; set Site URL to the member app and add both app URLs to redirect allow-list. **Keep `[auth.email] enable_signup = true`**: that key toggles the whole email provider, sign-in included — pushing `false` made every password login fail with "Email logins are disabled" (verified 2026-10-30).
 4. Enable the `pg_cron` extension (Database → Extensions). Migration 0005 schedules jobs only if it is available; re-run that `do $$` block if you enable it later.
 
 ## 1b. Agent access (Supabase MCP)

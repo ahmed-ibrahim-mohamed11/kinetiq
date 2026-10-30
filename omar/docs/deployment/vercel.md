@@ -17,13 +17,32 @@ Rules:
 
 Smoke test after deploy: `GET https://<domain>/api/health` returns `{status:"ok"}`; sign in as a staff user and confirm `/dashboard` renders with the branch's cameras.
 
-## Import flow (GitHub → Vercel)
+## Projects (created 2026-10-30 with the Vercel CLI, team scope `ahmed-1ff6`)
 
-Repository: `github.com/omarahmedvibe210-droid/ai-smart-gym` (private). In the Vercel dashboard, **Add New → Project → Import** that repository **twice**:
+| Project | ID | Root Directory | Production env vars |
+| --- | --- | --- | --- |
+| `smartgym-admin` | `prj_TXWAxnu0O67WlpprVKcXFOxJIVDN` | `apps/admin-web` | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_APP_ENV=production` |
+| `smartgym-member` | `prj_LnJrA0DVLdH16cYpZrdqjS7zbFfD` | `apps/member-web` | the same + `NEXT_PUBLIC_VAPID_PUBLIC_KEY` |
 
-1. Project `smartgym-admin`: Root Directory `apps/admin-web`, Framework Next.js, enable *Include source files outside of the Root Directory*. Environment variables (Production + Preview): `NEXT_PUBLIC_SUPABASE_URL=https://vpwudyxfsbyrbpwqdmew.supabase.co`, `NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key from `supabase projects api-keys`>`, `NEXT_PUBLIC_APP_ENV=production`.
-2. Project `smartgym-member`: Root Directory `apps/member-web`, same variables plus `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (generate with `npx web-push generate-vapid-keys`; the private half goes to the notification worker only).
+How they were configured (repeatable from the repo root; `apps/*/.vercel/` link files are gitignored):
 
-After the first deployment add both Vercel URLs to Supabase **Auth → URL Configuration** (Site URL = member app; redirect allow-list = both), replacing the localhost entries declared in `supabase/config.toml`.
+```bash
+npx vercel project create smartgym-admin
+npx vercel link --yes --project smartgym-admin --cwd apps/admin-web
+npx vercel api /v9/projects/smartgym-admin -X PATCH -F rootDirectory=apps/admin-web -F framework=nextjs -F sourceFilesOutsideRootDirectory=true
+npx vercel api /v9/projects/smartgym-admin -X PATCH --input infrastructure/vercel-protection.json   # Vercel Authentication on previews only
+npx vercel env add NEXT_PUBLIC_SUPABASE_URL --environment production --value https://vpwudyxfsbyrbpwqdmew.supabase.co --yes --no-sensitive --cwd apps/admin-web
+```
 
-> Status 2026-10-30: Supabase project exists and is linked; the GitHub repository and Vercel projects are the next steps (tracked in `PROGRESS.md`).
+Deployment Protection is limited to previews so production URLs are public; the apps authenticate users with Supabase Auth themselves. Preview environments deliberately have **no** Supabase variables until a staging project exists (see the rules above).
+
+## Git integration (GitHub → Vercel)
+
+`npx vercel git connect --yes --cwd apps/<app>` links a project to the `origin` remote (`github.com/omarahmedvibe210-droid/ai-smart-gym`). It requires, once, in the browser:
+
+1. GitHub connected under **Vercel → Account Settings → Login Connections**.
+2. The Vercel GitHub App installed for the `omarahmedvibe210-droid` account with access to `ai-smart-gym`: https://github.com/apps/vercel/installations/new
+
+Until that is done, production is deployed from the CLI, which uploads from the repository root because Root Directory is set: `npx vercel deploy --prod --yes --cwd apps/<app>`.
+
+After the first production deployment, add both URLs to Supabase Auth: `site_url` = member app, `additional_redirect_urls` = both (declared in `supabase/config.toml`, applied with `npx supabase config push`).
