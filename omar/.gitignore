@@ -61,3 +61,8 @@ test-results/
 
 # Local PostgreSQL client tools for the backup/restore drill (downloaded, not committed)
 tests/db/.pgtools/
+
+# Appended by `vercel link` (kept so the CLI stops re-adding them). The template stays tracked.
+.vercel
+.env*
+!.env.example

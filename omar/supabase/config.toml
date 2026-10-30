@@ -41,8 +41,10 @@ allowed_mime_types = ["image/png", "image/jpeg", "image/svg+xml"]
 [auth]
 enabled = true
 # Production apps on Vercel (team ahmed-1ff6). Localhost entries keep local development working.
-site_url = "https://smartgym-member-ahmed-1ff6.vercel.app"
+site_url = "https://smartgym-member.vercel.app"
 additional_redirect_urls = [
+  "https://smartgym-member.vercel.app",
+  "https://smartgym-admin.vercel.app",
   "https://smartgym-member-ahmed-1ff6.vercel.app",
   "https://smartgym-admin-ahmed-1ff6.vercel.app",
   "http://localhost:3000",

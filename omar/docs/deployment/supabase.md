@@ -26,7 +26,15 @@ supabase link --project-ref vpwudyxfsbyrbpwqdmew   # production project, created
 supabase db push                                   # applies supabase/migrations in order
 ```
 
-Do **not** run `supabase/seed.sql` against production — it creates a DEMO tenant and a dev device secret. For the first real tenant run the onboarding SQL in `docs/deployment/edge-device.md`.
+Do **not** run `supabase/seed.sql` against production — it creates a DEMO tenant and a dev device secret. The exercise catalog is a migration (0007), so production has it without the seed.
+
+## 2b. First tenant and owner account
+
+```bash
+node infrastructure/scripts/bootstrap-owner.mjs --email owner@example.com --org "Smart Gym" --branch "Main Branch"
+```
+
+Creates (idempotently) the organization, its first branch and an organization-wide `owner` staff role for that e-mail. A new auth user gets a random password that is appended to the gitignored root `.env` as `OWNER_BOOTSTRAP_PASSWORD` and never printed; change it after the first login. Everything else (members, equipment, cameras, devices) is created from the admin app by that owner — see `docs/deployment/edge-device.md` for device registration.
 
 Notes verified 2026-10-30 against project `vpwudyxfsbyrbpwqdmew` (eu-west-2, Postgres 17.11):
 - `supabase link` and `db push` no longer need the database password; CLI ≥ 2.122 provisions a temporary login role through the Management API ("Initialising login role…").
