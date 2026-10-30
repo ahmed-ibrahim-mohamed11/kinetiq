@@ -7,12 +7,23 @@
 3. Auth settings: disable public sign-ups (`enable_signup = false`, mirrored in `supabase/config.toml`); enable email confirmations; configure the SMTP provider; set Site URL to the member app and add both app URLs to redirect allow-list.
 4. Enable the `pg_cron` extension (Database → Extensions). Migration 0005 schedules jobs only if it is available; re-run that `do $$` block if you enable it later.
 
+## 1b. Agent access (Supabase MCP)
+
+The repo registers the hosted Supabase MCP server at project scope in `.mcp.json` (project ref `vpwudyxfsbyrbpwqdmew`; features: docs, account, database, debugging, development, functions, branching). It gives Claude Code read/write access to that project, so authenticate it the same way you would hand a teammate the dashboard:
+
+```bash
+claude            # in the repo root, in a regular terminal (not the IDE extension)
+/mcp              # select "supabase" → Authenticate → complete the browser OAuth flow
+```
+
+The OAuth grant is stored per user, not in the repo. Review every schema change the agent proposes before it is applied, and prefer a Supabase **branch** for anything experimental.
+
 ## 2. Link and push migrations
 
 ```bash
 supabase login
-supabase link --project-ref <ref>
-supabase db push                 # applies supabase/migrations in order
+supabase link --project-ref vpwudyxfsbyrbpwqdmew   # production project, created 2026-10-30
+supabase db push                                   # applies supabase/migrations in order
 ```
 
 Do **not** run `supabase/seed.sql` against production — it creates a DEMO tenant and a dev device secret. For the first real tenant run the onboarding SQL in `docs/deployment/edge-device.md`.

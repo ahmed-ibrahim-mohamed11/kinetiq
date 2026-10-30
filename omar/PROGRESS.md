@@ -52,7 +52,7 @@ Fixes made during this round of verification: time-aware rep smoothing; `interfa
 
 | Blocker | Needed for | Owner action |
 | --- | --- | --- |
-| Supabase project (region per legal) **or** Docker Desktop for `supabase start` | Auth/PostgREST/Edge Runtime execution, `tests/security/rls.test.ts`, `tests/integration/ingest-smoke.mjs`, clicking through the apps | Create project / install Docker; `supabase db push`; set function secrets |
+| Supabase project **authentication** (project exists: ref `vpwudyxfsbyrbpwqdmew`, created by the owner 2026-10-30; MCP server registered in `.mcp.json`) | Auth/PostgREST/Edge Runtime execution, `tests/security/rls.test.ts`, `tests/integration/ingest-smoke.mjs`, clicking through the apps | Owner completes the browser OAuth: `claude` → `/mcp` → supabase → Authenticate; and `supabase login && supabase link --project-ref vpwudyxfsbyrbpwqdmew`. **Nothing has been pushed to the project yet.** |
 | Vercel account linked to the GitHub repo | Deploy admin-web / member-web | Connect repo per `docs/deployment/vercel.md` |
 | GitHub remote | CI execution (incl. the embedded-DB job and backup drill), gitleaks | `git remote add origin … && git push` (local repo initialised with the full history) |
 | Authorised camera access (RTSP URLs, credentials, positions) | Phase 0 probe evidence, Phase 2 soak + GPU benchmark | Gym IT / owner |
@@ -63,12 +63,12 @@ Fixes made during this round of verification: time-aware rep smoothing; `interfa
 
 ## Current work
 
-Nothing in flight. Everything that can run without external resources runs and passes.
+**Connecting to the Supabase project `vpwudyxfsbyrbpwqdmew`.** Done: project-scope MCP server config (`.mcp.json`), deployment doc updated with the ref. Pending on the owner's browser login (cannot be done by the agent): MCP OAuth and `supabase link`. Once authenticated, in order: `supabase db push` (migrations 0001–0006, **no** seed on production) → `supabase secrets set QR_TOKEN_SECRET=…` → deploy `ingest-events`, `device-sync`, `qr-token` → fetch project URL + anon key → write `apps/*/.env.local` → run `tests/security/rls.test.ts` with a throwaway service key → sign in and click through both apps → record results here.
 
 ## Next engineering tasks (in order)
 
 1. Push to GitHub; confirm all CI jobs green (including `database-embedded` with the backup drill and the Deno check).
-2. Create the Supabase project; `supabase db push`; deploy the three functions; run `tests/security/rls.test.ts` and `tests/integration/ingest-smoke.mjs` against it; sign in and click through both apps.
+2. Finish the Supabase connection (see Current work): `supabase db push`; deploy the three functions; run `tests/security/rls.test.ts` and `tests/integration/ingest-smoke.mjs` against it; sign in and click through both apps.
 3. Deploy both apps to Vercel (staging first).
 4. On the GPU edge node: `pip install -e ".[cv]"`, `edge-ai discover` + `edge-ai probe` on the first authorised camera; commit the JSON under `docs/phase0/`.
 5. Phase 2: choose and benchmark the detector (`edge_ai.tools.benchmark`), 10-minute RTSP soak with forced disconnect.
