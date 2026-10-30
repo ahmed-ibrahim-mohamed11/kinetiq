@@ -45,6 +45,8 @@ supabase/.temp/
 # IDE / OS
 .vscode/*
 !.vscode/extensions.json
+# Claude Code per-machine permissions (project skills in .claude/skills ARE committed)
+.claude/settings.local.json
 .idea/
 .DS_Store
 Thumbs.db
