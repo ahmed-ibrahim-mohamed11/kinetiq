@@ -6,12 +6,14 @@
  *  - every public.* table in migrations has RLS enabled.
  */
 import { describe, expect, it } from 'vitest';
+import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { basename, join, relative } from 'node:path';
 
 const ROOT = join(__dirname, '..', '..');
 const SKIP_DIRS = new Set(['node_modules', '.next', '.git', 'dist', '.venv', '__pycache__', '.pytest_cache', 'coverage', '.vercel']);
 const TEXT_EXT = /\.(ts|tsx|js|mjs|cjs|json|sql|toml|yml|yaml|py|md|env|example|txt)$/i;
+const isCandidate = (name: string) => TEXT_EXT.test(name) || name.startsWith('.env');
 
 function* walk(dir: string): Generator<string> {
   for (const name of readdirSync(dir)) {
@@ -19,11 +21,40 @@ function* walk(dir: string): Generator<string> {
     const p = join(dir, name);
     const st = statSync(p);
     if (st.isDirectory()) yield* walk(p);
-    else if (TEXT_EXT.test(name) || name.startsWith('.env')) yield p;
+    else if (isCandidate(name)) yield p;
   }
 }
 
-const files = [...walk(ROOT)];
+/**
+ * The scope is "what git would commit": tracked files plus untracked files that are not
+ * ignored. Gitignored local files (`.env`, `apps/*\/.env.local`) legitimately hold real keys and
+ * must not fail the scan. Falls back to a full walk when git is unavailable.
+ */
+function committableFiles(): string[] | null {
+  try {
+    const out = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], {
+      cwd: ROOT,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      maxBuffer: 64 * 1024 * 1024,
+    });
+    return out
+      .split('\0')
+      .filter(Boolean)
+      .map((p) => join(ROOT, p))
+      .filter((p) => {
+        try {
+          return statSync(p).isFile();
+        } catch {
+          return false;
+        }
+      });
+  } catch {
+    return null;
+  }
+}
+
+const files = (committableFiles() ?? [...walk(ROOT)]).filter((p) => isCandidate(basename(p)));
 const read = (p: string) => readFileSync(p, 'utf8');
 
 describe('repository secret hygiene', () => {
