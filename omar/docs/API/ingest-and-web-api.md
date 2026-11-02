@@ -84,7 +84,9 @@ Verified by execution: `tests/db` runs every RPC above on an embedded PostgreSQL
 
 ## Web app server actions
 
-Inputs are validated with `packages/api-contracts/src/api.ts` (`CreateCameraInput`, `CreateCameraZoneInput`, `CreateEquipmentInput`, `CreateMemberInput`, `RecordConsentInput`, `WithdrawConsentInput`, `ManualCheckInInput`, `ManualCheckOutInput`, `RegisterPushSubscriptionInput`) and executed with the caller's session, so RLS is the final authority. Errors are returned as `{ ok: false, error }` using the `ApiError` code set.
+Inputs are validated with `packages/api-contracts/src/api.ts` (`CreateCameraInput`, `CreateCameraZoneInput`, `DeleteCameraZoneInput`, `CreateEquipmentInput`, `CreateMemberInput`, `RecordConsentInput` (records `informed_acknowledged_at`), `WithdrawConsentInput`, `ManualCheckInInput` (`{ member_id, method: 'staff_manual' | 'nfc' }` — QR check-ins go through the `qr-token` function only), `ManualCheckOutInput`, `IssueDeviceSecretInput`, `RevokeBiometricEnrollmentInput`, `CreateReportShareInput` (1–30 days), `RevokeReportShareInput`, `RegisterPushSubscriptionInput` (endpoint must pass `isAllowedPushEndpoint`)) and executed with the caller's session, so RLS is the final authority. Errors are returned as `{ ok: false, error }` using the `ApiError` code set; database error text is never forwarded to the browser.
+
+Both apps send a per-request nonce Content-Security-Policy (`connect-src` derived from `NEXT_PUBLIC_SUPABASE_URL` plus its `wss` origin for Realtime), HSTS, `frame-ancestors 'none'`, a strict referrer policy and a Permissions-Policy that allows the camera only on the admin app's own origin (kiosk scanner). Login `next` parameters are sanitised with `safeNextPath`.
 
 ## Health endpoints
 
