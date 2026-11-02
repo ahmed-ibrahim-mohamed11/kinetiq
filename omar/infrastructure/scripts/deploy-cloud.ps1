@@ -90,7 +90,10 @@ if (-not $SkipSupabase) {
     "VAPID_PUBLIC_KEY=$($dotenv['VAPID_PUBLIC_KEY'])",
     "VAPID_PRIVATE_KEY=$($dotenv['VAPID_PRIVATE_KEY'])",
     "VAPID_SUBJECT=$($dotenv['VAPID_SUBJECT'])",
-    "MEMBER_APP_URL=$memberAppUrl"
+    "MEMBER_APP_URL=$memberAppUrl",
+    "ADMIN_APP_URL=$(if ($dotenv['ADMIN_APP_URL']) { $dotenv['ADMIN_APP_URL'] } else { 'https://smartgym-admin.vercel.app' })",
+    # Browser origins allowed to call qr-token besides the two app URLs (local development).
+    "QR_ALLOWED_ORIGINS=$(if ($dotenv['QR_ALLOWED_ORIGINS']) { $dotenv['QR_ALLOWED_ORIGINS'] } else { 'http://localhost:3000,http://localhost:3001' })"
   )
   if ($dotenv['RESEND_API_KEY'] -and $dotenv['EMAIL_FROM']) {
     $lines += "RESEND_API_KEY=$($dotenv['RESEND_API_KEY'])"
