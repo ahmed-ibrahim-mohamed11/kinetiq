@@ -51,11 +51,13 @@ All confidences are in [0, 1]. `quality_label` is reserved for Phase 9 and must 
 }
 ```
 
-Response (`IngestResult`): `{ batch_id, accepted, duplicates, rejected: [{event_id, reason}], server_time }`. A replayed `batch_id` returns 200 with `accepted: 0` and `replayed: true`.
+Response (`IngestResult`): `{ batch_id, accepted, duplicates, rejected: [{event_id, code, reason}], server_time }`. `code` is one of `branch_mismatch`, `no_consent`, `unknown_reference`, `invalid_value`, `invalid_state`, `internal`; `reason` is a fixed sentence per code (the raw database error stays in `event_ingest_log.error`). A replayed `batch_id` returns 200 with `accepted: 0` and `replayed: true`. Infrastructure errors (deadlock, serialization failure, resource exhaustion) abort the whole call with HTTP 500 and record nothing, so the edge re-sends the same batch.
+
+Server-side bounds (migration 0008): at most 500 events; `sent_at` at most 1 h ahead of server time; `occurred_at` within `sent_at − 7 days … sent_at + 1 h`; free-text fields length-limited; camera, zone, equipment and member references must belong to the device's branch; linking tracks, usage, sets or reps to a session requires the member's current `cctv_workout_tracking` consent; `identity.checkout` with `method = face` and `biometric.enrolled` require granted, unexpired biometric consent.
 
 ## Ordering and gaps
 
-Events in a batch are applied in array order. Child events referencing an unknown parent local id (e.g. `set.started` before `exercise.activity.started`) are rejected individually and reported; the edge logs them as poison and does not retry. The edge therefore always flushes in sequence order and never reorders across batches.
+Events in a batch are applied in array order. Child events referencing an unknown parent local id (e.g. `set.started` before `exercise.activity.started`) are rejected individually and reported; the edge moves them to its `dead_letter` table (30 days), counts them per code, and does not retry. The edge flushes strictly in sequence order (a backing-off head blocks newer events) and never reorders across batches.
 
 ## Versioning
 

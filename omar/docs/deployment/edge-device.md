@@ -5,6 +5,8 @@
 - Ubuntu 22.04 LTS, NVIDIA driver ≥ 550, Docker ≥ 26, `nvidia-container-toolkit`, `chrony` enabled.
 - Two NICs: `cam0` on the camera VLAN (no default route), `lan0` with HTTPS egress. Host firewall: allow inbound 8088/9090/3000 from the admin VLAN only; outbound 443 to the Supabase project host; RTSP (554) outbound on `cam0` only.
 - Full-disk encryption (LUKS) on the data volume holding `/data` (queue + encrypted templates).
+- A UPS for the edge node and the PoE switch. The event queue and the template store commit with `synchronous=FULL`, but a clean shutdown avoids RTSP reconnect storms and SQLite recovery on boot.
+- The biometric key is mounted as a file (`EDGE_BIOMETRIC_KEY_FILE`, Docker secret) outside the data volume, never as a plain environment variable in a compose file.
 
 ## Cloud registration (owner/admin, SQL editor or admin UI)
 
@@ -20,11 +22,14 @@ Register cameras (`cameras` rows with `stream_url` **without** credentials), equ
 
 ```bash
 git clone <repo> && cd ai-smart-gym
-cp services/edge-ai/.env.example services/edge-ai/.env         # fill EDGE_DEVICE_ID, EDGE_BRANCH_ID, EDGE_DEVICE_SECRET, EDGE_INGEST_URL
-python3 -c "import os,base64;print(base64.b64encode(os.urandom(32)).decode())"  # → EDGE_BIOMETRIC_KEY_B64 (store in TPM/KMS in production)
+cp services/edge-ai/.env.example services/edge-ai/.env         # fill EDGE_DEVICE_ID, EDGE_BRANCH_ID, EDGE_DEVICE_SECRET, EDGE_INGEST_URL (https only); leave EDGE_BIOMETRIC_KEY_B64 empty
+mkdir -p secrets
+python3 -c "import os,base64;print(base64.b64encode(os.urandom(32)).decode())" > secrets/edge_biometric_key && chmod 600 secrets/edge_biometric_key   # Docker secret → EDGE_BIOMETRIC_KEY_FILE (TPM/KMS-backed in production)
+openssl rand -base64 24 > secrets/grafana_admin_password && chmod 600 secrets/grafana_admin_password
 cp services/edge-ai/config/cameras.example.yaml services/edge-ai/config/cameras.yaml           # ids must match the cloud rows
-cp services/edge-ai/config/camera-credentials.example.yaml services/edge-ai/config/camera-credentials.yaml && chmod 600 services/edge-ai/config/camera-credentials.yaml
-mkdir -p secrets && openssl rand -base64 24 > secrets/grafana_admin_password
+cp services/edge-ai/config/camera-credentials.example.yaml services/edge-ai/config/camera-credentials.yaml
+# The container runs as uid 10001; a root-owned 600 file is unreadable to it.
+sudo chown 10001:10001 services/edge-ai/config/camera-credentials.yaml && sudo chmod 600 services/edge-ai/config/camera-credentials.yaml
 ```
 
 ## Phase 0 probe (before any AI)

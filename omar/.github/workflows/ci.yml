@@ -89,9 +89,9 @@ jobs:
       - name: Start local Supabase (applies migrations + seed)
         run: supabase start -x studio,imgproxy,inbucket,logflare,vector
       - name: Export local keys
+        # `supabase status -o env` quotes values; strip the quotes or the URL/keys reach the tests with literal quotes.
         run: |
-          supabase status -o env | sed 's/^/export /' > .supabase.env
-          cat .supabase.env | grep -E 'API_URL|ANON_KEY|SERVICE_ROLE_KEY' | sed 's/export //' >> "$GITHUB_ENV"
+          supabase status -o env | grep -E '^(API_URL|ANON_KEY|SERVICE_ROLE_KEY)=' | sed -E 's/^([A-Z_]+)="?([^"]*)"?$/\1=\2/' >> "$GITHUB_ENV"
       - name: RLS and authorization tests
         env:
           RUN_RLS_TESTS: "1"
@@ -117,7 +117,10 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: deno check --config deno.json ingest-events/index.ts qr-token/index.ts device-sync/index.ts
+      - run: deno check --config deno.json ingest-events/index.ts qr-token/index.ts device-sync/index.ts notification-dispatch/index.ts
+        working-directory: supabase/functions
+      - name: Deno tests (handlers, HMAC, Web Push, vendored contract drift)
+        run: deno test --config deno.json --allow-env --allow-read tests/
         working-directory: supabase/functions
 
   security:

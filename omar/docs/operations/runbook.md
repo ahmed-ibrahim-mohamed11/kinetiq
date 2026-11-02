@@ -39,7 +39,8 @@ Rollback: apps → `npx vercel rollback` (or promote a previous deployment in th
 2. `401` → device secret or clock. Check `chronyc tracking`; if time is fine, rotate the secret (admin → Devices) and update `.env`.
 3. `5xx` → check Supabase status/logs for `ingest_events` errors; the edge retries automatically.
 4. Network → verify egress to `*.supabase.co:443`.
-5. After recovery, `edge_queue_depth` falls at ≤ 500 events/2 s per device. Nothing to replay manually.
+5. After recovery, `edge_queue_depth` falls at ≤ 500 events/2 s per device. Nothing to replay manually. Events the cloud rejected with a contract code (`branch_mismatch`, `no_consent`, `unknown_reference`, `invalid_value`, `invalid_state`, `internal`) are kept in the edge `dead_letter` table for 30 days and counted per code in `/healthz` (`sync.rejections_by_code`) and `/metrics` (`edge_sync_rejected_total{code}`); they are never re-sent.
+6. `403 device_retired` → the device was retired in the cloud; syncing stops and `device_retired` is set in `/healthz`. See "Device reports device_retired".
 
 ### Events rejected (`sync.event_rejected` in logs)
 A rejection is a contract or business-rule violation (e.g. member without consent). Inspect `event_ingest_log where status='rejected'` for the reason. Consent problems → front desk records consent → future check-ins succeed; past rejected events are not re-created.
@@ -76,9 +77,10 @@ Supabase PITR to the chosen timestamp. After restore, edge devices may hold even
 edge-ai sync                                   # refresh consents from the cloud first (fails closed otherwise)
 edge-ai enroll --member <uuid> --image a.jpg --image b.jpg --image c.jpg
 edge-ai drain                                  # pushes biometric.enrolled so the cloud registry shows it
-edge-ai revoke --member <uuid> --reason member_request
+edge-ai revoke --member <uuid> --reason member_request   # takes effect in the running service immediately
+edge-ai revoke --undecryptable --reason key_rotation      # drops templates that no longer decrypt after a key change
 ```
-Photos are not stored; only the encrypted embedding is. Consent withdrawn in the member app → the next `sync` deletes the template automatically.
+Photos are not stored; only the encrypted embedding is. Consent withdrawn in the member app → the next `sync` deletes the template automatically; templates absent from the cloud's `active_template_refs` (deleted or cancelled members, expired consent) are deleted on the next successful sync as well.
 
 ### Discovering cameras
 `edge-ai discover --interface <camera-VLAN IP> --seconds 5` lists ONVIF devices (model, name, XAddrs). Resolve RTSP URIs with `get_stream_uri()` using the viewer account, then register the camera in the admin app **without** credentials and add the credentials to `camera-credentials.yaml`.

@@ -20,10 +20,15 @@ services:
       EDGE_DATA_DIR: /data
       EDGE_CAMERAS_FILE: /config/cameras.yaml
       EDGE_CAMERA_SECRETS_FILE: /config/camera-credentials.yaml
+      # The template-encryption key is a Docker secret mounted outside the data volume; it takes
+      # precedence over EDGE_BIOMETRIC_KEY_B64, which must stay unset in .env on production hosts.
+      EDGE_BIOMETRIC_KEY_FILE: /run/secrets/edge_biometric_key
     volumes:
       - edge-data:/data
       - ../../services/edge-ai/config:/config:ro
       - ../../services/edge-ai/models:/models:ro
+    secrets:
+      - edge_biometric_key
     ports:
       - "127.0.0.1:8088:8088"
     deploy:
@@ -93,6 +98,8 @@ services:
 secrets:
   grafana_admin_password:
     file: ../../secrets/grafana_admin_password # gitignored; create before `up`
+  edge_biometric_key:
+    file: ../../secrets/edge_biometric_key # gitignored; 32 random bytes, base64 — see docs/deployment/edge-device.md
 
 volumes:
   edge-data:
