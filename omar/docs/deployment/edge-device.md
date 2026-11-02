@@ -44,7 +44,9 @@ docker compose -f infrastructure/docker/docker-compose.edge.yml --env-file servi
 curl -s localhost:8088/healthz | jq .
 ```
 
-Place the chosen detector at `services/edge-ai/models/detector.onnx` (see `docs/architecture/model-selection.md`). Without a model the service runs in camera-health-only mode and says so in its logs.
+CI publishes the image as `ghcr.io/omarahmedvibe210-droid/ai-smart-gym-edge-ai:main` (and `:sha-<commit>`) on every push to `main`; the compose file can pull that instead of building locally (`docker login ghcr.io` with a token that has `read:packages`).
+
+Models are not baked into the image. Place the chosen ONNX files under `services/edge-ai/models/` (gitignored) and reference them in `.env` (`EDGE_DETECTOR_MODEL_PATH`, `EDGE_POSE_MODEL_PATH`, …). Licence-clean candidates, their official sources and SHA-256 checksums are listed in `docs/operations/production-dependencies.md`; `docs/phase0/benchmark-2026-11-02-rtx5050-directml.json` records their raw latency on the development laptop (YOLOX-s ≈ 15–18 ms, RTMPose-m ≈ 5–7 ms per inference on the RTX 5050). Without a model the service runs in camera-health-only mode and says so in its logs.
 
 ## Operations
 

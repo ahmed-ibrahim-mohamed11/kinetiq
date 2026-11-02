@@ -8,4 +8,8 @@ Commit on-site evidence here so the feasibility gate is auditable:
 - `floor-plan.svg|pdf` — metric floor plan used for `branches.floor_plan` and `equipment.position_*_m`.
 - `checklist.md` — the completed `docs/operations/phase0-feasibility-checklist.md`.
 
-Nothing is here yet: no authorised camera has been connected. The tools exist and are tested; the measurements do not.
+Present so far:
+
+- `benchmark-2026-11-02-rtx5050-directml.json` — raw ONNX Runtime latency of the licence-clean candidate models (YOLOX-s, YOLOX-nano, RTMPose-m) on the development laptop's RTX 5050 via DirectML versus CPU, on one public COCO image. It proves the inference path and the speed budget (≈ 15–18 ms detector + ≈ 5–7 ms pose per frame on this GPU), **not** accuracy on gym footage.
+
+Still missing: every on-site artefact above. No authorised camera has been connected; the camera tools exist and are tested, the measurements do not.

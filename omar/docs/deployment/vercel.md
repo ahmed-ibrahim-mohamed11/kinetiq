@@ -40,6 +40,8 @@ Deployment Protection is limited to previews so production URLs are public; the 
 
 ## Git integration (GitHub → Vercel)
 
+Status 2026-11-02: **connected and verified** — the first push of `main` produced `source=git` production deployments for both projects (READY, health checks 200). Every push to `main` now deploys both apps; pull requests get preview deployments (without Supabase variables, see above).
+
 `npx vercel git connect --yes --cwd apps/<app>` links a project to the `origin` remote (`github.com/omarahmedvibe210-droid/ai-smart-gym`). It requires, once, in the browser:
 
 1. GitHub connected under **Vercel → Account Settings → Login Connections**.
