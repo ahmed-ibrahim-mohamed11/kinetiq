@@ -38,5 +38,8 @@ EXPOSE 8088
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
   CMD python3.10 -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8088/healthz', timeout=3).status in (200,503) else 1)"
 
+# Models are configured through the environment (EDGE_DETECTOR_MODEL_PATH, EDGE_POSE_MODEL_PATH, EDGE_REID_MODEL_PATH,
+# EDGE_FACE_MODEL_PATH under /models). Without a detector the service runs in camera-health-only mode instead of
+# crash-looping on a missing file.
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["edge-ai", "run", "--detector", "/models/detector.onnx"]
+CMD ["edge-ai", "run"]
