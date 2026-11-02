@@ -31,9 +31,18 @@ export interface Harness {
   asService<T>(fn: (c: pg.PoolClient) => Promise<T>): Promise<T>;
 }
 
+/**
+ * All migrations in apply order. `TEST_DB_SKIP_MIGRATIONS` (comma-separated filename prefixes,
+ * e.g. "20261102000009,20261102000010") excludes work-in-progress files so several people/agents
+ * can develop independent migrations side by side. CI never sets it.
+ */
 export function migrationFiles(): string[] {
+  const skip = (process.env.TEST_DB_SKIP_MIGRATIONS ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
   return readdirSync(MIGRATIONS_DIR)
-    .filter((f) => f.endsWith('.sql'))
+    .filter((f) => f.endsWith('.sql') && !skip.some((prefix) => f.startsWith(prefix)))
     .sort();
 }
 
