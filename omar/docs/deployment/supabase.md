@@ -52,7 +52,9 @@ supabase functions deploy device-sync --use-api --no-verify-jwt
 supabase functions deploy qr-token --use-api
 ```
 
-Type-check before deploying: `cd supabase/functions && deno check --config deno.json ingest-events/index.ts qr-token/index.ts device-sync/index.ts`.
+Type-check before deploying: `cd supabase/functions && deno check --config deno.json ingest-events/index.ts qr-token/index.ts device-sync/index.ts notification-dispatch/index.ts`.
+
+The fourth function, `notification-dispatch`, delivers Web Push / e-mail notifications and is called every minute by the `pg_cron` job created in migration 0011 (through `pg_net`, authenticated with the Vault secret `smartgym_dispatch_secret`). `infrastructure/scripts/deploy-cloud.ps1` provisions everything it needs in one run: function secrets from the root `.env` (`NOTIFICATION_DISPATCH_SECRET`, `VAPID_*`, `MEMBER_APP_URL`, optional `RESEND_API_KEY`/`EMAIL_FROM`), the two Vault secrets, the deploy itself and the cron job verification. Details: `docs/deployment/notification-dispatch.md`.
 
 ## 4. Verify
 
