@@ -13,7 +13,8 @@
     "apps/*",
     "services/notification-worker",
     "tests/security",
-    "tests/db"
+    "tests/db",
+    "tests/live"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

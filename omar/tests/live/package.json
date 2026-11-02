@@ -1,0 +1,20 @@
+{
+  "name": "@smartgym/tests-live",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Live verification against the hosted Supabase project and the deployed Vercel apps. Creates a clearly-labelled QA tenant and removes it afterwards. Never part of `npm test`.",
+  "scripts": {
+    "test:live": "vitest run --config vitest.config.ts",
+    "test:ui": "playwright test --config playwright.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@supabase/supabase-js": "^2.118.0",
+    "@types/node": "^22.10.2",
+    "http_ece": "^1.2.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
