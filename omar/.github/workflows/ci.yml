@@ -46,7 +46,8 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -e ".[dev]" opencv-python-headless onnxruntime onnx scipy defusedxml
+      # OpenCV 5 removed the Haar cascades the entrance face detector falls back to; keep the pyproject pin.
+      - run: pip install -e ".[dev]" "opencv-python-headless>=4.10,<5" onnxruntime onnx scipy defusedxml
       - run: ruff check .
       - run: mypy edge_ai --ignore-missing-imports || (echo "::warning::mypy reported issues" && exit 0)
       - run: pytest -q --cov=edge_ai --cov-report=term-missing
@@ -126,10 +127,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Gitleaks
-        uses: gitleaks/gitleaks-action@v2
+      # The gitleaks GitHub Action scans "<before>^..<after>", which fails when <before> is the root commit
+      # (first push to a new repository). The pinned CLI scans the whole history instead.
+      - name: Gitleaks (full history, pinned + checksum-verified)
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: 8.24.3
+        run: |
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          tarball="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSfL -o "/tmp/${tarball}" "${base}/${tarball}"
+          curl -sSfL -o /tmp/gitleaks_checksums.txt "${base}/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          (cd /tmp && grep " ${tarball}\$" gitleaks_checksums.txt | sha256sum --check -)
+          tar -xzf "/tmp/${tarball}" -C /tmp gitleaks
+          /tmp/gitleaks git --redact --verbose --exit-code 1 .
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -137,19 +147,37 @@ jobs:
         run: pip install bandit && bandit -q -r services/edge-ai/edge_ai -ll
 
   docker:
-    name: Docker — build edge-ai image
+    name: Docker — build edge-ai image, publish to GHCR on main
     runs-on: ubuntu-latest
     needs: [edge]
     if: github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/${{ github.repository_owner }}/ai-smart-gym-edge-ai
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
-      - name: Build (no push)
+      - name: Log in to GitHub Container Registry
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build (and push on main)
         uses: docker/build-push-action@v6
         with:
           context: .
           file: infrastructure/docker/edge-ai.Dockerfile
-          push: false
-          tags: smartgym/edge-ai:ci
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: |
+            ${{ env.IMAGE }}:sha-${{ github.sha }}
+            ${{ env.IMAGE }}:main
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.description=AI Smart Gym edge inference service (cameras, tracking, reps; no model weights baked in)
           cache-from: type=gha
           cache-to: type=gha,mode=max
