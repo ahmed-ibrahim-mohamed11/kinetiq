@@ -1,5 +1,42 @@
 # TECHNICAL_MASTER_REPORT.md — GYM-AI complete verified engineering audit
 
+## UPDATE 2026-10-10 (read first; the 2026-10-08 audit below is kept unchanged as a record)
+
+Since that audit, master-prompt Phases 0–5 were completed (Phase 6 waits for the owner's
+recordings; Phase 7, the full defense package, comes after). Superseded statements below:
+- Section 30 "realtime NOT TESTED": now measured. GPU `cuda_V2` 1.31×, CPU-only `cpu_V3` 1.07×
+  (LIVE_MODE.md).
+- Section 20 "no mocap": CMU Panoptic real 3D GT now gives PA-MPJPE 4.2 / 10.1 / 12.6 cm
+  (front/back/side).
+- Section 28 reproducibility: verified from a fresh clone (REPRODUCIBILITY.md).
+- Section 27 test count: now 618.
+- "production entry point / persisted model" gaps: closed (R-01).
+
+Evidence index: EXPERIMENT_REGISTRY.md (every experiment with before/after numbers),
+RISK_REGISTER.md, DECISION_LOG.md, AI_CORE_BASELINE_MANIFEST.{md,json}.
+
+**Current scorecard** (vocabulary per global rule 9: VALIDATED / STRONG / PARTIAL / WEAK /
+FAILED / NOT TESTED):
+
+| area | status | evidence | biggest gap |
+|---|---|---|---|
+| Rep segmentation, unseen Mendeley subjects | STRONG | locked TEST IoU F1 0.812 (MB-Lite); LOSO over 15 dev components 0.878 (median subject 0.875, min 0.615) | side view |
+| Seated-row rep segmentation (product domain) | PARTIAL | internal 0.841 / pull 0.853 (1 athlete, contaminated); external 0.632 / pull 0.842 (3 athletes) | Domain C not run |
+| Fresh unseen-athlete generalization | NOT TESTED | blocked on owner recordings; evaluation pre-registered and executable (PHASE6_PREREGISTRATION.md), candidate frozen at `ai-core-candidate-v1` | recordings |
+| Cross-view | PARTIAL | front/diagonal ≈ 0.97 (TEST, LOSO); side 0.383 TEST / 0.654 LOSO; main cause identified (camera-derived sign); the anatomical-sign fix raised LOSO side to 0.853 (about 2/3 of the gap) but cut the rear-view seated row 0.841 → 0.558, so it was rejected (P2.7) | side view (R-07): needs multi-view seated-row training data |
+| Slow/paused-tempo window extent | WEAK | external IoU 0.632 vs pull 0.842; synthetic reproduction; fixes rejected (P2.2, P2.7 secondary) | known limitation; measured in Phase 6 |
+| Cross-exercise transfer | WEAK | curl 0.650 | per-exercise models |
+| Form indicators | PARTIAL | best AUC 0.778 (rom_proxy); per-slice blind spots (P2.3); seated-row thresholds PROVISIONAL | per-deviation ground truth |
+| Confidence calibration | NOT TESTED | heuristic score, monotonicity-tested; not a probability | Domain C labels |
+| 3D accuracy | PARTIAL | PA-MPJPE 4.2 / 10.1 / 12.6 cm (one Panoptic subject); scale not metric | more GT only if a claim needs it |
+| Robustness + abstention | STRONG | failure boundaries quantified (ROBUSTNESS_REPORT.md); guards 0/45 false abstentions | multi-person crossing probe |
+| Live mode (Mode B) | STRONG | realtime measured on GPU and CPU-only for 148 s streams; accuracy within the pre-registered band | decode growth with stream length (R-17) |
+| Mode A pipeline + reproducibility | VALIDATED | raw video gives poses bit-identical to the research cache; fresh clone reproduces all 8 headline metrics exactly | Docker build (deferred to the closing phase) |
+| Result schema + local service | VALIDATED | strict schema tests; 16 service tests; real server run | auth/deploy deferred by scope |
+| Multi-person | NOT TESTED | single-athlete tracker by design | — |
+| Licensing | PARTIAL | academic / non-commercial use only (owner decision 2026-10-10: YOLO AGPL-3.0 kept, no Enterprise licence); lifter weights carry non-commercial dataset terms | commercial use needs a new decision |
+| Evaluation methodology + leakage protection | STRONG | pre-registered gates, locked TEST, subject-level splits, frozen-model rule for external | — |
+
 Written for: a senior ML/CV engineer or graduation reviewer with no prior project exposure.
 Date: 2026-10-08 · Repo state: commit `41976e6` (19 commits, tag `baseline-v0.2.0-frozen`) ·
 Full test suite at writing time: **90 passed, 0 failed** (includes 3 slow byte-identical

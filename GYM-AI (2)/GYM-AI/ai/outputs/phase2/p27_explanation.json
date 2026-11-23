@@ -1,0 +1,136 @@
+{
+ "camera": {
+  "ridge_weights": {
+   "elbow-pelvis lateral": 0.0315,
+   "elbow-pelvis vertical": 0.0717,
+   "elbow-pelvis BACKWARD": -0.0418,
+   "elbow-shoulder lateral": 0.0684,
+   "elbow-shoulder vertical": -0.0039,
+   "elbow-shoulder BACKWARD": -0.0505,
+   "trunk BACKWARD": -0.0278
+  },
+  "backward_weight_share": 0.406,
+  "internal_sr": {
+   "correct_01": {
+    "phase_p5_p95": [
+     0.414,
+     0.498
+    ],
+    "n_pred": 11,
+    "n_gt": 5
+   },
+   "correct_02": {
+    "phase_p5_p95": [
+     0.403,
+     0.535
+    ],
+    "n_pred": 5,
+    "n_gt": 5
+   },
+   "correct_03": {
+    "phase_p5_p95": [
+     0.4,
+     0.534
+    ],
+    "n_pred": 5,
+    "n_gt": 5
+   },
+   "asymmetry_01": {
+    "phase_p5_p95": [
+     0.412,
+     0.503
+    ],
+    "n_pred": 15,
+    "n_gt": 5
+   },
+   "asymmetry_02": {
+    "phase_p5_p95": [
+     0.398,
+     0.608
+    ],
+    "n_pred": 6,
+    "n_gt": 5
+   },
+   "asymmetry_03": {
+    "phase_p5_p95": [
+     0.368,
+     0.537
+    ],
+    "n_pred": 5,
+    "n_gt": 5
+   }
+  },
+  "mendeley_val_median_phase_range": {
+   "front": 0.639,
+   "side": 0.234,
+   "diagonal": 0.69
+  }
+ },
+ "anatomical": {
+  "ridge_weights": {
+   "elbow-pelvis lateral": 0.0186,
+   "elbow-pelvis vertical": 0.0435,
+   "elbow-pelvis BACKWARD": 0.0825,
+   "elbow-shoulder lateral": 0.0219,
+   "elbow-shoulder vertical": 0.0286,
+   "elbow-shoulder BACKWARD": 0.1106,
+   "trunk BACKWARD": 0.0145
+  },
+  "backward_weight_share": 0.648,
+  "internal_sr": {
+   "correct_01": {
+    "phase_p5_p95": [
+     0.372,
+     0.472
+    ],
+    "n_pred": 0,
+    "n_gt": 5
+   },
+   "correct_02": {
+    "phase_p5_p95": [
+     0.379,
+     0.486
+    ],
+    "n_pred": 1,
+    "n_gt": 5
+   },
+   "correct_03": {
+    "phase_p5_p95": [
+     0.372,
+     0.458
+    ],
+    "n_pred": 4,
+    "n_gt": 5
+   },
+   "asymmetry_01": {
+    "phase_p5_p95": [
+     0.376,
+     0.448
+    ],
+    "n_pred": 0,
+    "n_gt": 5
+   },
+   "asymmetry_02": {
+    "phase_p5_p95": [
+     0.396,
+     0.462
+    ],
+    "n_pred": 5,
+    "n_gt": 5
+   },
+   "asymmetry_03": {
+    "phase_p5_p95": [
+     0.349,
+     0.484
+    ],
+    "n_pred": 5,
+    "n_gt": 5
+   }
+  },
+  "mendeley_val_median_phase_range": {
+   "front": 0.795,
+   "side": 0.501,
+   "diagonal": 0.818
+  }
+ }
+}

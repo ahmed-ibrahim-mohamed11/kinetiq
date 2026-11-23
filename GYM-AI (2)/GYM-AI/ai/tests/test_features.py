@@ -6,6 +6,16 @@ from ai.core.features import (_interp_rows, get_design, obs_features,
                               phase_target, prepare_video, state_labels)
 
 
+@pytest.mark.parametrize("bad_fps", [0.0, -5.0, -1e-9, float("nan"), float("inf")])
+def test_prepare_video_rejects_bad_fps_explicitly(bad_fps):
+    """Phase 3 P3.7 (clear failure behaviour): fps<=0 used to propagate silently into a
+    ZeroDivisionError or an obscure scipy filter error several calls later. Must fail HERE,
+    with a message naming fps, not downstream."""
+    P = _synthetic_pose(T=30)
+    with pytest.raises(ValueError, match="fps"):
+        prepare_video("x", P, bad_fps)
+
+
 def _synthetic_pose(T=120, amp=0.3):
     """Rear-view seated-row-ish skeleton: pelvis at origin, thorax above, elbows oscillating backward."""
     rng = np.arange(T)

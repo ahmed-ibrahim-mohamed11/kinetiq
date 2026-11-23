@@ -1,0 +1,13 @@
+view,indicator,n_bad,n_good,sensitivity,false_alert_rate
+diagonal,lr_lag,48,52,0.021,0.0
+front,lr_lag,57,60,0.105,0.033
+side,lr_lag,41,54,0.0,0.148
+diagonal,lr_amplitude_ratio,48,52,0.021,0.0
+front,lr_amplitude_ratio,57,60,0.14,0.033
+side,lr_amplitude_ratio,41,54,0.39,0.056
+diagonal,trunk_motion,48,52,0.042,0.0
+front,trunk_motion,57,60,0.0,0.083
+side,trunk_motion,41,54,0.0,0.019
+diagonal,rom_proxy,48,52,0.0,0.0
+front,rom_proxy,57,60,0.596,0.017
+side,rom_proxy,41,54,0.22,0.037

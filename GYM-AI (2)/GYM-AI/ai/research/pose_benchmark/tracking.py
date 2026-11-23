@@ -1,8 +1,11 @@
 """Benchmark-only deterministic subject selection/tracking (Phase 2.5C mandatory fix).
 
 The production rule (highest-confidence box) switches to background people on 15/34 Mendeley
-videos (Phase 2.5B audit). For the benchmark, every YOLO-based pipeline uses THIS tracker on the
-same cached top-3 candidates, so all pipelines see identical 2D input:
+videos (Phase 2.5B audit). Every YOLO-based pipeline uses THIS tracker so all pipelines see
+identical 2D input; the number of candidates per frame is generic (shape-driven, not hardcoded):
+the Mendeley/Phase-2.5C benchmark cache holds top-3 (`ai/outputs/mendeley_2d/*.npz`,
+`make_tracked_2d.py`), while the seated-row/external-stress/causal-prototype paths pass top-8
+(`yolo_top8()` in `phase28/seated_row_transfer.py`, reused by `causal_prototype.py`):
 
   init    largest box area, median over the first 10 frames with detections
   assoc   per frame, the candidate maximising IoU with the current track box;
@@ -31,7 +34,8 @@ def _iou(a, b) -> float:
 
 
 def track_subject(kpts_top: np.ndarray, boxes: np.ndarray, img_wh: tuple[float, float]):
-    """kpts_top (T,3,17,3), boxes (T,3,5)=cx,cy,w,h,conf -> (kpts (T,17,3), log dict)."""
+    """kpts_top (T,N,17,3), boxes (T,N,5)=cx,cy,w,h,conf -> (kpts (T,17,3), log dict).
+    N = 3 for the Mendeley benchmark cache, 8 for seated-row/external/causal callers."""
     T = len(boxes)
     diag = float(np.hypot(*img_wh))
     valid_t = [t for t in range(T) if np.isfinite(boxes[t, 0, 0])]

@@ -1,0 +1,4 @@
+config,timing_validity,frames_proc,stream_s,realtime_factor,realtime_factor_first_quarter,realtime_factor_last_quarter,latency_median_s,latency_p95_s,latency_max_s,latency_final_s,decode_ms_first,decode_ms_last,decode_ms_growth_x,rss_start_mb,rss_end_mb,n_events
+cuda_V2,VALID,4440,148.0,1.309,1.402,1.168,0.024,0.244,0.411,0.411,9.9,279.4,28.36,1837.0,1845.0,98
+cpu_V3,VALID,2220,148.0,1.067,1.127,1.024,0.282,0.847,1.552,1.552,17.7,166.1,9.4,1975.0,1979.0,104
+cpu_V2_notta_det2,VALID,4440,148.0,0.884,0.972,0.836,8.007,19.233,21.337,21.337,12.0,361.0,30.21,2097.0,2010.0,97

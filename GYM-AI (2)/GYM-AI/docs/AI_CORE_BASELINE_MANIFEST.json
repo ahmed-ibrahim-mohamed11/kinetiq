@@ -1,0 +1,549 @@
+{
+ "manifest_version": "1.0",
+ "created_utc": "2026-10-10T07:58:00Z",
+ "baseline_lineage_commit": "92c0bcd2fc9133e8f0f4ba8bf3c152bdecc7a7e3",
+ "git": {
+  "commit": "100d824bb55c7b515bf344d747b244fb826316b2",
+  "branch": "main",
+  "dirty": true,
+  "dirty_files": [
+   "HANGELOG.md",
+   "README.md",
+   "ai/core/pose.py",
+   "ai/data/dataset_registry.json",
+   "ai/tests/test_pose.py",
+   "docs/DATASET_VALIDATION.md",
+   "docs/DECISION_LOG.md",
+   "docs/EXPERIMENT_REGISTRY.md",
+   "docs/LICENSING.md",
+   "docs/PRIVACY.md",
+   "docs/PROJECT_ROADMAP.md",
+   "docs/REPRODUCIBILITY.md",
+   "docs/RISK_REGISTER.md",
+   "docs/TECHNICAL_MASTER_REPORT.md"
+  ]
+ },
+ "environment": {
+  "python": "3.10.11",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "machine": "AMD64",
+  "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+  "packages": {
+   "torch": "2.14.0+cu130",
+   "torchvision": "0.29.0+cu130",
+   "ultralytics": "8.4.155",
+   "numpy": "2.2.6",
+   "scipy": "1.15.3",
+   "pandas": "2.3.3",
+   "opencv-python": "5.0.0.93",
+   "timm": "1.0.30",
+   "einops": "0.8.2",
+   "PyYAML": "6.0.3",
+   "pydantic": "2.13.5",
+   "pytest": "9.1.1",
+   "psutil": "7.2.2"
+  },
+  "cpu_logical": 20,
+  "cpu_physical": 14,
+  "ram_gb": 15.7,
+  "torch_cuda_available": true,
+  "torch_cuda_build": "13.0",
+  "gpu": "NVIDIA GeForce RTX 5050 Laptop GPU",
+  "nvidia_smi": "NVIDIA GeForce RTX 5050 Laptop GPU, 610.74, 8151 MiB"
+ },
+ "product_system": {
+  "description": "YOLO11n-pose top-8 -> deterministic tracker -> COCO->H36M -> MotionBERT-Lite (243-frame chunks, flip-TTA) -> torso-frame features -> ridge phase model + explicit-duration HSMM (masked supervision, refit on Mendeley BACK TRAIN) -> reps START/PULL/END -> form indicators v1 (seated_row thresholds PROVISIONAL)",
+  "cfg": {
+   "smooth_hz": 2.0,
+   "detrend_s": 10.0,
+   "alpha": 0.03,
+   "conf_thr": 0.3,
+   "dur_weight": 1.0,
+   "dur_sigma_floor": 0.3,
+   "tempo_norm": true,
+   "emis_var_floor": 0.001,
+   "min_dur_frac": 0.5,
+   "direct_gap_frac": 0.25,
+   "cens_q": 0.1,
+   "peak_sd_floor": 0.05
+  },
+  "n_train_videos": 73,
+  "fitted_system_sha256": "63d36c31761c95a86e380eee698ea002a196ce0dc5df7a7b2414ecc6532e0720"
+ },
+ "models": [
+  {
+   "role": "product",
+   "kind": "2d_pose_detector",
+   "path": "yolo11n-pose.pt",
+   "present": true,
+   "bytes": 6255593,
+   "sha256": "869e83fcdffdc7371fa4e34cd8e51c838cc729571d1635e5141e3075e9319dc0",
+   "source": "Ultralytics auto-download (ultralytics==8.4.155)",
+   "license": "AGPL-3.0 (Ultralytics) - commercial use needs Enterprise licence"
+  },
+  {
+   "role": "product",
+   "kind": "3d_lifter",
+   "path": "ai/models/motionbert/FT_MB_lite_MB_ft_h36m_global_lite/best_epoch.bin",
+   "present": true,
+   "bytes": 64099897,
+   "sha256": "9811155371db4ca5d20f31a36a232d41012e12e1333882888a564d741861148f",
+   "source": "HF walterzhu/MotionBERT checkpoint/pose3d/FT_MB_lite_MB_ft_h36m_global_lite/best_epoch.bin",
+   "license": "code Apache-2.0; weights trained on H36M/AMASS (dataset terms non-commercial)"
+  },
+  {
+   "role": "product",
+   "kind": "lifter_config",
+   "path": "motionbert/configs/pose3d/MB_ft_h36m_global_lite.yaml",
+   "present": true,
+   "bytes": 774,
+   "sha256": "672bb3ae05e89966acfbf395d601c7a22df0d2c038942d8ac0e585bce23dc8da",
+   "source": "vendored MotionBERT repo",
+   "license": "Apache-2.0"
+  },
+  {
+   "role": "product",
+   "kind": "rep_segmentation_artifact",
+   "path": "ai/models/rep_segmentation/mblite_rowing_v1.json",
+   "present": true,
+   "bytes": 13275,
+   "sha256": "5170ec6428286523de5cc83223bc656990c1474539480f980129eae73fd2db4b",
+   "source": "ai/scripts/export_model_artifact.py (frozen Mendeley BACK TRAIN fit)",
+   "license": "project-owned"
+  },
+  {
+   "role": "benchmark",
+   "kind": "3d_lifter",
+   "path": "ai/models/motionbert/FT_MB_release_MB_ft_h36m/best_epoch.bin",
+   "present": true,
+   "bytes": 169958969,
+   "sha256": "597c708bd585646cc6961df057ef73634edb83a4d5c1155d98a4cc0c04e81b98",
+   "source": "HF walterzhu/MotionBERT checkpoint/pose3d/FT_MB_release_MB_ft_h36m/best_epoch.bin",
+   "license": "code Apache-2.0; weights trained on H36M/AMASS (non-commercial dataset terms)"
+  },
+  {
+   "role": "benchmark",
+   "kind": "3d_lifter",
+   "path": "ai/models/poseformerv2/27_243_45.2.bin",
+   "present": true,
+   "bytes": 172754985,
+   "sha256": "f74d3eaad53e26909b6ff83c0c9eaf57be90631137d4514d25e06cea8f5ee190",
+   "source": "Google Drive 14SpqPyq9yiblCzTH5CorymKCUsXapmkg (PoseFormerV2 README)",
+   "license": "code MIT; weights trained on H36M"
+  },
+  {
+   "role": "benchmark",
+   "kind": "3d_lifter",
+   "path": "ai/models/motionagformer/motionagformer-b-h36m.pth.tr",
+   "present": true,
+   "bytes": 141930389,
+   "sha256": "eb15d088aadf193524a0d6c4a40680a324292db2781f3f45abe3400d5a4b343b",
+   "source": "Google Drive 1Iii5EwsFFm9_9lKBUPfN8bV5LmfkNUMP (MotionAGFormer README)",
+   "license": "code Apache-2.0; weights trained on H36M"
+  },
+  {
+   "role": "benchmark",
+   "kind": "3d_lifter",
+   "path": "ai/models/videopose3d/pretrained_h36m_detectron_coco.bin",
+   "present": true,
+   "bytes": 67892577,
+   "sha256": "d3219e005b50591f694da5cbaf6849f060d6b2cf895864a779f8a992ac63a232",
+   "source": "https://dl.fbaipublicfiles.com/video-pose-3d/",
+   "license": "CC BY-NC 4.0 - research only, excluded from product"
+  },
+  {
+   "role": "benchmark",
+   "kind": "end_to_end_pose",
+   "path": "ai/models/mediapipe/pose_landmarker_full.task",
+   "present": true,
+   "bytes": 9398198,
+   "sha256": "4eaa5eb7a98365221087693fcc286334cf0858e2eb6e15b506aa4a7ecdcec4ad",
+   "source": "storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full",
+   "license": "Apache-2.0"
+  }
+ ],
+ "configs": [
+  {
+   "path": "ai/outputs/phase27/motionbert_lite/config_final.json",
+   "sha256_lf": "12dd13c2502b14875b2c0e72fa881489a9aa6c7f6223e8c521fe2d63c0ebb60f"
+  },
+  {
+   "path": "ai/outputs/phase27/freeze_manifest.json",
+   "sha256_lf": "03449051d78c780731101d65c87c80e1a433885659e73e0caf5939bc41d63ebd"
+  },
+  {
+   "path": "ai/models/form_thresholds_v1_seated_row.json",
+   "sha256_lf": "af50eda59c82ac87d2f949fa099b820c02d3c490b7f7f1428858bb184a07ccbb"
+  },
+  {
+   "path": "ai/models/form_thresholds_v1_back.json",
+   "sha256_lf": "2d183165a93a61acbfcf8449c10d752b6a2764a015b5f7dfd526fd5539a60634"
+  },
+  {
+   "path": "ai/core/config.py",
+   "sha256_lf": "771844139d94dab0d40e93991f4a85d37a641800761c77161f9b1bbbbcefbf82"
+  },
+  {
+   "path": "ai/core/decoder.py",
+   "sha256_lf": "8d295aa295c82ccde0c694b2f42704d8604e79ae28d15e1059fe347ef1749ac2"
+  },
+  {
+   "path": "ai/core/features.py",
+   "sha256_lf": "66c14fd0fb4af2af05f9ffbe1e97da42f32f47298bd28e555a020be224d7647f"
+  },
+  {
+   "path": "ai/core/phase_model.py",
+   "sha256_lf": "193b59172cad1388b8f036af534aa1c597606d5c88b028d3782fce3dd663ca78"
+  },
+  {
+   "path": "ai/core/pose.py",
+   "sha256_lf": "100d27944abfe017d7ba5acd8141f579d39e83a6828faaeba09b24ca76518e7e"
+  },
+  {
+   "path": "ai/core/form_indicators.py",
+   "sha256_lf": "324aaadbf244322df1915a5aa29a9fd46dd8fe095b72a44586c4415a93e31b79"
+  },
+  {
+   "path": "ai/core/guards.py",
+   "sha256_lf": "0c2799b889913756f50beb74fb4dbc881526a11d94b609b050bd52e8091f806c"
+  },
+  {
+   "path": "ai/core/lifting.py",
+   "sha256_lf": "ebe077dcd6c6594d5754c1e1eacca0903c02afe76eedb6abfbeee5be7da196da"
+  },
+  {
+   "path": "ai/core/tracking.py",
+   "sha256_lf": "ab82c0f2b81f50bef0af436bb8cbf40ef9250ef2feb006f34e4e82c122deb9d2"
+  },
+  {
+   "path": "ai/core/live.py",
+   "sha256_lf": "12e9c21a63960904e0ae879a2de9b86d9b1346a0a20ba68ba1573a22453a7113"
+  },
+  {
+   "path": "ai/core/io.py",
+   "sha256_lf": "75ba9dc97cece243706c325d695d19b890102f382bd0644cf751c4b1018547ad"
+  },
+  {
+   "path": "ai/core/model_artifact.py",
+   "sha256_lf": "cd00c197e3b6e0cbd5364a3dde637599622269fcb819c8f6388b23c8337fc0bf"
+  },
+  {
+   "path": "ai/core/schema.py",
+   "sha256_lf": "70fb1ac81a0777b288e1152ba066398f051c3a4423afd62471f9cd27adee1c2a"
+  },
+  {
+   "path": "ai/core/pipeline.py",
+   "sha256_lf": "30725e31ee7d8087bb3f42c30016d0b748fb7fe0dfe9c53cc5b2b8adb2aa4e0f"
+  },
+  {
+   "path": "ai/schemas/analysis_result.v1.json",
+   "sha256_lf": "b6001d9dbdbcfd95a06e22aad092322ab9ace9287ec829dcc66c931051f297b7"
+  },
+  {
+   "path": "ai/research/pose_benchmark/tracking.py",
+   "sha256_lf": "0b5b8481e5a627d31d2c126e9b580dbcb106912dc45906b90f5b9d8bca1e2c1b"
+  },
+  {
+   "path": "ai/research/pose_benchmark/lifters.py",
+   "sha256_lf": "b4edd30c6da521e27c8b7a2d834bb76ec9013d4253bfedb4d0363880f7a461cb"
+  },
+  {
+   "path": "ai/research/phase27/train_eval.py",
+   "sha256_lf": "65a078db9820ad46e57a6c409dcebc61349c425f215e4703d145caefaed90ee1"
+  },
+  {
+   "path": "ai/research/realtime/causal_prototype.py",
+   "sha256_lf": "d29a955d2ab670ee93e5cbb72b7b3d46b341797b0e9b07f0804fa87abbcfb93f"
+  }
+ ],
+ "data": [
+  {
+   "name": "mendeley_annotations",
+   "path": "ai/data/mendeley_rep_annotations_expanded.csv",
+   "sha256_lf": "339e36c55826f88e8de904f7951d0401800bdc26391a548211d60cf876a23d3e"
+  },
+  {
+   "name": "mendeley_subject_split",
+   "path": "ai/data/mendeley_subject_split.csv",
+   "sha256_lf": "820eb60cf48ff049e703e6ff48dc9527d56cb979b81345474be90deba93c8dda"
+  },
+  {
+   "name": "mendeley_duplicate_groups",
+   "path": "ai/outputs/mendeley_duplicate_groups.json",
+   "sha256_lf": "e22465167954dc937c8628967e731aba85c974d3fc9280aa8dce41fd52eb7ee6"
+  },
+  {
+   "name": "internal_seated_row_gt",
+   "path": "ai/outputs/manual_rep_annotations.csv",
+   "sha256_lf": "b53b42462a5944653c32e8a40b7a544af867b8268e29d325d952a417bf2a829e"
+  },
+  {
+   "name": "external_gt",
+   "path": "ai/data/external_stress_test/annotations.csv",
+   "sha256_lf": "eecc11e3e36b3f484e875255986ee627fb4a3d6a0462be9426ac2f9a306cf4d5"
+  }
+ ],
+ "protocol": {
+  "name": "v2",
+  "pull_tolerance_s": 0.5333,
+  "iou_threshold": 0.5,
+  "mae_pooling": "over matched pairs (seconds); legacy docs used per-video means",
+  "locked_sets": [
+   "Mendeley TEST (5 subjects; one run per frozen candidate)",
+   "Domain C fresh athletes (not yet recorded)"
+  ]
+ },
+ "headline_metrics": {
+  "mendeley_val_iou_f1": {
+   "value": 0.9137,
+   "documented": 0.914,
+   "reproduces_documented": true
+  },
+  "internal_sr_iou_f1": {
+   "value": 0.8406,
+   "documented": 0.841,
+   "reproduces_documented": true
+  },
+  "internal_sr_pull_f1": {
+   "value": 0.8529,
+   "documented": 0.853,
+   "reproduces_documented": true
+  },
+  "external_iou_f1": {
+   "value": 0.6316,
+   "documented": 0.632,
+   "reproduces_documented": true
+  },
+  "external_pull_f1": {
+   "value": 0.8421,
+   "documented": 0.842,
+   "reproduces_documented": true
+  },
+  "causal_V1_low_latency_iou_f1": {
+   "value": 0.7397,
+   "documented": 0.74,
+   "reproduces_documented": true
+  },
+  "causal_V2_quality_iou_f1": {
+   "value": 0.806,
+   "documented": 0.806,
+   "reproduces_documented": true
+  },
+  "causal_V3_budget_15fps_iou_f1": {
+   "value": 0.8125,
+   "documented": 0.812,
+   "reproduces_documented": true
+  }
+ },
+ "pooled": {
+  "mendeley_val": {
+   "iou": {
+    "tp": 286,
+    "fp": 28,
+    "fn": 26,
+    "n_gt": 312,
+    "n_pred": 454,
+    "n_ignored": 140,
+    "precision": 0.9108,
+    "recall": 0.9167,
+    "f1": 0.9137,
+    "start_mae_s": 0.1163,
+    "pull_mae_s": 0.0793,
+    "end_mae_s": 0.1235,
+    "abs_count_error_mean": 0.5333
+   },
+   "pull": {
+    "tp": 294,
+    "fp": 21,
+    "fn": 18,
+    "n_gt": 312,
+    "n_pred": 454,
+    "n_ignored": 139,
+    "precision": 0.9333,
+    "recall": 0.9423,
+    "f1": 0.9378,
+    "start_mae_s": 0.1236,
+    "pull_mae_s": 0.0834,
+    "end_mae_s": 0.1442,
+    "abs_count_error_mean": 0.5667
+   }
+  },
+  "internal_sr": {
+   "iou": {
+    "tp": 29,
+    "fp": 10,
+    "fn": 1,
+    "n_gt": 30,
+    "n_pred": 47,
+    "n_ignored": 8,
+    "precision": 0.7436,
+    "recall": 0.9667,
+    "f1": 0.8406,
+    "start_mae_s": 0.2759,
+    "pull_mae_s": 0.1747,
+    "end_mae_s": 0.369,
+    "abs_count_error_mean": 1.5
+   },
+   "pull": {
+    "tp": 29,
+    "fp": 9,
+    "fn": 1,
+    "n_gt": 30,
+    "n_pred": 47,
+    "n_ignored": 9,
+    "precision": 0.7632,
+    "recall": 0.9667,
+    "f1": 0.8529,
+    "start_mae_s": 0.2483,
+    "pull_mae_s": 0.1276,
+    "end_mae_s": 0.3724,
+    "abs_count_error_mean": 1.6667
+   }
+  },
+  "external": {
+   "iou": {
+    "tp": 6,
+    "fp": 3,
+    "fn": 4,
+    "n_gt": 10,
+    "n_pred": 11,
+    "n_ignored": 2,
+    "precision": 0.6667,
+    "recall": 0.6,
+    "f1": 0.6316,
+    "start_mae_s": 0.6311,
+    "pull_mae_s": 0.3656,
+    "end_mae_s": 0.6667,
+    "abs_count_error_mean": 0.2
+   },
+   "pull": {
+    "tp": 8,
+    "fp": 1,
+    "fn": 2,
+    "n_gt": 10,
+    "n_pred": 11,
+    "n_ignored": 2,
+    "precision": 0.8889,
+    "recall": 0.8,
+    "f1": 0.8421,
+    "start_mae_s": 0.9733,
+    "pull_mae_s": 0.2825,
+    "end_mae_s": 0.9083,
+    "abs_count_error_mean": 0.2
+   }
+  },
+  "causal": {
+   "V1_low_latency": {
+    "iou": {
+     "tp": 27,
+     "fp": 16,
+     "fn": 3,
+     "n_gt": 30,
+     "n_pred": 54,
+     "n_ignored": 11,
+     "precision": 0.6279,
+     "recall": 0.9,
+     "f1": 0.7397,
+     "start_mae_s": 0.2802,
+     "pull_mae_s": 0.1827,
+     "end_mae_s": 0.3963,
+     "abs_count_error_mean": 2.1667
+    },
+    "pull": {
+     "tp": 28,
+     "fp": 15,
+     "fn": 2,
+     "n_gt": 30,
+     "n_pred": 54,
+     "n_ignored": 11,
+     "precision": 0.6512,
+     "recall": 0.9333,
+     "f1": 0.7671,
+     "start_mae_s": 0.2679,
+     "pull_mae_s": 0.1286,
+     "end_mae_s": 0.4107,
+     "abs_count_error_mean": 2.1667
+    }
+   },
+   "V2_quality": {
+    "iou": {
+     "tp": 27,
+     "fp": 10,
+     "fn": 3,
+     "n_gt": 30,
+     "n_pred": 47,
+     "n_ignored": 10,
+     "precision": 0.7297,
+     "recall": 0.9,
+     "f1": 0.806,
+     "start_mae_s": 0.2333,
+     "pull_mae_s": 0.1383,
+     "end_mae_s": 0.3827,
+     "abs_count_error_mean": 1.5
+    },
+    "pull": {
+     "tp": 28,
+     "fp": 9,
+     "fn": 2,
+     "n_gt": 30,
+     "n_pred": 47,
+     "n_ignored": 10,
+     "precision": 0.7568,
+     "recall": 0.9333,
+     "f1": 0.8358,
+     "start_mae_s": 0.2536,
+     "pull_mae_s": 0.1405,
+     "end_mae_s": 0.3845,
+     "abs_count_error_mean": 1.5
+    }
+   },
+   "V3_budget_15fps": {
+    "iou": {
+     "tp": 26,
+     "fp": 8,
+     "fn": 4,
+     "n_gt": 30,
+     "n_pred": 39,
+     "n_ignored": 5,
+     "precision": 0.7647,
+     "recall": 0.8667,
+     "f1": 0.8125,
+     "start_mae_s": 0.2397,
+     "pull_mae_s": 0.1385,
+     "end_mae_s": 0.3077,
+     "abs_count_error_mean": 0.6667
+    },
+    "pull": {
+     "tp": 28,
+     "fp": 6,
+     "fn": 2,
+     "n_gt": 30,
+     "n_pred": 39,
+     "n_ignored": 5,
+     "precision": 0.8235,
+     "recall": 0.9333,
+     "f1": 0.875,
+     "start_mae_s": 0.2702,
+     "pull_mae_s": 0.1345,
+     "end_mae_s": 0.3274,
+     "abs_count_error_mean": 0.6667
+    }
+   }
+  }
+ },
+ "split_roles": {
+  "mendeley_train": "TRAIN (14 subjects) - fitting only",
+  "mendeley_val": "DEV (5 subjects) - model/config selection (used since Phase 2.7)",
+  "mendeley_test": "LOCKED TEST (5 subjects) - single runs only; used once in Phase 2.7",
+  "internal_sr": "DEV / CONTAMINATED - chose MB-Lite as product primary + provisional SR form thresholds",
+  "external": "STRESS REFERENCE - eval-only, never tuned on; Instagram reels (licensing caveat, see LICENSING.md)",
+  "domain_c": "FINAL TEST - future >=10 fresh athletes; untouched"
+ },
+ "tests": {
+  "command": "python -m pytest -q",
+  "summary": "619 passed, 20 warnings in 480.95s (0:08:00)",
+  "passed": 619,
+  "failed": 0,
+  "exit_code": 0
+ }
+}

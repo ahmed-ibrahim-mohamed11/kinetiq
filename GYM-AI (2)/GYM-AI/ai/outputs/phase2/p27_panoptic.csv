@@ -1,0 +1,7 @@
+view,cam,rule,backward_signal_corr
+front,30,camera,-0.9265
+front,30,anatomical,0.9265
+side,15,camera,-0.7078
+side,15,anatomical,0.7078
+back,0,camera,0.7756
+back,0,anatomical,0.7756

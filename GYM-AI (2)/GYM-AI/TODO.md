@@ -1,5 +1,12 @@
 # TODO
 
+**SUPERSEDED 2026-10-09**: this file's "Phase 0–9" numbering and the 2026-10-04 "one phase at a
+time" directive were both superseded by the technical-lead-autonomy decision (DECISION_LOG
+2026-10-05) and then by the owner's current master-prompt phase plan (Phase 0–7; see
+docs/PROJECT_ROADMAP.md for the live queue and docs/PROJECT_STATE.md for current status). Kept
+below verbatim as a historical record of what was actually done through 2026-10-05; do not use it
+to plan new work.
+
 ## OWNER DIRECTIVE 2026-10-04: one phase at a time; report → STOP → wait for explicit approval.
 ## Phase 4+ product work PAUSED (preserved). Baseline FROZEN: tag `baseline-v0.2.0-frozen`.
 
@@ -45,7 +52,8 @@
 - [x] Video folders verified correct (B2 resolved)
 - [x] **STEP 0:** owner deferred to recommendation → **Path B** (2026-10-02)
 - [x] Path B: vendored MotionBERT (commit `705d3a95`), downloaded pose3d checkpoint, `ai/research/extract_poses3d.py`, regenerated 6 pose files, ran v2 unchanged → **new honest baseline F1 0.87** (`ai/outputs/baselines/v2_hsmm_nested_lovo.json`)
-- [ ] Owner: delete the stray zero-commit `C:\Users\Lenovo\.git` (outside the project; not done automatically)
+- [x] ~~Owner: delete the stray zero-commit `C:\Users\Lenovo\.git`~~ — moot: the repo moved to a
+  different machine (RTX 5050 laptop) on 2026-10-09; see AI_CORE_BASELINE_MANIFEST.md
 - [ ] Owner: back up the 6 research videos off this machine (git-ignored, not protected by the repo)
 - [x] Record GPU status (none; CPU timings measured) in `docs/HARDWARE_SETUP.md`
 

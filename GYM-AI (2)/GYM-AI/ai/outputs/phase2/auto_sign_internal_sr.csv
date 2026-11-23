@@ -1,0 +1,13 @@
+video,rule,tp,fp,fn
+correct_01,iou,5,0,0
+correct_01,pull,5,0,0
+correct_02,iou,5,0,0
+correct_02,pull,4,0,1
+correct_03,iou,5,0,0
+correct_03,pull,5,0,0
+asymmetry_01,iou,4,1,1
+asymmetry_01,pull,4,1,1
+asymmetry_02,iou,5,0,0
+asymmetry_02,pull,5,0,0
+asymmetry_03,iou,5,0,0
+asymmetry_03,pull,5,0,0

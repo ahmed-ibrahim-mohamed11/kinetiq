@@ -1,0 +1,341 @@
+{
+  "schema_version": "1.0-squat",
+  "exercise": "barbell_squat",
+  "status": "OK",
+  "setup_ok": true,
+  "camera_view": "front",
+  "frontal_ratio": 0.9992,
+  "observable_errors": {
+    "knees_caving_inward": true,
+    "knees_forward_error": false,
+    "shallow_squat": true,
+    "excessive_trunk_lean": false,
+    "heel_lift": false,
+    "lr_asymmetry": true
+  },
+  "n_frames": 470,
+  "fps": 15.0,
+  "duration_s": 31.33,
+  "total_reps": 9,
+  "correct_reps": 0,
+  "incorrect_reps": 9,
+  "uncertain_reps": 0,
+  "alarm_events_count": 1,
+  "alarm_latency_median_ms": 0.002,
+  "alarm_latency_p95_ms": 0.0035,
+  "reps": [
+    {
+      "index": 1,
+      "start_frame": 10,
+      "bottom_frame": 31,
+      "end_frame": 52,
+      "start_s": 0.667,
+      "bottom_s": 2.067,
+      "end_s": 3.467,
+      "duration_s": 2.8,
+      "descent_s": 1.4,
+      "ascent_s": 1.4,
+      "min_knee_angle_deg": 46.14,
+      "min_hip_angle_deg": 89.75,
+      "min_ankle_angle_deg": 33.96,
+      "max_trunk_lean_deg": 16.58,
+      "bottom_depth_rel": 0.1812,
+      "min_valgus_ratio": 0.7786,
+      "max_forward_knee": 0.706,
+      "verdict": "incorrect",
+      "confidence": 0.8769,
+      "primary_error": "knees_caving_inward",
+      "detected_errors": [
+        "knees_caving_inward"
+      ],
+      "explanation": "Push your knees outward in line with your toes!",
+      "model_verdicts": {
+        "06_Rules_Thresholds": "incorrect",
+        "07_RF_XGBoost_Ensemble": "incorrect",
+        "08_1DCNN_BiGRU_Temporal": "incorrect",
+        "09_AngleGraph_GNN": "incorrect",
+        "10_Small_STGCN": "incorrect"
+      }
+    },
+    {
+      "index": 2,
+      "start_frame": 55,
+      "bottom_frame": 78,
+      "end_frame": 98,
+      "start_s": 3.667,
+      "bottom_s": 5.2,
+      "end_s": 6.533,
+      "duration_s": 2.867,
+      "descent_s": 1.533,
+      "ascent_s": 1.333,
+      "min_knee_angle_deg": 74.9,
+      "min_hip_angle_deg": 59.87,
+      "min_ankle_angle_deg": 51.29,
+      "max_trunk_lean_deg": 54.46,
+      "bottom_depth_rel": 0.3736,
+      "min_valgus_ratio": 1.1137,
+      "max_forward_knee": 0.5526,
+      "verdict": "incorrect",
+      "confidence": 0.7782,
+      "primary_error": "knees_caving_inward",
+      "detected_errors": [
+        "knees_caving_inward"
+      ],
+      "explanation": "Push your knees outward in line with your toes!",
+      "model_verdicts": {
+        "06_Rules_Thresholds": "incorrect",
+        "07_RF_XGBoost_Ensemble": "incorrect",
+        "08_1DCNN_BiGRU_Temporal": "correct",
+        "09_AngleGraph_GNN": "incorrect",
+        "10_Small_STGCN": "incorrect"
+      }
+    },
+    {
+      "index": 3,
+      "start_frame": 102,
+      "bottom_frame": 122,
+      "end_frame": 148,
+      "start_s": 6.8,
+      "bottom_s": 8.133,
+      "end_s": 9.867,
+      "duration_s": 3.067,
+      "descent_s": 1.333,
+      "ascent_s": 1.733,
+      "min_knee_angle_deg": 62.11,
+      "min_hip_angle_deg": 68.63,
+      "min_ankle_angle_deg": 45.54,
+      "max_trunk_lean_deg": 37.56,
+      "bottom_depth_rel": 0.2193,
+      "min_valgus_ratio": 1.0302,
+      "max_forward_knee": 0.5661,
+      "verdict": "incorrect",
+      "confidence": 0.8754,
+      "primary_error": "knees_caving_inward",
+      "detected_errors": [
+        "knees_caving_inward"
+      ],
+      "explanation": "Push your knees outward in line with your toes!",
+      "model_verdicts": {
+        "06_Rules_Thresholds": "uncertain",
+        "07_RF_XGBoost_Ensemble": "incorrect",
+        "08_1DCNN_BiGRU_Temporal": "incorrect",
+        "09_AngleGraph_GNN": "incorrect",
+        "10_Small_STGCN": "incorrect"
+      }
+    },
+    {
+      "index": 4,
+      "start_frame": 154,
+      "bottom_frame": 172,
+      "end_frame": 202,
+      "start_s": 10.267,
+      "bottom_s": 11.467,
+      "end_s": 13.467,
+      "duration_s": 3.2,
+      "descent_s": 1.2,
+      "ascent_s": 2.0,
+      "min_knee_angle_deg": 96.33,
+      "min_hip_angle_deg": 86.19,
+      "min_ankle_angle_deg": 74.64,
+      "max_trunk_lean_deg": 24.43,
+      "bottom_depth_rel": 0.2328,
+      "min_valgus_ratio": 0.445,
+      "max_forward_knee": 0.2827,
+      "verdict": "incorrect",
+      "confidence": 0.7916,
+      "primary_error": "knees_caving_inward",
+      "detected_errors": [
+        "knees_caving_inward"
+      ],
+      "explanation": "Push your knees outward in line with your toes!",
+      "model_verdicts": {
+        "06_Rules_Thresholds": "incorrect",
+        "07_RF_XGBoost_Ensemble": "incorrect",
+        "08_1DCNN_BiGRU_Temporal": "incorrect",
+        "09_AngleGraph_GNN": "incorrect",
+        "10_Small_STGCN": "incorrect"
+      }
+    },
+    {
+      "index": 5,
+      "start_frame": 208,
+      "bottom_frame": 234,
+      "end_frame": 260,
+      "start_s": 13.867,
+      "bottom_s": 15.6,
+      "end_s": 17.333,
+      "duration_s": 3.467,
+      "descent_s": 1.733,
+      "ascent_s": 1.733,
+      "min_knee_angle_deg": 74.26,
+      "min_hip_angle_deg": 91.35,
+      "min_ankle_angle_deg": 59.78,
+      "max_trunk_lean_deg": 23.49,
+      "bottom_depth_rel": 0.1925,
+      "min_valgus_ratio": 0.885,
+      "max_forward_knee": 0.4288,
+      "verdict": "incorrect",
+      "confidence": 0.7932,
+      "primary_error": "knees_caving_inward",
+      "detected_errors": [
+        "knees_caving_inward"
+      ],
+      "explanation": "Push your knees outward in line with your toes!",
+      "model_verdicts": {
+        "06_Rules_Thresholds": "incorrect",
+        "07_RF_XGBoost_Ensemble": "incorrect",
+        "08_1DCNN_BiGRU_Temporal": "incorrect",
+        "09_AngleGraph_GNN": "incorrect",
+        "10_Small_STGCN": "incorrect"
+      }
+    },
+    {
+      "index": 6,
+      "start_frame": 263,
+      "bottom_frame": 287,
+      "end_frame": 318,
+      "start_s": 17.533,
+      "bottom_s": 19.133,
+      "end_s": 21.2,
+      "duration_s": 3.667,
+      "descent_s": 1.6,
+      "ascent_s": 2.067,
+      "min_knee_angle_deg": 56.37,
+      "min_hip_angle_deg": 80.9,
+      "min_ankle_angle_deg": 37.54,
+      "max_trunk_lean_deg": 41.99,
+      "bottom_depth_rel": 0.2799,
+      "min_valgus_ratio": 1.0287,
+      "max_forward_knee": 0.6606,
+      "verdict": "incorrect",
+      "confidence": 0.8798,
+      "primary_error": "knees_caving_inward",
+      "detected_errors": [
+        "knees_caving_inward"
+      ],
+      "explanation": "Push your knees outward in line with your toes!",
+      "model_verdicts": {
+        "06_Rules_Thresholds": "uncertain",
+        "07_RF_XGBoost_Ensemble": "incorrect",
+        "08_1DCNN_BiGRU_Temporal": "incorrect",
+        "09_AngleGraph_GNN": "incorrect",
+        "10_Small_STGCN": "incorrect"
+      }
+    },
+    {
+      "index": 7,
+      "start_frame": 323,
+      "bottom_frame": 344,
+      "end_frame": 371,
+      "start_s": 21.533,
+      "bottom_s": 22.933,
+      "end_s": 24.733,
+      "duration_s": 3.2,
+      "descent_s": 1.4,
+      "ascent_s": 1.8,
+      "min_knee_angle_deg": 80.65,
+      "min_hip_angle_deg": 94.68,
+      "min_ankle_angle_deg": 63.44,
+      "max_trunk_lean_deg": 30.44,
+      "bottom_depth_rel": 0.1642,
+      "min_valgus_ratio": 0.4957,
+      "max_forward_knee": 0.456,
+      "verdict": "incorrect",
+      "confidence": 0.8669,
+      "primary_error": "knees_caving_inward",
+      "detected_errors": [
+        "knees_caving_inward"
+      ],
+      "explanation": "Push your knees outward in line with your toes!",
+      "model_verdicts": {
+        "06_Rules_Thresholds": "incorrect",
+        "07_RF_XGBoost_Ensemble": "incorrect",
+        "08_1DCNN_BiGRU_Temporal": "incorrect",
+        "09_AngleGraph_GNN": "incorrect",
+        "10_Small_STGCN": "incorrect"
+      }
+    },
+    {
+      "index": 8,
+      "start_frame": 374,
+      "bottom_frame": 397,
+      "end_frame": 422,
+      "start_s": 24.933,
+      "bottom_s": 26.467,
+      "end_s": 28.133,
+      "duration_s": 3.2,
+      "descent_s": 1.533,
+      "ascent_s": 1.667,
+      "min_knee_angle_deg": 58.41,
+      "min_hip_angle_deg": 92.28,
+      "min_ankle_angle_deg": 48.59,
+      "max_trunk_lean_deg": 21.64,
+      "bottom_depth_rel": 0.0888,
+      "min_valgus_ratio": 0.3234,
+      "max_forward_knee": 0.4857,
+      "verdict": "incorrect",
+      "confidence": 0.9111,
+      "primary_error": "knees_caving_inward",
+      "detected_errors": [
+        "knees_caving_inward"
+      ],
+      "explanation": "Push your knees outward in line with your toes!",
+      "model_verdicts": {
+        "06_Rules_Thresholds": "incorrect",
+        "07_RF_XGBoost_Ensemble": "incorrect",
+        "08_1DCNN_BiGRU_Temporal": "incorrect",
+        "09_AngleGraph_GNN": "incorrect",
+        "10_Small_STGCN": "incorrect"
+      }
+    },
+    {
+      "index": 9,
+      "start_frame": 426,
+      "bottom_frame": 449,
+      "end_frame": 469,
+      "start_s": 28.4,
+      "bottom_s": 29.933,
+      "end_s": 31.267,
+      "duration_s": 2.867,
+      "descent_s": 1.533,
+      "ascent_s": 1.333,
+      "min_knee_angle_deg": 58.9,
+      "min_hip_angle_deg": 56.51,
+      "min_ankle_angle_deg": 57.16,
+      "max_trunk_lean_deg": 33.38,
+      "bottom_depth_rel": -0.0065,
+      "min_valgus_ratio": 0.8962,
+      "max_forward_knee": 0.5027,
+      "verdict": "incorrect",
+      "confidence": 0.8256,
+      "primary_error": "knees_caving_inward",
+      "detected_errors": [
+        "knees_caving_inward"
+      ],
+      "explanation": "Push your knees outward in line with your toes!",
+      "model_verdicts": {
+        "06_Rules_Thresholds": "incorrect",
+        "07_RF_XGBoost_Ensemble": "incorrect",
+        "08_1DCNN_BiGRU_Temporal": "incorrect",
+        "09_AngleGraph_GNN": "incorrect",
+        "10_Small_STGCN": "incorrect"
+      }
+    }
+  ],
+  "error_counts": {
+    "knees_caving_inward": 9,
+    "knees_forward_error": 0,
+    "shallow_squat": 0,
+    "excessive_trunk_lean": 0,
+    "heel_lift": 0,
+    "lr_asymmetry": 0
+  },
+  "timings_ms": {
+    "squat_features_ms": 9.33,
+    "instant_alarm_total_ms": 2.18,
+    "rep_judging_ms": 221.58
+  },
+  "warnings": [
+    "Camera view is 'front': knees_forward_error, excessive_trunk_lean, heel_lift cannot be reliably observed from this angle and are gated as uncertain."
+  ]
+}

@@ -6,6 +6,18 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+*.pem
+*.key
+
+# --- OneDrive sync-conflict copies ---
+*-LAPTOP-49D58D35*
+
+# --- runtime databases: biometric face templates + event queues, never commit ---
+outputs/smart_gym_data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
 
 # --- large binaries: dataset videos + model weights (see docs/HARDWARE_SETUP.md, ai/models/README.md) ---
 *.mp4
@@ -13,10 +25,14 @@ __pycache__/
 *.avi
 *.zip
 ai/data/mendeley/
+ai/data/panoptic/
+ai/data/aistpp/
 *.pt
 *.pth
+*.pth.tr
 *.bin
 *.onnx
+*.task
 
 # --- arrays: only the small (T,17,3) pose inputs that the baseline needs are tracked ---
 *.npy
@@ -37,3 +53,11 @@ third_party/*
 ai/data/external_stress_test/raw/
 ai/outputs/external_stress_test/sheets/
 ai/outputs/external_stress_test/drafts/
+
+# --- Phase 6 final test: the data root (videos, annotations, pose caches, per-video results) lives
+# OUTSIDE the repository (%LOCALAPPDATA%\gym-ai\phase6, never in OneDrive); these lines only guard
+# against a copy landing here by mistake. Only the published report + run ledger are tracked.
+ai/data/phase6/
+ai/outputs/phase6/cache/
+ai/outputs/phase6/dry_run*/
+ai/outputs/phase6/.run.lock

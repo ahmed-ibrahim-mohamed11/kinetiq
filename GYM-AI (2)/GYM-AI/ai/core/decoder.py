@@ -32,6 +32,14 @@ def estimate_tempo(fused: np.ndarray, fps: float, lo_s: float = 0.4, hi_s: float
     if len(pk) == 0:
         return None
     h = seg[pk]
+    if h.max() <= 0:
+        # R-16 (RISK_REGISTER.md, found by Phase 2.2's extreme synthetic slowdown/pause probes):
+        # every in-range peak is a NEGATIVE autocorrelation. "h >= 0.6*h.max()" assumes h.max() is
+        # positive -- for a negative h.max(), 0.6*h.max() is CLOSER to zero than h.max() itself, so
+        # h.max() fails its own filter and this used to crash with an empty-array IndexError instead
+        # of the documented "no periodicity found" contract. No positive-correlation peak means no
+        # real periodicity in range, so return None exactly as that contract already promises.
+        return None
     first = pk[h >= 0.6 * h.max()][0]          # first strong peak: avoids locking on 2x the period
     return float((lo + first) / fps)
 

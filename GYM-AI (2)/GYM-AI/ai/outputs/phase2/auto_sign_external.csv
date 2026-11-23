@@ -1,0 +1,11 @@
+video,rule,tp,fp,fn
+ext_02_full,iou,3,2,3
+ext_02_full,pull,0,5,6
+ext_03_segA,iou,1,0,0
+ext_03_segA,pull,1,0,0
+ext_03_segB,iou,1,0,0
+ext_03_segB,pull,1,0,0
+ext_08_segB,iou,1,0,0
+ext_08_segB,pull,0,1,1
+ext_08_segC,iou,1,0,0
+ext_08_segC,pull,1,0,0

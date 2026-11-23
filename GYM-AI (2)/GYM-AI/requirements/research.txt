@@ -1,0 +1,21 @@
+# Research/benchmark-only extras (other lifters, MediaPipe, plotting, Supabase tests, ...).
+# Not needed by the product path, the tests or the headline metrics.
+# Exact pins from the validated environment (Python 3.10, 2026-10-10).
+-r dev.txt
+absl-py==2.5.0
+beautifulsoup4==4.15.0
+cffi==2.1.1
+einops==0.8.2
+flatbuffers==25.12.19
+gdown==6.4.1
+mediapipe==1.0.1
+opencv-contrib-python==5.0.0.93
+psycopg==3.3.6
+psycopg-binary==3.3.6
+pycparser==3.0
+PySocks==1.7.1
+safetensors==0.8.0
+sounddevice==0.5.6
+soupsieve==2.10
+timm==1.0.30
+torch-dct==0.1.6

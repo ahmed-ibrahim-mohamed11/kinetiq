@@ -1,0 +1,118 @@
+{
+  "n_subjects": 3,
+  "evaluation_protocol": "5-Fold Stratified Out-of-Fold Cross-Validation across all 18 Mendeley Squat videos",
+  "n_videos": 18,
+  "total_segmented_reps": 268,
+  "good_reps": 145,
+  "bad_reps": 123,
+  "view_detection_accuracy": 1.0,
+  "alarm_engine_latency_ms": {
+    "median_ms": 0.0024,
+    "p95_ms": 0.0053,
+    "max_ms": 1.1523,
+    "target_ms": 200.0,
+    "passes_target": true
+  },
+  "judging_models_test_set": {
+    "06_Rules_Thresholds": {
+      "accuracy": 0.5746,
+      "precision": 0.5437,
+      "recall": 0.4553,
+      "f1": 0.4956,
+      "ece": 0.122,
+      "tp": 56,
+      "fp": 47,
+      "fn": 67,
+      "tn": 98
+    },
+    "07_RF_XGBoost_Ensemble": {
+      "accuracy": 0.709,
+      "precision": 0.732,
+      "recall": 0.5772,
+      "f1": 0.6455,
+      "ece": 0.1708,
+      "tp": 71,
+      "fp": 26,
+      "fn": 52,
+      "tn": 119
+    },
+    "08_1DCNN_BiGRU_Temporal": {
+      "accuracy": 0.75,
+      "precision": 0.7333,
+      "recall": 0.7154,
+      "f1": 0.7243,
+      "ece": 0.1561,
+      "tp": 88,
+      "fp": 32,
+      "fn": 35,
+      "tn": 113
+    },
+    "09_AngleGraph_GNN": {
+      "accuracy": 0.6978,
+      "precision": 0.681,
+      "recall": 0.6423,
+      "f1": 0.6611,
+      "ece": 0.2448,
+      "tp": 79,
+      "fp": 37,
+      "fn": 44,
+      "tn": 108
+    },
+    "10_Small_STGCN": {
+      "accuracy": 0.7836,
+      "precision": 0.7686,
+      "recall": 0.7561,
+      "f1": 0.7623,
+      "ece": 0.1328,
+      "tp": 93,
+      "fp": 28,
+      "fn": 30,
+      "tn": 117
+    },
+    "Ensemble_All_5": {
+      "accuracy": 0.7575,
+      "precision": 0.7736,
+      "recall": 0.6667,
+      "f1": 0.7162,
+      "ece": 0.0953,
+      "tp": 82,
+      "fp": 24,
+      "fn": 41,
+      "tn": 121
+    }
+  },
+  "baselines_comparison": {
+    "published_MD_CVCSPC_f1": 0.526,
+    "published_GYMetricPose_f1": 0.44,
+    "kinetiq_best_f1": 0.7623
+  },
+  "demo_videos": [
+    {
+      "video": "subject_002_squat_good_front",
+      "mp4": "C:\\Users\\mamdo\\OneDrive\\Desktop\\Kinetiq\\GYM-AI (2)\\GYM-AI\\ai\\outputs\\squat_assessment\\demo_subject_002_squat_good_front_annotated.mp4",
+      "report": "C:\\Users\\mamdo\\OneDrive\\Desktop\\Kinetiq\\GYM-AI (2)\\GYM-AI\\ai\\outputs\\squat_assessment\\demo_subject_002_squat_good_front_report.json",
+      "total_reps": 14,
+      "correct": 13,
+      "incorrect": 1,
+      "alarms": 0
+    },
+    {
+      "video": "subject_002_squat_bad_front",
+      "mp4": "C:\\Users\\mamdo\\OneDrive\\Desktop\\Kinetiq\\GYM-AI (2)\\GYM-AI\\ai\\outputs\\squat_assessment\\demo_subject_002_squat_bad_front_annotated.mp4",
+      "report": "C:\\Users\\mamdo\\OneDrive\\Desktop\\Kinetiq\\GYM-AI (2)\\GYM-AI\\ai\\outputs\\squat_assessment\\demo_subject_002_squat_bad_front_report.json",
+      "total_reps": 9,
+      "correct": 0,
+      "incorrect": 9,
+      "alarms": 1
+    },
+    {
+      "video": "subject_003_squat_bad_front",
+      "mp4": "C:\\Users\\mamdo\\OneDrive\\Desktop\\Kinetiq\\GYM-AI (2)\\GYM-AI\\ai\\outputs\\squat_assessment\\demo_subject_003_squat_bad_front_annotated.mp4",
+      "report": "C:\\Users\\mamdo\\OneDrive\\Desktop\\Kinetiq\\GYM-AI (2)\\GYM-AI\\ai\\outputs\\squat_assessment\\demo_subject_003_squat_bad_front_report.json",
+      "total_reps": 22,
+      "correct": 0,
+      "incorrect": 22,
+      "alarms": 5
+    }
+  ]
+}

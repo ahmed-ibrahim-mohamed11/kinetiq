@@ -1,0 +1,16 @@
+component,split,subjects,n_videos,n_train_videos,n_gt,iou_tp,iou_fp,iou_fn,iou_f1,pull_f1,pull_mae_s
+subject_001,train,subject_001,6,91,99,78,16,21,0.8083,0.7876,0.0439
+subject_002,val,subject_002,6,96,4,4,5,0,0.6154,0.6154,0.0833
+subject_003,train,subject_003,6,91,75,68,12,7,0.8774,0.9103,0.0423
+subject_005,train,"subject_005,subject_006",12,91,82,74,14,8,0.8706,0.9176,0.1171
+subject_007,train,subject_007,6,91,55,47,11,8,0.8319,0.8696,0.0453
+subject_008,val,subject_008,6,92,55,47,27,8,0.7287,0.8527,0.0667
+subject_010,train,"subject_010,subject_013",11,86,140,125,17,15,0.8865,0.8865,0.0288
+subject_012,train,subject_012,6,91,67,64,3,3,0.9552,1.0,0.0726
+subject_014,train,"subject_014,subject_019,subject_020",17,80,208,194,12,14,0.9372,0.9517,0.0592
+subject_015,val,subject_015,6,91,46,38,6,8,0.8444,0.9111,0.0992
+subject_016,train,subject_016,6,91,89,67,22,22,0.7528,0.7303,0.079
+subject_017,val,subject_017,6,91,117,113,2,4,0.9741,0.9828,0.0778
+subject_018,train,subject_018,6,91,75,63,6,12,0.875,0.8571,0.091
+subject_022,val,subject_022,6,91,90,82,7,8,0.9162,0.9556,0.0682
+subject_023,train,subject_023,3,94,24,22,2,2,0.9167,1.0,0.0917

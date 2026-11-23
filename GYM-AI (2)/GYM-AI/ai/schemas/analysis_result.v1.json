@@ -1,0 +1,482 @@
+{
+ "$defs": {
+  "GuardInfo": {
+   "additionalProperties": false,
+   "properties": {
+    "status": {
+     "enum": [
+      "OK",
+      "NO_PERSON",
+      "VIDEO_TOO_SHORT",
+      "INSUFFICIENT_CONFIDENCE",
+      "LOST_TRACK",
+      "AMBIGUOUS_SUBJECT",
+      "UNSUPPORTED_EXERCISE"
+     ],
+     "title": "Status",
+     "type": "string"
+    },
+    "reason": {
+     "default": "",
+     "title": "Reason",
+     "type": "string"
+    },
+    "diagnostics": {
+     "additionalProperties": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "integer"
+       },
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "title": "Diagnostics",
+     "type": "object"
+    }
+   },
+   "required": [
+    "status"
+   ],
+   "title": "GuardInfo",
+   "type": "object"
+  },
+  "IndicatorResult": {
+   "additionalProperties": false,
+   "properties": {
+    "indicator": {
+     "enum": [
+      "lr_lag",
+      "lr_amplitude_ratio",
+      "trunk_motion",
+      "rom_proxy"
+     ],
+     "title": "Indicator",
+     "type": "string"
+    },
+    "value": {
+     "title": "Value",
+     "type": "number"
+    },
+    "normalized": {
+     "title": "Normalized",
+     "type": "number"
+    },
+    "threshold": {
+     "title": "Threshold",
+     "type": "number"
+    },
+    "severity": {
+     "enum": [
+      "ok",
+      "attention"
+     ],
+     "title": "Severity",
+     "type": "string"
+    },
+    "message": {
+     "title": "Message",
+     "type": "string"
+    },
+    "confidence": {
+     "enum": [
+      "high",
+      "medium",
+      "low"
+     ],
+     "title": "Confidence",
+     "type": "string"
+    },
+    "confidence_score": {
+     "description": "HEURISTIC score, NOT a calibrated probability",
+     "maximum": 1.0,
+     "minimum": 0.0,
+     "title": "Confidence Score",
+     "type": "number"
+    }
+   },
+   "required": [
+    "indicator",
+    "value",
+    "normalized",
+    "threshold",
+    "severity",
+    "message",
+    "confidence",
+    "confidence_score"
+   ],
+   "title": "IndicatorResult",
+   "type": "object"
+  },
+  "RepResult": {
+   "additionalProperties": false,
+   "properties": {
+    "index": {
+     "minimum": 1,
+     "title": "Index",
+     "type": "integer"
+    },
+    "start_frame": {
+     "minimum": 0,
+     "title": "Start Frame",
+     "type": "integer"
+    },
+    "pull_frame": {
+     "minimum": 0,
+     "title": "Pull Frame",
+     "type": "integer"
+    },
+    "end_frame": {
+     "minimum": 0,
+     "title": "End Frame",
+     "type": "integer"
+    },
+    "start_s": {
+     "minimum": 0.0,
+     "title": "Start S",
+     "type": "number"
+    },
+    "pull_s": {
+     "minimum": 0.0,
+     "title": "Pull S",
+     "type": "number"
+    },
+    "end_s": {
+     "minimum": 0.0,
+     "title": "End S",
+     "type": "number"
+    },
+    "duration_s": {
+     "minimum": 0.0,
+     "title": "Duration S",
+     "type": "number"
+    },
+    "truncated": {
+     "default": false,
+     "title": "Truncated",
+     "type": "boolean"
+    },
+    "peak_z": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Peak Z"
+    },
+    "lag_pull_s": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Lag Pull S"
+    },
+    "amp_ratio": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Amp Ratio"
+    },
+    "indicators": {
+     "items": {
+      "$ref": "#/$defs/IndicatorResult"
+     },
+     "title": "Indicators",
+     "type": "array"
+    }
+   },
+   "required": [
+    "index",
+    "start_frame",
+    "pull_frame",
+    "end_frame",
+    "start_s",
+    "pull_s",
+    "end_s",
+    "duration_s"
+   ],
+   "title": "RepResult",
+   "type": "object"
+  },
+  "Summary": {
+   "additionalProperties": false,
+   "properties": {
+    "n_reps": {
+     "minimum": 0,
+     "title": "N Reps",
+     "type": "integer"
+    },
+    "n_reps_with_attention": {
+     "minimum": 0,
+     "title": "N Reps With Attention",
+     "type": "integer"
+    },
+    "mean_rep_duration_s": {
+     "anyOf": [
+      {
+       "minimum": 0.0,
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Mean Rep Duration S"
+    }
+   },
+   "required": [
+    "n_reps",
+    "n_reps_with_attention"
+   ],
+   "title": "Summary",
+   "type": "object"
+  },
+  "Versions": {
+   "additionalProperties": false,
+   "properties": {
+    "schema_version": {
+     "const": "1.0",
+     "default": "1.0",
+     "title": "Schema Version",
+     "type": "string"
+    },
+    "artifact_version": {
+     "title": "Artifact Version",
+     "type": "string"
+    },
+    "artifact_fingerprint": {
+     "title": "Artifact Fingerprint",
+     "type": "string"
+    },
+    "detector": {
+     "title": "Detector",
+     "type": "string"
+    },
+    "detector_sha256": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Detector Sha256"
+    },
+    "lifter": {
+     "title": "Lifter",
+     "type": "string"
+    },
+    "lifter_sha256": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Lifter Sha256"
+    },
+    "code_version": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Code Version"
+    }
+   },
+   "required": [
+    "artifact_version",
+    "artifact_fingerprint",
+    "detector",
+    "lifter"
+   ],
+   "title": "Versions",
+   "type": "object"
+  },
+  "VideoInfo": {
+   "additionalProperties": false,
+   "properties": {
+    "n_frames": {
+     "minimum": 0,
+     "title": "N Frames",
+     "type": "integer"
+    },
+    "fps": {
+     "exclusiveMinimum": 0.0,
+     "title": "Fps",
+     "type": "number"
+    },
+    "width": {
+     "anyOf": [
+      {
+       "minimum": 1,
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Width"
+    },
+    "height": {
+     "anyOf": [
+      {
+       "minimum": 1,
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Height"
+    },
+    "duration_s": {
+     "minimum": 0.0,
+     "title": "Duration S",
+     "type": "number"
+    },
+    "source_sha256": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "description": "content hash, never the path",
+     "title": "Source Sha256"
+    }
+   },
+   "required": [
+    "n_frames",
+    "fps",
+    "duration_s"
+   ],
+   "title": "VideoInfo",
+   "type": "object"
+  }
+ },
+ "additionalProperties": false,
+ "properties": {
+  "schema_version": {
+   "const": "1.0",
+   "default": "1.0",
+   "title": "Schema Version",
+   "type": "string"
+  },
+  "mode": {
+   "enum": [
+    "after_set",
+    "live"
+   ],
+   "title": "Mode",
+   "type": "string"
+  },
+  "exercise": {
+   "const": "seated_row",
+   "default": "seated_row",
+   "title": "Exercise",
+   "type": "string"
+  },
+  "status": {
+   "enum": [
+    "OK",
+    "NO_PERSON",
+    "VIDEO_TOO_SHORT",
+    "INSUFFICIENT_CONFIDENCE",
+    "LOST_TRACK",
+    "AMBIGUOUS_SUBJECT",
+    "UNSUPPORTED_EXERCISE"
+   ],
+   "title": "Status",
+   "type": "string"
+  },
+  "guard": {
+   "$ref": "#/$defs/GuardInfo"
+  },
+  "video": {
+   "$ref": "#/$defs/VideoInfo"
+  },
+  "versions": {
+   "$ref": "#/$defs/Versions"
+  },
+  "reps": {
+   "items": {
+    "$ref": "#/$defs/RepResult"
+   },
+   "title": "Reps",
+   "type": "array"
+  },
+  "summary": {
+   "$ref": "#/$defs/Summary"
+  },
+  "warnings": {
+   "items": {
+    "type": "string"
+   },
+   "title": "Warnings",
+   "type": "array"
+  },
+  "timings_ms": {
+   "anyOf": [
+    {
+     "additionalProperties": {
+      "type": "number"
+     },
+     "type": "object"
+    },
+    {
+     "type": "null"
+    }
+   ],
+   "default": null,
+   "title": "Timings Ms"
+  }
+ },
+ "required": [
+  "mode",
+  "status",
+  "guard",
+  "video",
+  "versions",
+  "summary"
+ ],
+ "title": "AnalysisResult",
+ "type": "object"
+}

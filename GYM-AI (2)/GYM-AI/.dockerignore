@@ -1,0 +1,21 @@
+# ALLOWLIST: the image holds only what the Mode A service needs. Raw videos (ai/data, ~6 GB),
+# caches (ai/outputs), benchmark checkpoints and research code never enter the build context;
+# product checkpoints are downloaded and sha256-verified inside the image.
+*
+!ai/__init__.py
+!ai/core/
+!ai/service/
+!ai/scripts/__init__.py
+!ai/scripts/baseline_lib.py
+!ai/scripts/download_checkpoints.py
+!ai/scripts/analyze_set.py
+!ai/models/rep_segmentation/
+!ai/models/form_thresholds_v1_seated_row.json
+!ai/models/form_thresholds_v1_back.json
+!ai/schemas/
+!motionbert/
+!shared/event-schemas/python/
+!docs/AI_CORE_BASELINE_MANIFEST.json
+!requirements/
+**/__pycache__
+**/*.pyc

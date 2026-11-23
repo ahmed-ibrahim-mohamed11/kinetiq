@@ -1,0 +1,50 @@
+{
+ "folds": 15,
+ "protocol": "v2",
+ "exercise": "back",
+ "splits_used": [
+  "train",
+  "val"
+ ],
+ "test_split_touched": false,
+ "pooled": {
+  "iou": {
+   "tp": 1086,
+   "fp": 162,
+   "fn": 140,
+   "n_gt": 1226,
+   "n_pred": 1754,
+   "n_ignored": 506,
+   "precision": 0.8702,
+   "recall": 0.8858,
+   "f1": 0.8779,
+   "start_mae_s": 0.1188,
+   "pull_mae_s": 0.0686,
+   "end_mae_s": 0.1428,
+   "abs_count_error_mean": 0.6239
+  },
+  "pull": {
+   "tp": 1116,
+   "fp": 139,
+   "fn": 110,
+   "n_gt": 1226,
+   "n_pred": 1754,
+   "n_ignored": 499,
+   "precision": 0.8892,
+   "recall": 0.9103,
+   "f1": 0.8996,
+   "start_mae_s": 0.1255,
+   "pull_mae_s": 0.0661,
+   "end_mae_s": 0.1705,
+   "abs_count_error_mean": 0.633
+  }
+ },
+ "per_component_iou_f1": {
+  "median": 0.875,
+  "min": 0.6154,
+  "max": 0.9741,
+  "n_below_0_80": 3,
+  "n_below_0_70": 1
+ },
+ "caveat": "cfg selected on VAL in Phase 2.7; per-subject stability evidence, not a TEST replacement"
+}

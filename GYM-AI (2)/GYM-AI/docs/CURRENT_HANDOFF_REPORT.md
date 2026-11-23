@@ -1,4 +1,136 @@
-# CURRENT_HANDOFF_REPORT.md — verified current state (2026-10-08)
+# CURRENT_HANDOFF_REPORT.md — verified current state
+
+# ▶ HANDOFF 2026-10-10 (CURRENT — read this first; the 2026-10-08 snapshot below is historical)
+
+Working under the owner's master prompt (Phases 0–5 now, 6 on fresh-athlete recordings, then AI
+CORE FREEZE, then 7; DB/UI/deploy DEFERRED until "START CLOSING PHASE"). After any context
+compaction: re-read THIS section, docs/EXPERIMENT_REGISTRY.md (pre-registered plans + log),
+docs/RISK_REGISTER.md, and the master-prompt global rules (baseline-first, pre-registered
+accept/reject, subject-level splits, final test data never touched, licensed data only, Mode A
+never degraded for Mode B, no unmeasured claims, one milestone = one commit).
+
+Environment notes: git = `%LOCALAPPDATA%\Programs\MinGit\cmd\git.exe` (not on PATH); Python 3.10.11
+per-user + repo `.venv` (repointed); torch **2.14.0+cu130** (RTX 5050 Laptop GPU usable). Use
+`git commit -F <msgfile>` for multi-line messages (PowerShell here-strings mis-split).
+
+## Phase status
+
+| phase | status | commits |
+|---|---|---|
+| 0 — audit + baseline lock | **DONE** | `35eccfb` |
+| 1 — data acquisition | **DONE** | `13a8034` |
+| 2 — training/improvement (P2.1–P2.5) | **DONE — all five executed and decided** (details below) | `c2670eb`..`2451739` |
+| 3 — robustness & safety (P3.0–P3.7) | **DONE** | `159e876`..`ef51cca` |
+| 4 — live mode | **DONE** (updated later 2026-10-10): GPU `cuda_V2` 1.31×, CPU-only `cpu_V3` 1.07×, measured on AC; R-17 session-length limit | `6955cf5`, `c742b28` |
+| 5 — AI service | **DONE** except the Docker build (Docker not installed) | `d91d6a4`, `a72719e`, `a73cc8f`, `9e91249` |
+| 6 / 7 | not started (6 needs owner recordings) | — |
+| DB / UI / deploy | **DEFERRED** (owner instruction) | — |
+
+## Phase 2 — status and numbers (P2.1–P2.5 all DONE)
+
+- **P2.1 orientation/depth-sign — REJECTED fix + new evidence.** Yaw sweep (synthetic): internal_sr
+  is a step function (IoU F1 0.8406 for yaw 0–90°, 0.9667 for 105–180°); mendeley_val degrades in a
+  staggered way (0.9137 → 0.623 at 105°). Per-video label-free auto-sign (pick higher Viterbi
+  likelihood): internal_sr 0.8406→0.9667 and VAL side-view 0.760→0.859, BUT mendeley_val pooled
+  0.9137→**0.7685** and external pull F1 0.842→**0.316** ⇒ REJECTED by its own gate.
+  **P2.1-panoptic (real multi-view 3D GT, CMU Panoptic)**: PA-MPJPE **4.21 / 10.07 / 12.64 cm**
+  (front / back / side; side also unstable, σ 5.8 cm); backward-signal correlation vs GT
+  **−0.926 / −0.708 / +0.776** ⇒ the `FACING_IN_CAMERA` sign convention is correct for rear-ish
+  cameras (our product setup) and inverted for front/side. First real-3D-GT number ever (R-11).
+- **P2.2 paused-tempo extent — REJECTED fix.** Synthetic END-hold 0.5 s: internal_sr 0.841→0.720,
+  mendeley_val 0.914→0.764 (closest match to the real external failure). Plateau-trim fix: mixed/
+  negative (pull-hold case −0.15; untouched normal tempo regressed tp 29→28). Found **R-16**
+  (`estimate_tempo` crash) — fixed in P3.0.
+- **P2.3 form indicators — DONE, none dropped.** `rom_proxy` blind spot: 0/48 Mendeley diagonal-view
+  bad reps, 0 on medium/slow-tempo bad reps. `lr_amplitude_ratio` clean seated-row check = exact
+  parity 0.067/0.067 (the old 4/26-vs-2/21 claim is retracted). `trunk_motion` clean seated-row
+  0.400 vs 0.067 (6×). `lr_lag` unchanged.
+- **P2.4 confidence — ACCEPTED.** Heuristic = validity + raw pose confidence + threshold margin;
+  explicitly NOT a probability; true calibration BLOCKED on Domain C deviation labels.
+- **P2.5 annotation noise + gates — DONE.** F1 robust (0.9137→0.8982 at ±5 frames); pull MAE not
+  (0.079→0.207 s); the MB-Lite vs PFv2 pull-MAE gap (0.041 s) is within ±2-frame noise. Domain C
+  gates: 4/5 confirmed as-is; per-view gate flagged AT ELEVATED RISK on side/oblique (unchanged).
+
+## Phase 3 highlights (DONE)
+R-16 fixed (true no-op on real data). Failure injection: wrist dropout has ZERO effect at any
+severity; shoulder dropout ≡ elbow dropout; resolution jitter σ0.05 → internal_sr 0.506
+(mendeley_val 0.848 — far worse out-of-distribution); confidence noise σ0.3 → 0.648;
+inconsistent tempo 0.597 (worse than constant 0.7× slowdown 0.704). `ai/core/guards.py`
+(abstention + exercise guard): 0 false abstentions on 45 real videos. P3.7 fixed silent-output
+gaps (bad fps, invalid Cfg, empty annotations). docs/ROBUSTNESS_REPORT.md.
+
+## Phase 4 so far
+torch → cu130, baseline byte-identical. Production `ai/core/{tracking,live}.py`,
+`lifting.MotionBertLite`, `pose.YoloTopK` — each proven equal to its frozen research reference.
+Live from RAW video: **cpu_V2 IoU F1 0.806 (27/10/3) = validated prototype**; cuda_V2 0.783
+(27/12/3). Micro-bench (idle, AC): YOLO CPU 28.6 ms / CUDA 12.7 ms; MB-Lite 243-window TTA
+CPU 1,450 ms / CUDA 116 ms (fp16 44 ms). Smoke cuda_V2 (AC): 23.8 ms/frame, 1.40× realtime,
+latency p95 69 ms — **indicative only, no realtime claim yet**. Full timing matrix DISCARDED (laptop
+slept + switched to battery mid-run); harness now refuses battery and flags suspend gaps.
+Bug fixed: `form_indicators._xcorr_lag_s` crash on short windows. docs/LIVE_MODE.md.
+
+## Phase 5 so far (working tree, NOT yet committed at this handoff)
+- P5.1 `ai/core/model_artifact.py` + `ai/scripts/export_model_artifact.py` →
+  `ai/models/rep_segmentation/mblite_rowing_v1.json` (13,275 B, fingerprint 63d36c31… = manifest);
+  `ai/tests/test_model_artifact.py` 6/6; `verify_baseline.py --source artifact` reproduces all
+  headline metrics; `ai/core/io.py::segment_video/load_model` now work (core of R-01 closed).
+- P5.3 `ai/core/schema.py` (AnalysisResult v1.0, strict) + `ai/schemas/analysis_result.v1.json` +
+  `ai/tests/test_schema.py` 16/16 (incl. mapping onto the existing edge-event contract).
+- P5.2 `ai/core/pipeline.py`, `ai/scripts/analyze_set.py`, `ai/tests/test_pipeline.py` — written,
+  NOT yet run.
+- `ai/outputs/phase4/` holds only the indicative smoke-run CSVs — do not commit as evidence.
+
+## Datasets touched this session (licences in docs/LICENSING.md, registry ai/data/dataset_registry.json)
+- **CMU Panoptic Studio** `171204_pose1_sample` — DOWNLOADED (~65 MB: calibration, 3D body GT for
+  101 frames, 7 of 31 HD views) to `ai/data/panoptic/` (git-ignored). Licence: non-commercial
+  research only, no account, redistribution forbidden → never committed.
+- MM-Fit — CC BY 4.0, approved, NOT downloaded. Fit3D — DROPPED (owner). QEVD — needs owner EULA
+  approval, not downloaded. AIST++ / MPI-INF-3DHP — not pursued. RepCount-A — excluded
+  (YouTube-scraped). Final-test (Domain C) data — does not exist yet, never touched.
+
+## LATEST — owner decisions + four tasks (2026-10-10, later)
+Owner decisions applied (`09b9e1b`): YOLO academic/non-commercial only; Ultralytics `sync` off
+(product path makes zero network calls); yt-dlp removed; QEVD skipped; Docker deferred to closing.
+Owner's task list, in order: (1) last pre-freeze attempt on R-07/R-08 — **P2.7 DONE, REJECTED**
+(pre-registered `badf440`; anatomical sign: LOSO side 0.654 → 0.853 but internal_sr 0.841 → 0.558;
+R-07/R-08 known limitations, no further tuning); (2) Phase 6 pre-registration
+(`docs/PHASE6_PREREGISTRATION.md`) + runner (`ai/scripts/phase6_evaluate.py`) + freeze tag
+`ai-core-candidate-v1` (NO model/threshold/config change after the tag); (3) intake tooling
+(`validate_recordings`, `annotate_reps`, `annotation_agreement`, `docs/PHASE6_ANNOTATION_GUIDE.md`,
+spec v1.1); (4) `docs/CLEANUP_PLAN.md` audit only — delete nothing without owner approval. Then STOP
+and wait for the owner's recordings.
+
+## EARLIER (end of 2026-10-10)
+Phases 0–5 are at DoD as far as possible without the owner. P5.5 was verified from a fresh clone
+(`9e91249`). Phase 4 timing was measured on AC: GPU `cuda_V2` 1.31×, CPU-only `cpu_V3` 1.07×
+(docs/LIVE_MODE.md). A Phase 2 DoD gap found in review is closed: LOSO for the trained
+components, pooled 0.878 with side view 0.654 (P2.6, `8303ce1`). Current scorecard: top of
+TECHNICAL_MASTER_REPORT.md. Stop condition (C) is reached. The remaining work needs the owner:
+Domain C recordings (Phase 6), the YOLO AGPL decision, and a Docker install (Dockerfile
+verification). Optional engineering without owner input: a sliding decode buffer (R-17).
+
+## EXACT NEXT STEP (as written earlier on 2026-10-10; items 1–3 since completed)
+Done since this handoff was first written: P5.1–P5.3 (`d91d6a4`), P5.4 service + P5.7 privacy
+(`a72719e`), P5.5 tooling + P5.6 regression tests + P5.7b telemetry fix + P5.8 boundaries/README
+(Phase 5 part 3 commit). All details in EXPERIMENT_REGISTRY.md.
+1. **P5.5 clean-clone verification**: `git clone` this repo into a temp dir, fresh venv (per-user
+   Python 3.10.11, CPU torch from the PyTorch CPU index), then follow docs/REPRODUCIBILITY.md
+   literally (download_checkpoints → pytest → rebuild_pose_caches → verify_baseline --with-causal →
+   analyze_set on a dev video). Compare the rebuilt caches with this repo's caches, then record the
+   results in REPRODUCIBILITY.md's verification log and a registry row, and commit.
+2. Phase 5 DoD check, then the STOP-condition (C) status report (phase table, scorecard, top risks,
+   owner actions).
+3. When the laptop is on AC power: `python ai/research/phase4/live_benchmark.py` (full matrix) and
+   `--long-session cuda_V2 cpu_V2_notta_320 cpu_V2`, then decide P4.3–P4.5 per the pre-registered
+   criteria and update docs/LIVE_MODE.md.
+
+## Owner actions pending
+Plug the laptop in (Phase 4 timing) · fresh ≥10-athlete recordings (Phase 6) · YOLO AGPL-3.0
+decision · Docker install (only to verify the Dockerfile) · optional: QEVD EULA decision.
+
+---
+
+# HISTORICAL SNAPSHOT 2026-10-08 (preserved as reviewed)
 
 > **Post-script (2026-10-08, after owner approval)**: the external stress test described as
 > "in progress" below was completed the same day — verdict **PARTIAL EXTERNAL TRANSFER**

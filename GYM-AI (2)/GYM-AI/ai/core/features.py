@@ -33,6 +33,11 @@ def prepare_video(name: str, pose: np.ndarray, fps: float,
     P = np.asarray(pose, dtype=float)
     if P.ndim != 3 or P.shape[1:] != (17, 3):
         raise ValueError(f"{name}: expected (T,17,3) H36M pose, got {P.shape}")
+    if not (fps > 0) or not np.isfinite(fps):
+        # Phase 3 (P3.7, clear failure behaviour): fps<=0 used to propagate silently into a
+        # ZeroDivisionError or an obscure scipy filter error several calls later instead of
+        # failing here, at the one place every caller already passes fps through.
+        raise ValueError(f"{name}: fps must be a positive, finite number, got {fps!r}")
     T = len(P)
     finite = np.isfinite(P).all(axis=(1, 2))
     P = _interp_rows(P.reshape(T, -1), finite).reshape(T, 17, 3)

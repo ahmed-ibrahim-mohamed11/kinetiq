@@ -1,0 +1,13 @@
+tempo,indicator,n_bad,n_good,sensitivity,false_alert_rate
+fast,lr_lag,118,81,0.059,0.099
+medium,lr_lag,22,32,0.0,0.0
+slow,lr_lag,6,53,0.0,0.038
+fast,lr_amplitude_ratio,118,81,0.203,0.062
+medium,lr_amplitude_ratio,22,32,0.045,0.0
+slow,lr_amplitude_ratio,6,53,0.0,0.0
+fast,trunk_motion,118,81,0.0,0.0
+medium,trunk_motion,22,32,0.045,0.094
+slow,trunk_motion,6,53,0.167,0.057
+fast,rom_proxy,118,81,0.364,0.037
+medium,rom_proxy,22,32,0.0,0.0
+slow,rom_proxy,6,53,0.0,0.0

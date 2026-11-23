@@ -1,0 +1,9 @@
+indicator,form,mean,count
+lr_amplitude_ratio,deviated,0.06666666666666667,15
+lr_amplitude_ratio,good,0.06666666666666667,15
+lr_lag,deviated,0.2,15
+lr_lag,good,0.06666666666666667,15
+rom_proxy,deviated,0.4,15
+rom_proxy,good,0.06666666666666667,15
+trunk_motion,deviated,0.4,15
+trunk_motion,good,0.06666666666666667,15
