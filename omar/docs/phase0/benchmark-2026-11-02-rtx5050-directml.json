@@ -1,0 +1,61 @@
+{
+    "kind":  "raw model latency benchmark (inference only; pre/post-processing excluded)",
+    "date":  "2026-11-02",
+    "machine":  "development edge node: laptop, Windows 11",
+    "gpu":  "NVIDIA GeForce RTX 5050 Laptop GPU, 610.74, 8151 MiB",
+    "test_data":  "COCO val2017 image 000000000785.jpg (public dataset, not gym footage)",
+    "note":  "Speed and numerical parity only. Accuracy on gym footage is NOT measured here. Production edge nodes will use Linux + CUDA/TensorRT; DirectML numbers are indicative.",
+    "result":  {
+                   "onnxruntime":  "1.23.0",
+                   "image":  "000000000785.jpg",
+                   "image_size":  [
+                                      425,
+                                      640
+                                  ],
+                   "iterations":  100,
+                   "models":  {
+                                  "yolox_s.onnx":  {
+                                                       "CPUExecutionProvider":  {
+                                                                                    "mean_ms":  108.58,
+                                                                                    "p50_ms":  107.31,
+                                                                                    "p95_ms":  134.23
+                                                                                },
+                                                       "DmlExecutionProvider":  {
+                                                                                    "mean_ms":  18.04,
+                                                                                    "p50_ms":  18.48,
+                                                                                    "p95_ms":  20.3,
+                                                                                    "active_provider":  "DmlExecutionProvider",
+                                                                                    "max_abs_diff_vs_cpu":  5.054473876953125E-05
+                                                                                }
+                                                   },
+                                  "yolox_nano.onnx":  {
+                                                          "CPUExecutionProvider":  {
+                                                                                       "mean_ms":  17.44,
+                                                                                       "p50_ms":  16.43,
+                                                                                       "p95_ms":  23.97
+                                                                                   },
+                                                          "DmlExecutionProvider":  {
+                                                                                       "mean_ms":  4.62,
+                                                                                       "p50_ms":  4.76,
+                                                                                       "p95_ms":  6.97,
+                                                                                       "active_provider":  "DmlExecutionProvider",
+                                                                                       "max_abs_diff_vs_cpu":  0.00027358531951904297
+                                                                                   }
+                                                      },
+                                  "rtmpose-m_simcc-body7_256x192.onnx":  {
+                                                                             "CPUExecutionProvider":  {
+                                                                                                          "mean_ms":  25.51,
+                                                                                                          "p50_ms":  23.78,
+                                                                                                          "p95_ms":  41.43
+                                                                                                      },
+                                                                             "DmlExecutionProvider":  {
+                                                                                                          "mean_ms":  6.53,
+                                                                                                          "p50_ms":  6.24,
+                                                                                                          "p95_ms":  8.88,
+                                                                                                          "active_provider":  "DmlExecutionProvider",
+                                                                                                          "max_abs_diff_vs_cpu":  2.2053718566894531E-06
+                                                                                                      }
+                                                                         }
+                              }
+               }
+}

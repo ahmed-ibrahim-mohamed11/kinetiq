@@ -1,0 +1,24 @@
+{
+  "name": "@smartgym/tests-db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Executes the real migrations + seed on an embedded PostgreSQL with a Supabase shim, then runs functional, RLS and backup/restore tests.",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --pool=forks --poolOptions.forks.singleFork=true",
+    "db:up": "node --import tsx scripts/up.ts",
+    "gen:types": "node --import tsx scripts/gen-types.ts"
+  },
+  "dependencies": {
+    "embedded-postgres": "18.4.0-beta.17",
+    "pg": "^8.13.1",
+    "tsx": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

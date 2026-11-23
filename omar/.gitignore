@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment and secrets — never commit
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+camera-credentials.*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Edge runtime data
+services/edge-ai/data/
+services/edge-ai/models/*.onnx
+services/edge-ai/models/*.engine
+services/edge-ai/models/*.pt
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# IDE / OS
+.vscode/*
+!.vscode/extensions.json
+# Claude Code per-machine permissions (project skills in .claude/skills ARE committed)
+.claude/settings.local.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+
+# Vercel
+.vercel/
+
+# Local PostgreSQL client tools for the backup/restore drill (downloaded, not committed)
+tests/db/.pgtools/
+
+# Appended by `vercel link` (kept so the CLI stops re-adding them). The template stays tracked.
+.vercel
+.env*
+!.env.example
