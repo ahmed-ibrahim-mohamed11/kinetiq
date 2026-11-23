@@ -16,10 +16,13 @@ def test_templates_are_encrypted_at_rest(tmp_path: Path):
     assert b"0.1" not in raw and b"0.2" not in raw
     assert ref.startswith("tpl-")
     assert store.all_templates()[0][2] == [0.1, 0.2, 0.3]
-    # wrong key cannot decrypt
+    # wrong key cannot decrypt: the row is skipped and counted, never returned (and never crashes the caller)
     other = EncryptedTemplateStore(tmp_path / "faces.sqlite", os.urandom(32))
-    with pytest.raises(Exception):  # noqa: B017 — InvalidTag from cryptography
-        other.all_templates()
+    assert other.all_templates() == []
+    assert other.undecryptable == 1
+    # same key id but tampered ciphertext → InvalidTag, also skipped
+    forged = EncryptedTemplateStore(tmp_path / "faces.sqlite", os.urandom(32), key_id=store.key_id)
+    assert forged.all_templates() == [] and forged.undecryptable == 1
 
 
 def test_enrollment_requires_consent(tmp_path: Path):

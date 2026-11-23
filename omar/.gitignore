@@ -17,7 +17,19 @@ next-env.d.ts
 secrets/
 *.pem
 *.key
+*.p12
+*.pfx
 camera-credentials.*
+
+# Local SSL certificates (keep public CA cert in public/ for download, ignore the rest)
+certificates/
+apps/admin-web/certificates/
+apps/member-web/certificates/
+*.crt
+*.csr
+*.srl
+!apps/member-web/public/kinetiq-ca.crt
+!apps/admin-web/public/kinetiq-ca.crt
 
 # Python
 __pycache__/

@@ -53,9 +53,10 @@ class Track:
         return (x1 + vx1, y1 + vy1, x2 + vx2, y2 + vy2)
 
     def update(self, det: Detection, ts: float) -> None:
-        prev = self.box
-        alpha = 0.6  # velocity smoothing
-        new_v = tuple(det.box[i] - prev[i] for i in range(4))
+        prev = self.history[-1] if self.history else self.box
+        steps = max(1, self.time_since_update)
+        alpha = 0.5  # velocity smoothing
+        new_v = tuple((det.box[i] - prev[i]) / steps for i in range(4))
         self.velocity = tuple(alpha * new_v[i] + (1 - alpha) * self.velocity[i] for i in range(4))  # type: ignore[assignment]
         self.box = det.box
         self.score = 0.7 * self.score + 0.3 * det.score
@@ -93,11 +94,13 @@ class IouTracker:
         return [t for t in self._tracks if t.state == TrackState.CONFIRMED]
 
     def update(self, detections: list[Detection], ts: float) -> list[Track]:
-        # 1. predict
+        # 1. predict (extrapolate for the first missed frame only; hold position afterward so
+        # stationary exercisers do not drift away during brief crouched detector dropouts)
         for t in self._tracks:
             t.age += 1
             t.time_since_update += 1
-            t.box = t.predict()
+            if t.time_since_update == 1:
+                t.box = t.predict()
 
         active = [t for t in self._tracks if t.state != TrackState.LOST]
         high = [d for d in detections if d.score >= self.high_score]
@@ -105,7 +108,9 @@ class IouTracker:
 
         # 2. first association: high-score dets ↔ all active tracks
         unmatched_tracks, unmatched_high = self._associate(active, high, self.iou_threshold, ts)
-        # 3. second association: low-score dets ↔ remaining tracks (occlusion recovery)
+        # 3a. second association: remaining high-score dets at lower threshold (deep crouch / aspect change)
+        unmatched_tracks, unmatched_high = self._associate(unmatched_tracks, unmatched_high, self.low_iou_threshold, ts)
+        # 3b. third association: low-score dets ↔ remaining tracks (occlusion recovery)
         unmatched_tracks, _ = self._associate(unmatched_tracks, low, self.low_iou_threshold, ts)
 
         # 4. lifecycle
@@ -136,8 +141,20 @@ class IouTracker:
             return tracks, dets
         pairs: list[tuple[float, int, int]] = []
         for ti, t in enumerate(tracks):
+            tx1, ty1, tx2, ty2 = t.box
+            tcx, tcy = 0.5 * (tx1 + tx2), 0.5 * (ty1 + ty2)
+            tw, th = max(1.0, tx2 - tx1), max(1.0, ty2 - ty1)
             for di, d in enumerate(dets):
                 v = iou(t.box, d.box)
+                if v < thresh and t.state == TrackState.CONFIRMED:
+                    # Articulated pose fallback (e.g. deep squat halves box height while keeping horizontal centre)
+                    dx1, dy1, dx2, dy2 = d.box
+                    dcx, dcy = 0.5 * (dx1 + dx2), 0.5 * (dy1 + dy2)
+                    dw, dh = max(1.0, dx2 - dx1), max(1.0, dy2 - dy1)
+                    ref_w = max(tw, dw)
+                    ref_h = max(th, dh)
+                    if abs(tcx - dcx) <= 0.65 * ref_w and abs(tcy - dcy) <= 0.65 * ref_h:
+                        v = max(v, thresh)
                 if v >= thresh:
                     pairs.append((v, ti, di))
         pairs.sort(reverse=True)

@@ -94,6 +94,17 @@ class GlobalIdentityRegistry:
         gid = self._local_to_global.get((camera_id, local_track_id))
         return self._identities.get(gid) if gid else None
 
+    def all(self) -> list[GlobalIdentity]:
+        return list(self._identities.values())
+
+    def drop(self, global_id: str) -> GlobalIdentity | None:
+        """Forget an identity and its local-track links; the next observation of those local
+        tracks starts a NEW (anonymous) global identity."""
+        g = self._identities.pop(global_id, None)
+        for key in [k for k, gid in self._local_to_global.items() if gid == global_id]:
+            del self._local_to_global[key]
+        return g
+
     def active(self, now: float | None = None) -> list[GlobalIdentity]:
         now = now if now is not None else time.time()
         return [g for g in self._identities.values() if now - g.last_seen_at <= self.reassociate_seconds]

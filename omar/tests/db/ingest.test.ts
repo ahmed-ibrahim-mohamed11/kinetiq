@@ -52,7 +52,7 @@ function fixtures(): Ev[] {
 
 async function ingest(events: Ev[], batchId = randomUUID()) {
   const { rows } = await h.pool.query(`select public.ingest_events($1::uuid, $2::uuid, now(), $3::jsonb) as r`, [DEVICE, batchId, JSON.stringify(events)]);
-  return rows[0].r as { accepted: number; duplicates: number; rejected: Array<{ event_id: string; reason: string }> };
+  return rows[0].r as { accepted: number; duplicates: number; rejected: Array<{ event_id: string; code: string; reason: string }> };
 }
 
 beforeAll(async () => {
@@ -94,7 +94,8 @@ describe('ingest_events on a real database', () => {
     expect(s.exercises[0].sets[0]).toMatchObject({ set_index: 1, reps: 10, verified: true });
     expect(s.uncertain_segments).toHaveLength(1);
     expect(s.uncertain_segments[0].reason).toBe('occlusion');
-    expect(report.rows[0].tok).toBe(48);
+    // C3: no share link exists until the member creates one (format covered by hardening-checkin).
+    expect(report.rows[0].tok).toBeNull();
 
     const jobs = await h.pool.query(`select channel, template, status from public.notification_jobs where member_id = $1`, [MEMBER]);
     expect(jobs.rows).toEqual([{ channel: 'email', template: 'workout_report_ready', status: 'queued' }]);
@@ -124,7 +125,10 @@ describe('ingest_events on a real database', () => {
     checkin.event_id = randomUUID();
     const r = await ingest([checkin]);
     expect(r.accepted).toBe(0);
-    expect(r.rejected[0]?.reason).toMatch(/biometric consent/);
+    // C4: stable code + fixed reason; the raw message stays in event_ingest_log.error.
+    expect(r.rejected[0]?.code).toBe('no_consent');
+    const log = await h.pool.query(`select error from public.event_ingest_log where event_id = $1`, [checkin.event_id]);
+    expect(log.rows[0].error).toMatch(/biometric consent/);
     // withdrawal trigger revoked enrollments (none exist, but the trigger must not fail) and QR still works
     const qr = { ...checkin, event_id: randomUUID(), payload: { ...checkin.payload, method: 'qr', confidence: 1 } };
     const r2 = await ingest([qr]);
@@ -144,7 +148,7 @@ describe('ingest_events on a real database', () => {
     usage.payload.equipment_id = eq.rows[0].id;
     usage.payload.usage_local_id = 'u-foreign';
     const r = await ingest([usage]);
-    expect(r.rejected[0]?.reason).toMatch(/not in device branch/);
+    expect(r.rejected[0]?.code).toBe('branch_mismatch');
   });
 
   it('abandon_stale_sessions finalises forgotten sessions as abandoned', async () => {
@@ -175,7 +179,18 @@ describe('ingest_events on a real database', () => {
   it('retention job runs against every configured table', async () => {
     const { rows } = await h.pool.query(`select * from public.apply_retention()`);
     expect(rows.map((r) => r.table_name).sort()).toEqual(
-      ['audit_logs', 'camera_status_logs', 'device_health_logs', 'event_ingest_log', 'ingest_batches', 'person_tracks', 'repetition_events', 'tracking_uncertain_segments'].sort(),
+      [
+        'audit_logs',
+        'biometric_revocations',
+        'camera_status_logs',
+        'consent_records_archive',
+        'device_health_logs',
+        'event_ingest_log',
+        'ingest_batches',
+        'person_tracks',
+        'repetition_events',
+        'tracking_uncertain_segments',
+      ].sort(),
     );
   });
 });

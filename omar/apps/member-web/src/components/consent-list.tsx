@@ -48,13 +48,13 @@ export function ConsentList({ consents }: { consents: Tables<'consent_records'>[
                 </div>
                 {meta && <p className="text-sm text-muted-foreground">{meta.description}</p>}
                 <p className="text-xs text-muted-foreground">
-                  Policy {c.policy_version} Â· granted {formatDateTime(c.granted_at)}
-                  {c.withdrawn_at && ` Â· withdrawn ${formatDateTime(c.withdrawn_at)}`}
+                  Policy {c.policy_version} · granted {formatDateTime(c.granted_at)}
+                  {c.withdrawn_at && ` · withdrawn ${formatDateTime(c.withdrawn_at)}`}
                 </p>
               </div>
               {c.status === 'granted' && (
                 <Button variant="outline" size="sm" className="shrink-0" onClick={() => withdraw(c)} disabled={pending && busyId === c.id}>
-                  {pending && busyId === c.id ? 'Withdrawingâ€¦' : 'Withdraw'}
+                  {pending && busyId === c.id ? 'Withdrawing…' : 'Withdraw'}
                 </Button>
               )}
             </li>

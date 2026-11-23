@@ -48,6 +48,10 @@ class SetSegmenter:
     _unverified_seen: bool = field(default=False, init=False)
 
     @property
+    def _set_index(self) -> int:
+        return self.set_index
+
+    @property
     def current_set_local_id(self) -> str:
         return f"{self.activity_local_id}:s{self.set_index}"
 

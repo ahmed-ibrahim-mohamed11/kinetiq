@@ -34,11 +34,12 @@ export default async function CamerasPage() {
       <PageHeader
         title="Cameras & zones"
         description="Existing CCTV/IP cameras registered for AI processing. Stream URLs never contain credentials; those live in the edge device's secrets file."
+        breadcrumbs={[{ label: 'Cameras & Zones' }]}
       />
       {camerasRes.error && (
         <div className="mb-4">
           <Alert variant="error" title="Could not load cameras">
-            {camerasRes.error.message} â€” camera configuration is visible to owners, admins, managers and auditors only.
+            {camerasRes.error.message} — camera configuration is visible to owners, admins, managers and auditors only.
           </Alert>
         </div>
       )}
@@ -65,7 +66,7 @@ export default async function CamerasPage() {
                     <TableRow key={c.id}>
                       <TableCell>
                         <div className="font-medium">{c.name}</div>
-                        <div className="text-xs text-muted-foreground">{branchName.get(c.branch_id) ?? 'â€”'}</div>
+                        <div className="text-xs text-muted-foreground">{branchName.get(c.branch_id) ?? '—'}</div>
                       </TableCell>
                       <TableCell>
                         {c.enabled ? (
@@ -81,7 +82,7 @@ export default async function CamerasPage() {
                       <TableCell className="text-xs">
                         <div className="font-mono">{c.protocol}</div>
                         <div className="text-muted-foreground">
-                          {c.resolution_w && c.resolution_h ? `${c.resolution_w}Ã—${c.resolution_h}` : 'res. unknown'}
+                          {c.resolution_w && c.resolution_h ? `${c.resolution_w}×${c.resolution_h}` : 'res. unknown'}
                           {c.fps ? ` @ ${c.fps} fps` : ''}
                         </div>
                       </TableCell>

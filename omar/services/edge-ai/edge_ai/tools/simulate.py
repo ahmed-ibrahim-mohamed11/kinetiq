@@ -10,6 +10,13 @@ Drives the real Pipeline with a scripted scenario:
 
 The scenario exercises contracts, queue, fusion, rep/set logic and the sync
 client against a local Supabase. It proves plumbing, not vision accuracy.
+
+Overrides (Settings, all optional; defaults reproduce the seed-based run):
+  EDGE_SIM_MEMBER_ID    member to simulate (default: seed demo member)
+  EDGE_SIM_CONSENT_ID   that member's cctv_workout_tracking consent record (sent with identity.checkin)
+  EDGE_SIM_CHECKIN      qr (emit identity.checkin) | skip (already checked in at the kiosk: bind only)
+  EDGE_SIM_CHECKOUT     edge (emit identity.checkout) | skip (the member checks out in the app)
+Camera, zone and equipment ids come from the cameras YAML (`simulate --cameras FILE`).
 """
 
 from __future__ import annotations
@@ -40,14 +47,22 @@ def _knee_angle(t_in_set: float, period: float = 2.5) -> float:
 def run_simulation(
     settings: Settings, cams: CamerasFile, profiles: dict[str, RepProfile], seconds: float = 90.0, sync: bool = True
 ) -> int:
+    member_id = str(settings.sim_member_id)
+    consent_id = str(settings.sim_consent_id)
     pipeline = Pipeline(settings, cams.cameras, cams.exercise_ids, profiles, detector=None, pose=None)
-    entrance = next(c for c in cams.cameras if c.purpose == "entrance")
+    entrance = next((c for c in cams.cameras if c.purpose == "entrance"), None) or next(
+        (c for c in cams.cameras if c.purpose == "mixed"), None
+    )
+    if entrance is None:
+        raise SystemExit("simulation needs an entrance (or mixed) camera in the cameras YAML")
     floor = [c for c in cams.cameras if c.purpose == "floor"]
     if len(floor) < 2:
         raise SystemExit("simulation needs two floor cameras sharing an equipment zone (see cameras.example.yaml)")
     cam_a, cam_b = floor[0], floor[1]
-    zone_a = next(z for z in cam_a.zones if z.exercise_slug == "leg-press")
-    zone_b = next(z for z in cam_b.zones if z.exercise_slug == "leg-press")
+    zone_a = next((z for z in cam_a.zones if z.exercise_slug == "leg-press"), None)
+    zone_b = next((z for z in cam_b.zones if z.exercise_slug == "leg-press"), None)
+    if zone_a is None or zone_b is None:
+        raise SystemExit("simulation needs a leg-press equipment zone on each of the first two floor cameras")
 
     def centre(poly: list[tuple[float, float]]) -> tuple[float, float, float, float]:
         xs = [p[0] for p in poly]
@@ -62,7 +77,12 @@ def run_simulation(
     # 1. entrance
     pipeline.on_observation(entrance, 1, (900.0, 300.0, 1000.0, 900.0), 0.95, t0, None, None)
     gid = pipeline.registry.global_for_local(str(entrance.id), 1).global_id  # type: ignore[union-attr]
-    assert pipeline.bind_member(gid, DEMO_MEMBER_ID, 1.0, "qr", entrance.id, DEMO_CONSENT_ID, None)
+    # checkin=skip: the member is already checked in at the kiosk; the edge only binds the identity,
+    # so the workout events carry member_id and the cloud attaches them to the existing session.
+    bound = pipeline.bind_member(
+        gid, member_id, 1.0, "qr", entrance.id, consent_id, None, emit_checkin=settings.sim_checkin == "qr"
+    )
+    assert bound
     pipeline.on_local_track_lost(entrance, 1, t0 + 2.0)
 
     # 2. appears on both floor cameras; no embeddings, so association must be explicit here:
@@ -94,11 +114,12 @@ def run_simulation(
     # 4. leave + checkout
     pipeline.on_local_track_lost(cam_a, 7, t)
     pipeline.on_local_track_lost(cam_b, 3, t)
-    pipeline.emitter.emit(
-        "identity.checkout",
-        IdentityCheckOutPayload(member_id=UUID(DEMO_MEMBER_ID), method="qr", confidence=1.0, camera_id=None),
-        datetime.fromtimestamp(t + 5, tz=timezone.utc),
-    )
+    if settings.sim_checkout == "edge":
+        pipeline.emitter.emit(
+            "identity.checkout",
+            IdentityCheckOutPayload(member_id=UUID(member_id), method="qr", confidence=1.0, camera_id=None),
+            datetime.fromtimestamp(t + 5, tz=timezone.utc),
+        )
     pipeline.emit_heartbeat()
 
     h = pipeline.health()

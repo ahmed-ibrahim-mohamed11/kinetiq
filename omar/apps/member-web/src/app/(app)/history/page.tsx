@@ -42,7 +42,7 @@ export default async function HistoryPage() {
                 <div className="min-w-0">
                   <p className="truncate font-medium">{formatDateTime(s.check_in_at, tz)}</p>
                   <p className="text-xs text-muted-foreground">
-                    {formatDuration(duration)} Â· {CHECKIN_METHOD_LABELS[s.check_in_method] ?? s.check_in_method}
+                    {formatDuration(duration)} · {CHECKIN_METHOD_LABELS[s.check_in_method] ?? s.check_in_method}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

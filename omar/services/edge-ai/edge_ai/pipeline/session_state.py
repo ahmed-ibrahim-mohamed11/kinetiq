@@ -23,9 +23,12 @@ from edge_ai.contracts.events_v1 import (
 from edge_ai.events.builder import EventBuilder
 from edge_ai.fusion.equipment_association import ZoneEvent
 from edge_ai.fusion.rep_dedup import RepDeduplicator
+from edge_ai.pose.angles import extract_signal
+from edge_ai.pose.base import Pose
+from edge_ai.reps.biomechanical_squat import BiomechanicalSquatEngine
 from edge_ai.reps.profiles import RepProfile
 from edge_ai.reps.set_segmenter import SetSegmenter
-from edge_ai.reps.state_machine import RepCounter
+from edge_ai.reps.state_machine import RepCounter, RepEvent
 
 
 @dataclass
@@ -38,8 +41,10 @@ class ActiveUsage:
     exercise_id: UUID
     profile: RepProfile
     started_at: float
+    exercise_slug: str = ""
     # one rep counter per observing camera; dedup merges them
     counters: dict[str, RepCounter] = field(default_factory=dict)
+    squat_engines: dict[str, BiomechanicalSquatEngine] = field(default_factory=dict)
     segmenter: SetSegmenter | None = None
     active_seconds: float = 0.0
     last_motion_t: float | None = None
@@ -55,6 +60,10 @@ class IdentityWorkoutState:
     profiles: dict[str, RepProfile]
     usage: ActiveUsage | None = None
     tracking_confidence: float = 1.0
+    member_name: str | None = None
+    live_squat_engine: BiomechanicalSquatEngine = field(default_factory=BiomechanicalSquatEngine)
+    _last_live_pose_t: float = -1.0
+    _last_live_squat_rep: object | None = None
 
     # ── zone events → usage/activity lifecycle ───────────────────────────────
     def on_zone_event(self, ev: ZoneEvent) -> None:
@@ -79,6 +88,7 @@ class IdentityWorkoutState:
                 exercise_id,
                 profile,
                 ev.t,
+                exercise_slug=slug or "",
             )
             self.usage.segmenter = SetSegmenter(activity_local_id=activity_id)
             self.emitter.emit(
@@ -153,6 +163,63 @@ class IdentityWorkoutState:
         u.segmenter.tracking_verified = self.tracking_confidence >= TRACKING_VERIFIED_THRESHOLD
         for ev in u.segmenter.on_rep(rep):
             self._emit_set_event(ev, camera_id=camera_id)
+
+    def update_live_pose(self, pose: Pose, t: float) -> None:
+        if abs(t - self._last_live_pose_t) > 1e-6:
+            self._last_live_squat_rep = self.live_squat_engine.update(pose, t)
+            self._last_live_pose_t = t
+
+    def on_pose(self, camera_id: str, pose: Pose, t: float) -> None:
+        self.update_live_pose(pose, t)
+        u = self.usage
+        if u is None or u.segmenter is None:
+            return
+
+        # Check if current exercise is a squat requiring full biomechanical analysis
+        is_squat = "squat" in u.exercise_slug.lower() or "squat" in u.profile.signal.lower()
+        if is_squat:
+            engine = u.squat_engines.get(camera_id)
+            if engine is None:
+                # Share live_squat_engine with the primary observing camera
+                if not u.squat_engines:
+                    engine = self.live_squat_engine
+                else:
+                    engine = BiomechanicalSquatEngine()
+                u.squat_engines[camera_id] = engine
+
+            if engine is self.live_squat_engine and abs(t - self._last_live_pose_t) <= 1e-6:
+                squat_rep = self._last_live_squat_rep
+            else:
+                squat_rep = engine.update(pose, t)
+
+            if u.last_motion_t is not None and engine.phase.value not in (
+                "no_person",
+                "standing_ready",
+                "insufficient_visibility",
+                "seated_idle",
+            ):
+                u.active_seconds += max(0.0, min(1.0, t - u.last_motion_t))
+            u.last_motion_t = t
+
+            if squat_rep is not None:
+                if not self.dedup.observe(self.global_id, u.equipment_id, camera_id, squat_rep.completed_at, squat_rep.confidence):  # type: ignore[attr-defined]
+                    return
+                u.segmenter.tracking_verified = self.tracking_confidence >= TRACKING_VERIFIED_THRESHOLD
+                rep = RepEvent(
+                    rep_index=squat_rep.rep_number,  # type: ignore[attr-defined]
+                    started_at=squat_rep.started_at,  # type: ignore[attr-defined]
+                    completed_at=squat_rep.completed_at,  # type: ignore[attr-defined]
+                    duration_s=squat_rep.duration_s,  # type: ignore[attr-defined]
+                    confidence=squat_rep.confidence,  # type: ignore[attr-defined]
+                    peak_value=squat_rep.min_knee_angle_deg,  # type: ignore[attr-defined]
+                )
+                for ev in u.segmenter.on_rep(rep):
+                    self._emit_set_event(ev, camera_id=camera_id)
+            return
+
+        # Default: scalar angle extraction and hysteresis counter
+        val, conf = extract_signal(u.profile.signal, pose)
+        self.on_signal(camera_id, val, conf, t)
 
     def tick(self, now: float) -> None:
         u = self.usage

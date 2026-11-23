@@ -77,6 +77,12 @@ SNAPSHOT = {
 }
 
 
+def _now_iso(offset_s: float = 0.0) -> str:
+    from datetime import datetime, timedelta, timezone
+
+    return (datetime.now(timezone.utc) + timedelta(seconds=offset_s)).isoformat().replace("+00:00", "Z")
+
+
 def _server(secret: str):  # type: ignore[no-untyped-def]
     def handler(req: httpx.Request) -> httpx.Response:
         ts = req.headers["x-device-timestamp"]
@@ -84,7 +90,8 @@ def _server(secret: str):  # type: ignore[no-untyped-def]
         exp = hmac.new(secret.encode(), canon.encode(), hashlib.sha256).hexdigest()
         if exp != req.headers["x-device-signature"]:
             return httpx.Response(401, json={"code": "unauthorized"})
-        return httpx.Response(200, json=SNAPSHOT)
+        # Like device_sync_snapshot(): generated_at = now() on the server.
+        return httpx.Response(200, json={**SNAPSHOT, "generated_at": _now_iso()})
 
     return handler
 

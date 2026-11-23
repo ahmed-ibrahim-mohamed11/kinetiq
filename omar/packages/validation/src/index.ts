@@ -75,6 +75,33 @@ export function normalizeConfidence(value: number): number {
   return Math.round(Math.min(1, Math.max(0, value)) * 10_000) / 10_000;
 }
 
+const SAFE_NEXT_BASE = 'http://safe-next.invalid';
+
+/**
+ * Post-login redirect target (`?next=`). Returns a same-origin path (with query
+ * and hash) or `fallback`. Rejects everything a browser could resolve to another
+ * origin: absolute URLs, protocol-relative `//host`, backslashes (`/\host` is
+ * `//host` to the WHATWG URL parser), control characters (tab/newline are
+ * stripped by the parser, so `/<tab>/host` is `//host`), and paths that
+ * normalise to `//host` (`/.//host`).
+ */
+export function safeNextPath(next: string | null | undefined, fallback = '/dashboard'): string {
+  if (typeof next !== 'string' || next.length === 0 || next.length > 2048) return fallback;
+  if (!next.startsWith('/') || next.startsWith('//')) return fallback;
+  // eslint-disable-next-line no-control-regex
+  if (next.includes('\\') || /[\u0000-\u001f\u007f]/.test(next)) return fallback;
+  let url: URL;
+  try {
+    url = new URL(next, SAFE_NEXT_BASE);
+  } catch {
+    return fallback;
+  }
+  if (url.origin !== SAFE_NEXT_BASE) return fallback;
+  const path = `${url.pathname}${url.search}${url.hash}`;
+  if (!path.startsWith('/') || path.startsWith('//')) return fallback;
+  return path;
+}
+
 /**
  * Validate a QR check-in token: `SGM1.<member_code>.<unix_minute>.<hmac12>`.
  * Verification itself needs the secret and lives server-side; this only

@@ -72,25 +72,25 @@ export default async function DevicesPage() {
                     <TableRow key={d.id}>
                       <TableCell>
                         <div className="font-medium">{d.name}</div>
-                        <div className="text-xs text-muted-foreground">{branchName.get(d.branch_id) ?? 'â€”'}</div>
+                        <div className="text-xs text-muted-foreground">{branchName.get(d.branch_id) ?? '—'}</div>
                       </TableCell>
                       <TableCell>
                         <Badge variant={live ? 'success' : statusVariant(d.status)}>{live ? 'live' : d.status}</Badge>
                       </TableCell>
-                      <TableCell className="font-mono text-xs">{d.software_version ?? 'â€”'}</TableCell>
+                      <TableCell className="font-mono text-xs">{d.software_version ?? '—'}</TableCell>
                       <TableCell className="text-sm">{formatDateTime(d.last_seen_at)}</TableCell>
-                      <TableCell className="tabular-nums text-sm">{d.last_sequence < 0 ? 'â€”' : d.last_sequence}</TableCell>
-                      <TableCell className="tabular-nums text-sm">{h ? `${h.cameras_online ?? 0} / ${h.cameras_total ?? 0}` : 'â€”'}</TableCell>
+                      <TableCell className="tabular-nums text-sm">{d.last_sequence < 0 ? '—' : d.last_sequence}</TableCell>
+                      <TableCell className="tabular-nums text-sm">{h ? `${h.cameras_online ?? 0} / ${h.cameras_total ?? 0}` : '—'}</TableCell>
                       <TableCell className="tabular-nums text-sm">
-                        {h?.queue_depth ?? 'â€”'}
+                        {h?.queue_depth ?? '—'}
                         {h && (h.queue_depth ?? 0) > 500 && <span className="ml-1 text-xs text-warning">backlog</span>}
                       </TableCell>
-                      <TableCell className="tabular-nums text-sm">{h?.avg_pipeline_latency_ms != null ? `${Math.round(h.avg_pipeline_latency_ms)} ms` : 'â€”'}</TableCell>
+                      <TableCell className="tabular-nums text-sm">{h?.avg_pipeline_latency_ms != null ? `${Math.round(h.avg_pipeline_latency_ms)} ms` : '—'}</TableCell>
                       <TableCell className="tabular-nums text-sm">
-                        {h?.gpu_utilization != null ? `${Math.round(h.gpu_utilization * 100)}%` : 'â€”'}
+                        {h?.gpu_utilization != null ? `${Math.round(h.gpu_utilization * 100)}%` : '—'}
                         {h?.gpu_memory_used_mb != null && <div className="text-xs text-muted-foreground">{Math.round(h.gpu_memory_used_mb)} MB</div>}
                       </TableCell>
-                      <TableCell className="text-sm">{h?.uptime_seconds != null ? formatDuration(h.uptime_seconds) : 'â€”'}</TableCell>
+                      <TableCell className="text-sm">{h?.uptime_seconds != null ? formatDuration(h.uptime_seconds) : '—'}</TableCell>
                       <TableCell className="text-right">
                         <IssueSecret deviceId={d.id} deviceName={d.name} />
                       </TableCell>

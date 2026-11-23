@@ -5,6 +5,8 @@ import { createClient, getCurrentMember, getUser } from '@smartgym/supabase-clie
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@smartgym/ui';
 import { ConsentList } from '@/components/consent-list';
 import { PushToggle } from '@/components/push-toggle';
+import { NotificationPrefsForm } from '@/components/notification-prefs-form';
+import { LanguageToggle } from '@/components/language-toggle';
 
 export const metadata: Metadata = { title: 'Settings' };
 export const dynamic = 'force-dynamic';
@@ -14,27 +16,50 @@ export default async function SettingsPage() {
   if (!user || !member) redirect('/login');
   const supabase = await createClient();
 
-  const [{ data: consents }, { count: pushCount }] = await Promise.all([
+  const [{ data: consents }, { count: pushCount }, { data: prefs }] = await Promise.all([
     supabase.from('consent_records').select('*').eq('member_id', member.id).order('granted_at', { ascending: false }),
     supabase.from('push_subscriptions').select('id', { count: 'exact', head: true }).eq('user_id', user.id).is('disabled_at', null),
+    supabase.from('notification_preferences').select('*').eq('member_id', member.id).maybeSingle(),
   ]);
+
+  const currentPrefs = {
+    workout_reports: prefs?.workout_reports ?? true,
+    subscription_expiry_alerts: prefs?.subscription_expiry_alerts ?? true,
+    promotional_offers: prefs?.promotional_offers ?? false,
+  };
 
   return (
     <div className="space-y-5">
       <div>
         <h1 className="text-xl font-semibold tracking-tight">Settings</h1>
         <p className="text-sm text-muted-foreground">
-          {member.full_name} Â· member code <span className="font-mono">{member.member_code}</span> Â· {user.email}
+          {member.full_name} · member code <span className="font-mono">{member.member_code}</span> · {user.email}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Notifications</CardTitle>
-          <CardDescription>We notify you once per visit, when your workout report is ready.</CardDescription>
+          <CardTitle className="text-base">اللغة والاتجاه / Language & Direction</CardTitle>
+          <CardDescription>تبديل لغة العرض بين العربية والإنجليزية (يدعم الاتجاه من اليمين لليسار RTL).</CardDescription>
         </CardHeader>
         <CardContent>
+          <LanguageToggle />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Push Notifications</CardTitle>
+          <CardDescription>Enable Web Push notifications on this browser or mobile device.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <PushToggle vapidPublicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? ''} activeServerSubscriptions={pushCount ?? 0} />
+          <div className="border-t border-border pt-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+              Communication Preferences
+            </h4>
+            <NotificationPrefsForm initialPrefs={currentPrefs} />
+          </div>
         </CardContent>
       </Card>
 

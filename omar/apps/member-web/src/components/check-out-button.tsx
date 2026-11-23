@@ -25,7 +25,7 @@ export function CheckOutButton() {
   return (
     <div className="space-y-2">
       {error && <Alert variant="error">{error}</Alert>}
-      <Button className="w-full" variant="default" onClick={onClick} disabled={pending}>
+      <Button className="w-full" variant="default" onClick={onClick} disabled={pending} data-testid="check-out-button">
         {pending ? 'Finishing your session…' : 'Check out'}
       </Button>
     </div>

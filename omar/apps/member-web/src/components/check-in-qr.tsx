@@ -2,15 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { createClient } from '@smartgym/supabase-client/browser';
 import { Alert, Button } from '@smartgym/ui';
+import { getQrTokenAction } from '@/lib/actions';
 
 const REFRESH_MS = 30_000;
-
-interface TokenResponse {
-  token: string;
-  expires_in_seconds: number;
-}
 
 export function CheckInQr({ memberCode }: { memberCode: string }) {
   const [token, setToken] = useState<string | null>(null);
@@ -22,21 +17,11 @@ export function CheckInQr({ memberCode }: { memberCode: string }) {
   const fetchToken = useCallback(async () => {
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getSession();
-      const accessToken = data.session?.access_token;
-      if (!accessToken) throw new Error('not signed in');
-      const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      if (!base) throw new Error('Supabase URL not configured');
-      const res = await fetch(`${base}/functions/v1/qr-token`, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${accessToken}`, apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '' },
-        cache: 'no-store',
-      });
-      if (!res.ok) throw new Error(`QR service responded ${res.status}`);
-      const body = (await res.json()) as TokenResponse;
-      if (!body.token) throw new Error('empty token');
-      setToken(body.token);
+      const res = await getQrTokenAction();
+      if (!res.ok || !res.data?.token) {
+        throw new Error(res.error || 'Failed to generate token');
+      }
+      setToken(res.data.token);
       setError(null);
       setSecondsLeft(REFRESH_MS / 1000);
     } catch (err) {
@@ -66,12 +51,18 @@ export function CheckInQr({ memberCode }: { memberCode: string }) {
   return (
     <div className="flex flex-col items-center gap-4">
       {token ? (
-        <div className="rounded-xl border bg-white p-4 shadow-sm">
-          <QRCodeSVG value={token} size={220} level="M" marginSize={1} aria-label="Check-in QR code" />
+        <div className="flex flex-col items-center gap-2">
+          <div className="rounded-xl border bg-white p-4 shadow-sm">
+            <QRCodeSVG value={token} size={220} level="M" marginSize={1} aria-label="Check-in QR code" />
+          </div>
+          {/* The same code as text, so the front desk can type it when the kiosk camera is unavailable. */}
+          <p className="max-w-[18rem] select-all break-all text-center font-mono text-xs text-muted-foreground" data-testid="qr-token-text" aria-label="Check-in code as text">
+            {token}
+          </p>
         </div>
       ) : (
         <div className="flex h-[252px] w-[252px] items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground">
-          {loading ? 'Generating codeâ€¦' : 'No code available'}
+          {loading ? 'Generating code…' : 'No code available'}
         </div>
       )}
       {error ? (
@@ -88,7 +79,7 @@ export function CheckInQr({ memberCode }: { memberCode: string }) {
         <p className="font-mono text-xl font-semibold tracking-widest">{memberCode}</p>
       </div>
       <Button variant="outline" size="sm" onClick={() => void fetchToken()} disabled={loading}>
-        {loading ? 'Refreshingâ€¦' : 'Refresh code'}
+        {loading ? 'Refreshing…' : 'Refresh code'}
       </Button>
     </div>
   );

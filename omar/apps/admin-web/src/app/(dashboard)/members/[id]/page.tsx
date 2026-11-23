@@ -24,7 +24,8 @@ import { createClient } from '@smartgym/supabase-client/server';
 import type { Tables } from '@smartgym/supabase-client/types';
 import { PageHeader } from '@/components/page-header';
 import { ConsentForm, WithdrawConsentButton } from './consent-form';
-import { CheckInButton } from './member-actions';
+import { CheckInButton, FaceEnrollmentWidget, RevokeEnrollmentButton } from './member-actions';
+import { FreezeSubscriptionModal, UnfreezeSubscriptionButton, RenewSubscriptionModal } from './subscription-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,6 +33,11 @@ type Member = Tables<'members'>;
 type Consent = Tables<'consent_records'>;
 type Enrollment = Tables<'biometric_enrollments'> & { edge_devices: { name: string } | null };
 type Session = Pick<Tables<'attendance_sessions'>, 'id' | 'check_in_at' | 'check_out_at' | 'check_in_method' | 'check_out_method' | 'status'>;
+type SubscriptionWithPlan = Tables<'member_subscriptions'> & { membership_plans: Tables<'membership_plans'> | null };
+type Payment = Tables<'payments'>;
+type Invoice = Tables<'invoices'>;
+type PlanOption = Pick<Tables<'membership_plans'>, 'id' | 'name' | 'price' | 'currency' | 'duration_days' | 'ai_training_included'>;
+
 interface Report {
   id: string;
   attendance_session_id: string;
@@ -60,7 +66,17 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
   const member = memberData as Member | null;
   if (!member) notFound();
 
-  const [consentsRes, enrollmentsRes, sessionsRes, reportsRes, branchRes] = await Promise.all([
+  const [
+    consentsRes,
+    enrollmentsRes,
+    sessionsRes,
+    reportsRes,
+    branchRes,
+    subsRes,
+    paymentsRes,
+    invoicesRes,
+    plansRes,
+  ] = await Promise.all([
     supabase.from('consent_records').select('*').eq('member_id', id).order('granted_at', { ascending: false }).returns<Consent[]>(),
     supabase.from('biometric_enrollments').select('*, edge_devices(name)').eq('member_id', id).order('enrolled_at', { ascending: false }).returns<Enrollment[]>(),
     supabase
@@ -72,24 +88,54 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
       .returns<Session[]>(),
     supabase.from('workout_reports').select('id, attendance_session_id, generated_at, summary').eq('member_id', id).returns<Report[]>(),
     supabase.from('branches').select('name').eq('id', member.branch_id).maybeSingle(),
+    supabase
+      .from('member_subscriptions')
+      .select('*, membership_plans(*)')
+      .eq('member_id', id)
+      .order('created_at', { ascending: false })
+      .returns<SubscriptionWithPlan[]>(),
+    supabase.from('payments').select('*').eq('member_id', id).order('created_at', { ascending: false }).limit(20).returns<Payment[]>(),
+    supabase.from('invoices').select('*').eq('member_id', id).order('issued_at', { ascending: false }).limit(20).returns<Invoice[]>(),
+    supabase
+      .from('membership_plans')
+      .select('id, name, price, currency, duration_days, ai_training_included')
+      .eq('is_active', true)
+      .order('duration_days')
+      .returns<PlanOption[]>(),
   ]);
 
   const consents = consentsRes.data ?? [];
   const enrollments = enrollmentsRes.data ?? [];
   const sessions = sessionsRes.data ?? [];
+  const subscriptions = subsRes.data ?? [];
+  const payments = paymentsRes.data ?? [];
+  const invoices = invoicesRes.data ?? [];
+  const availablePlans = plansRes.data ?? [];
+
   const reportBySession = new Map((reportsRes.data ?? []).map((r) => [r.attendance_session_id, r]));
   const activeSession = sessions.find((s) => s.status === 'active') ?? null;
   const branchName = (branchRes.data as { name: string } | null)?.name ?? '—';
 
-  const grantedTypes = new Set(consents.filter((c) => c.status === 'granted').map((c) => c.consent_type));
+  const nowMs = Date.now();
+  const isValid = (c: Consent) => c.status === 'granted' && (!c.expires_at || new Date(c.expires_at).getTime() > nowMs);
+  const grantedTypes = new Set(consents.filter(isValid).map((c) => c.consent_type));
   const canTrack = grantedTypes.has('cctv_workout_tracking');
   const canFace = grantedTypes.has('biometric_face_identification');
+
+  // Subscription calculation
+  const activeSub = subscriptions.find((s) => s.status === 'active' || s.status === 'frozen') ?? subscriptions[0] ?? null;
+  const isSubActive = activeSub && (activeSub.status === 'active' || activeSub.status === 'frozen');
+  const remainingDays = activeSub ? Math.max(0, Math.ceil((new Date(activeSub.expires_at).getTime() - nowMs) / (1000 * 60 * 60 * 24))) : 0;
+  const maxFreezeRemaining = activeSub?.membership_plans
+    ? Math.max(0, activeSub.membership_plans.freeze_allowance_days - activeSub.total_freeze_days_used)
+    : 0;
 
   return (
     <>
       <PageHeader
         title={member.full_name}
         description={`${member.member_code} · ${branchName}`}
+        breadcrumbs={[{ label: 'Members', href: '/members' }, { label: member.full_name }]}
         actions={
           <>
             <Badge variant={statusVariant(member.status)} className="self-center">
@@ -99,6 +145,94 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
           </>
         }
       />
+
+      {/* Subscription & Entitlements Banner */}
+      <div className="mb-6 rounded-xl border border-border bg-card p-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-semibold">
+                {activeSub?.membership_plans?.name ?? 'No active package'}
+              </h3>
+              {activeSub && (
+                <Badge
+                  variant={
+                    activeSub.status === 'active'
+                      ? 'default'
+                      : activeSub.status === 'frozen'
+                      ? 'outline'
+                      : 'destructive'
+                  }
+                >
+                  {activeSub.status.toUpperCase()}
+                </Badge>
+              )}
+              {activeSub?.ai_addon_active && (
+                <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30">
+                  ⚡ AI Workout Tracking Active
+                </Badge>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {activeSub ? (
+                <>
+                  Valid: {new Date(activeSub.starts_at).toLocaleDateString()} — {new Date(activeSub.expires_at).toLocaleDateString()}
+                  {activeSub.total_freeze_days_used > 0 && ` (${activeSub.total_freeze_days_used}d frozen)`}
+                </>
+              ) : (
+                'Member has no registered subscription package.'
+              )}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {activeSub?.status === 'active' && maxFreezeRemaining > 0 && (
+              <FreezeSubscriptionModal subscriptionId={activeSub.id} maxDaysRemaining={maxFreezeRemaining} />
+            )}
+            {activeSub?.status === 'frozen' && (
+              <UnfreezeSubscriptionButton subscriptionId={activeSub.id} />
+            )}
+            <RenewSubscriptionModal memberId={member.id} branchId={member.branch_id} plans={availablePlans} />
+          </div>
+        </div>
+
+        {/* Subscription Metrics */}
+        {activeSub && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 text-sm">
+            <div>
+              <p className="text-xs text-muted-foreground">Remaining Duration</p>
+              <p className="text-lg font-bold text-foreground">
+                {activeSub.status === 'frozen' ? 'Frozen' : `${remainingDays} days`}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Sessions Remaining</p>
+              <p className="text-lg font-bold text-foreground">
+                {activeSub.sessions_remaining !== null ? `${activeSub.sessions_remaining} visits` : 'Unlimited'}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Freeze Allowance</p>
+              <p className="text-lg font-bold text-foreground">
+                {maxFreezeRemaining}d left
+                <span className="text-xs font-normal text-muted-foreground block">
+                  ({activeSub.freeze_count_used} used of {activeSub.membership_plans?.max_freeze_count ?? 1})
+                </span>
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Payment Status</p>
+              <p className="text-lg font-bold text-foreground">
+                {activeSub.paid_amount >= activeSub.total_price ? (
+                  <span className="text-emerald-500">Fully Paid</span>
+                ) : (
+                  <span className="text-amber-500">{activeSub.remaining_balance} EGP Due</span>
+                )}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
 
       {!canTrack && (
         <div className="mb-4">
@@ -112,7 +246,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Contact</CardTitle>
+            <CardTitle>Member Profile &amp; Emergency</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-3 text-sm">
             <div>
@@ -124,13 +258,31 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
               <p className="truncate">{member.email ?? '—'}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">Account</p>
-              <p>{member.user_id ? 'Activated' : 'Not activated yet'}</p>
+              <p className="text-muted-foreground">Date of Birth</p>
+              <p>{member.date_of_birth ?? '—'}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Emergency Contact</p>
+              <p>
+                {member.emergency_contact_name
+                  ? `${member.emergency_contact_name} (${member.emergency_contact_phone ?? '—'})`
+                  : '—'}
+              </p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Account App Login</p>
+              <p>{member.user_id ? 'Activated' : 'Invitation pending'}</p>
             </div>
             <div>
               <p className="text-muted-foreground">Member since</p>
               <p>{formatDateTime(member.created_at)}</p>
             </div>
+            {member.notes && (
+              <div className="col-span-2 pt-2 border-t border-border">
+                <p className="text-xs text-muted-foreground">Staff Notes</p>
+                <p className="text-xs mt-0.5">{member.notes}</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -156,10 +308,102 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
                         {e.edge_devices?.name ?? 'device'} · key {e.key_id} · {formatDateTime(e.enrolled_at)}
                       </p>
                     </div>
-                    <Badge variant={e.revoked_at ? 'destructive' : 'success'}>{e.revoked_at ? 'revoked' : 'active'}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={e.revoked_at ? 'destructive' : 'success'}>{e.revoked_at ? 'revoked' : 'active'}</Badge>
+                      {!e.revoked_at && <RevokeEnrollmentButton enrollmentId={e.id} memberId={member.id} />}
+                    </div>
                   </li>
                 ))}
               </ul>
+            )}
+            <FaceEnrollmentWidget
+              memberId={member.id}
+              memberCode={member.member_code}
+              memberName={member.full_name}
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Payment Ledger & Invoices */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Payment Ledger</CardTitle>
+            <CardDescription>Direct cash, card, and electronic payment records.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {payments.length === 0 ? (
+              <EmptyState title="No payments recorded" description="Payments logged at reception appear here." />
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Method</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {payments.map((p) => (
+                    <TableRow key={p.id}>
+                      <TableCell className="font-semibold text-foreground">
+                        {p.amount.toLocaleString()} {p.currency}
+                      </TableCell>
+                      <TableCell className="capitalize text-xs">{p.method.replace('_', ' ')}</TableCell>
+                      <TableCell>
+                        <Badge variant={p.status === 'completed' ? 'default' : 'outline'}>{p.status}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right text-xs text-muted-foreground">
+                        {formatDateTime(p.created_at)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Invoices</CardTitle>
+            <CardDescription>Official member billing invoices and receipts.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {invoices.length === 0 ? (
+              <EmptyState title="No invoices generated" description="Invoices issued on subscription purchases appear here." />
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Invoice #</TableHead>
+                    <TableHead>Total</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Issued</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {invoices.map((inv) => (
+                    <TableRow key={inv.id}>
+                      <TableCell className="font-mono text-xs font-semibold">{inv.invoice_number}</TableCell>
+                      <TableCell className="font-semibold text-foreground">
+                        {inv.total.toLocaleString()} EGP
+                        {inv.discount > 0 && (
+                          <span className="block text-[11px] text-primary">-{inv.discount} discount</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={inv.status === 'paid' ? 'default' : 'outline'}>{inv.status}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right text-xs text-muted-foreground">
+                        {formatDateTime(inv.issued_at)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
           </CardContent>
         </Card>
@@ -190,7 +434,13 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
                     <TableRow key={c.id}>
                       <TableCell className="font-medium">{c.consent_type.replaceAll('_', ' ')}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{c.policy_version}</TableCell>
-                      <TableCell className="text-sm">{formatDateTime(c.granted_at)}</TableCell>
+                      <TableCell className="text-sm">
+                        {formatDateTime(c.granted_at)}
+                        <div className="text-xs text-muted-foreground">
+                          {c.informed_acknowledged_at ? 'informed notice acknowledged' : 'no informed-notice record'}
+                          {c.expires_at && ` · expires ${formatDateTime(c.expires_at)}`}
+                        </div>
+                      </TableCell>
                       <TableCell>
                         <Badge variant={statusVariant(c.status)}>{c.status}</Badge>
                         {c.withdrawn_at && <div className="text-xs text-muted-foreground">{formatDateTime(c.withdrawn_at)}</div>}

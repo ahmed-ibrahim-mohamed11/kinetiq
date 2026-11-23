@@ -55,6 +55,16 @@ class FrameSource(Protocol):
     def stop(self) -> None: ...
 
 
+def parse_webcam_url(url: str) -> int | None:
+    """`webcam://<index>` (local USB/laptop camera, development only) → device index, else None."""
+    if not url.lower().startswith("webcam://"):
+        return None
+    rest = url.split("://", 1)[1].strip("/")
+    if not rest.isdigit():
+        raise ValueError(f"webcam URL must be webcam://<device index>, got {url!r}")
+    return int(rest)
+
+
 @dataclass
 class RtspReader:
     url: str  # may include credentials; NEVER logged (use redact_url)
@@ -121,6 +131,25 @@ class RtspReader:
         import os
 
         import cv2  # lazy
+
+        local_index = parse_webcam_url(self.url)
+        if local_index is not None:
+            # Local webcam (development): `webcam://0` → device index 0. DirectShow on Windows opens
+            # USB/laptop cameras quickly; other platforms use OpenCV's default backend.
+            backend = cv2.CAP_DSHOW if os.name == "nt" else cv2.CAP_ANY
+            cap = cv2.VideoCapture(local_index, backend)
+            if not cap.isOpened():
+                cap.release()
+                raise ConnectionError(f"failed to open local webcam {local_index}")
+            # Request 640x480 @ 15fps to conserve CPU/memory during local edge inference
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+            cap.set(cv2.CAP_PROP_FPS, 15)
+            w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            if w > 0 and h > 0:
+                self.resolution = (w, h)
+            return cap
 
         # Force TCP so packet loss produces delays instead of corrupt frames; 10s socket timeout.
         os.environ.setdefault(

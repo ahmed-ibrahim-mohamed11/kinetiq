@@ -89,7 +89,11 @@ def enroll_member(
     norm = float(np.linalg.norm(mean))
     template = (mean / norm).tolist() if norm > 0 else mean.tolist()
 
-    ref = store.enroll(member_id, consent_id, template, getattr(embedder, "model_name", "unknown"))
+    model_name = getattr(embedder, "model_name", "unknown")
+    ref = store.new_template_ref()
+    # Queue the event BEFORE the template row exists. A concurrently running pipeline reads its
+    # reconciliation cut-off time first and the pending refs second, so a template whose event it
+    # did not see as pending is necessarily newer than the cut-off and survives reconciliation.
     if emitter is not None:
         emitter.emit(
             "biometric.enrolled",
@@ -98,10 +102,20 @@ def enroll_member(
                 consent_record_id=UUID(consent_id),
                 template_ref=ref,
                 key_id=store.key_id,
-                model_name=getattr(embedder, "model_name", "unknown"),
+                model_name=model_name,
                 quality=quality,
             ),
         )
+    try:
+        store.enroll(member_id, consent_id, template, model_name, template_ref=ref)
+    except Exception:
+        if emitter is not None:
+            # The cloud would otherwise register a template this device does not hold.
+            emitter.emit(
+                "biometric.revoked",
+                BiometricRevokedPayload(member_id=UUID(member_id), template_ref=ref, reason="staff_request"),
+            )
+        raise
     return EnrollmentResult(ref, len(embeddings), quality)
 
 
@@ -111,8 +125,9 @@ RevocationReason = Literal["consent_withdrawn", "member_request", "staff_request
 def revoke_member(
     *, member_id: str, store: EncryptedTemplateStore, emitter: EventBuilder | None, reason: RevocationReason
 ) -> int:
-    refs = [ref for ref, m, _ in store.all_templates() if m == member_id]
-    deleted = store.revoke_member(member_id)
+    # Select by id, never decrypt: an undecryptable row must still be deletable.
+    refs = store.refs_for_member(member_id)
+    deleted = store.delete_refs(refs)
     if emitter is not None:
         for ref in refs:
             emitter.emit(
@@ -121,15 +136,56 @@ def revoke_member(
     return deleted
 
 
+def revoke_undecryptable(
+    *, store: EncryptedTemplateStore, emitter: EventBuilder | None, reason: RevocationReason = "key_rotation"
+) -> int:
+    """Delete every template the current key cannot decrypt (after a key change) and tell the cloud."""
+    rows = store.undecryptable_refs()
+    deleted = store.delete_refs([ref for ref, _ in rows])
+    if emitter is not None:
+        for ref, member in rows:
+            try:
+                member_uuid = UUID(member)
+            except ValueError:
+                continue
+            emitter.emit(
+                "biometric.revoked", BiometricRevokedPayload(member_id=member_uuid, template_ref=ref, reason=reason)
+            )
+    return deleted
+
+
 def apply_cloud_revocations(*, revoked_refs: list[str], store: EncryptedTemplateStore) -> int:
-    """Delete templates the cloud marked revoked (consent withdrawn in the member app)."""
-    local = {ref: member for ref, member, _ in store.all_templates()}
-    n = 0
-    for ref in revoked_refs:
-        member = local.get(ref)
-        if member:
-            n += store.revoke_member(member)
-    return n
+    """Delete exactly the templates the cloud marked revoked (consent withdrawn, member deleted, ...)."""
+    local = {ref for ref, _, _ in store.list_refs()}
+    return store.delete_refs([ref for ref in revoked_refs if ref in local])
+
+
+def reconcile_templates(
+    *,
+    store: EncryptedTemplateStore,
+    active_refs: list[str],
+    revoked_refs: list[str],
+    pending_refs: set[str],
+    enrolled_before: float,
+) -> int:
+    """Make the local store match the cloud registry after a successful, NON-cached sync.
+
+    Deleted: refs the cloud revoked, and refs the cloud does not list as active although their
+    `biometric.enrolled` event had already left the queue, for a template enrolled before
+    `enrolled_before`. Read `enrolled_before` FIRST, then `pending_refs`, then request the snapshot:
+    enroll_member queues the event before it stores the template, so a ref missing from
+    `pending_refs` either left the queue already or was enrolled after `enrolled_before`. A deleted
+    ref is either an orphan the cloud rejected, or a registry row that disappeared (member deleted).
+    Templates still waiting for their enrolment event to sync are kept.
+    """
+    active = set(active_refs)
+    revoked = set(revoked_refs)
+    doomed = [
+        ref
+        for ref, _member, enrolled_at in store.list_refs()
+        if ref in revoked or (ref not in active and ref not in pending_refs and enrolled_at < enrolled_before)
+    ]
+    return store.delete_refs(doomed)
 
 
 def load_images(paths: list[Path]) -> list[Any]:

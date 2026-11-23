@@ -12,7 +12,7 @@ export function Elapsed({ sinceIso, className }: { sinceIso: string; className?:
   }, []);
   const seconds = Math.max(0, (now - new Date(sinceIso).getTime()) / 1000);
   return (
-    <span className={className} aria-live="off">
+    <span className={className} aria-live="off" suppressHydrationWarning>
       {formatDuration(seconds)}
     </span>
   );

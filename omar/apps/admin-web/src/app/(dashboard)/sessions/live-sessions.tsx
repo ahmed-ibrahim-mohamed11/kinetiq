@@ -25,6 +25,7 @@ import { createClient } from '@smartgym/supabase-client/browser';
 import { staffCheckOut } from '@/lib/actions';
 import type { ActionResult } from '@/lib/action-result';
 import type { LiveSessionRow } from '@/lib/sessions-data';
+import { CameraVisionMonitor } from './camera-vision-monitor';
 
 type RealtimeState = 'connecting' | 'live' | 'offline';
 
@@ -58,19 +59,21 @@ export function LiveSessions({ initial, loadedAt }: { initial: LiveSessionRow[];
   }, [router]);
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <div className="mb-4 flex items-center justify-between text-xs text-muted-foreground">
-          <span className="flex items-center gap-2">
-            <LiveDot active={rt === 'live'} />
-            {rt === 'live' ? 'Realtime connected' : rt === 'connecting' ? 'Connecting to realtime…' : 'Realtime unavailable — refreshing every 30 s'}
-          </span>
-          <span>Updated {formatTime(loadedAt)}</span>
-        </div>
-        {initial.length === 0 ? (
-          <EmptyState title="Nobody is checked in" description="Active sessions appear here the moment a member is identified at the entrance or scans their QR code." />
-        ) : (
-          <Table>
+    <div className="space-y-6">
+      <CameraVisionMonitor activeSessions={initial} />
+      <Card>
+        <CardContent className="pt-6">
+          <div className="mb-4 flex items-center justify-between text-xs text-muted-foreground">
+            <span className="flex items-center gap-2">
+              <LiveDot active={rt === 'live'} />
+              {rt === 'live' ? 'Realtime connected' : rt === 'connecting' ? 'Connecting to realtime…' : 'Realtime unavailable — refreshing every 30 s'}
+            </span>
+            <span>Updated {formatTime(loadedAt)}</span>
+          </div>
+          {initial.length === 0 ? (
+            <EmptyState title="Nobody is checked in" description="Active sessions appear here the moment a member is identified at the entrance or scans their QR code." />
+          ) : (
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Member</TableHead>
@@ -90,6 +93,7 @@ export function LiveSessions({ initial, loadedAt }: { initial: LiveSessionRow[];
         )}
       </CardContent>
     </Card>
+  </div>
   );
 }
 

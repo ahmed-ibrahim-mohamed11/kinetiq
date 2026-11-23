@@ -1,5 +1,9 @@
 /**
- * Notification worker entry point.
+ * Notification worker entry point — the SELF-HOSTED alternative to the
+ * notification-dispatch Supabase Edge Function (the production default, see
+ * docs/deployment/notification-dispatch.md). Both share the job-processing logic
+ * and templates in supabase/functions/_shared/notify and can run side by side:
+ * claim_notification_jobs uses SKIP LOCKED.
  *
  * Polls notification_jobs via SKIP LOCKED RPCs (claim_notification_jobs),
  * delivers Web Push (VAPID) and reports outcomes; the database owns retry
@@ -9,8 +13,9 @@
 import { createClient } from '@supabase/supabase-js';
 import webpush from 'web-push';
 import { loadServerEnv } from '@smartgym/shared-config';
+import { supabaseDb, supabaseEmailLookup, type SupabaseLike } from '../../../supabase/functions/_shared/notify/supabase-db.ts';
 import { ResendEmailSender } from './email';
-import { tick, type Db, type EmailSender, type Job, type PushSender, type PushSub } from './worker';
+import { tick, type Db, type EmailSender, type PushSender } from './worker';
 
 const env = loadServerEnv();
 const memberAppUrl = process.env.MEMBER_APP_URL ?? 'http://localhost:3001';
@@ -25,33 +30,12 @@ webpush.setVapidDetails(env.VAPID_SUBJECT, env.VAPID_PUBLIC_KEY, env.VAPID_PRIVA
 // Service role: this process is trusted and runs outside the browser. Never ship this key anywhere else.
 const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
 
-const db: Db = {
-  async claim(worker, limit) {
-    const { data, error } = await supabase.rpc('claim_notification_jobs', { p_worker: worker, p_limit: limit });
-    if (error) throw error;
-    return (data ?? []) as Job[];
-  },
-  async complete(jobId, ok, err) {
-    const { error } = await supabase.rpc('complete_notification_job', { p_job_id: jobId, p_ok: ok, p_error: err ?? null });
-    if (error) throw error;
-  },
-  async memberName(memberId) {
-    const { data } = await supabase.from('members').select('full_name').eq('id', memberId).maybeSingle();
-    return data?.full_name ?? 'Member';
-  },
-  async pushSubscriptions(memberId) {
-    const { data, error } = await supabase.rpc('member_push_subscriptions', { p_member_id: memberId });
-    if (error) throw error;
-    return (data ?? []) as PushSub[];
-  },
-  async disablePushSubscription(id) {
-    await supabase.rpc('disable_push_subscription', { p_id: id });
-  },
-};
+const sb = supabase as unknown as SupabaseLike;
+const db: Db = supabaseDb(sb);
 
 const push: PushSender = {
   async send(sub, json) {
-    await webpush.sendNotification({ endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } }, json, { TTL: 3600, urgency: 'normal' });
+    await webpush.sendNotification({ endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } }, json, { TTL: 3600, urgency: 'normal', timeout: 10_000 });
   },
 };
 
@@ -59,15 +43,7 @@ const push: PushSender = {
 // email channel fails explicitly and the job dead-letters after its retries.
 let email: EmailSender | undefined;
 if (process.env.RESEND_API_KEY && process.env.EMAIL_FROM) {
-  email = new ResendEmailSender(
-    {
-      async memberEmail(memberId) {
-        const { data } = await supabase.from('members').select('email').eq('id', memberId).maybeSingle();
-        return (data?.email as string | null) ?? null;
-      },
-    },
-    { apiKey: process.env.RESEND_API_KEY, from: process.env.EMAIL_FROM },
-  );
+  email = new ResendEmailSender(supabaseEmailLookup(sb), { apiKey: process.env.RESEND_API_KEY, from: process.env.EMAIL_FROM });
 }
 
 const log = (msg: string, data?: Record<string, unknown>) => console.log(JSON.stringify({ ts: new Date().toISOString(), msg, ...data }));

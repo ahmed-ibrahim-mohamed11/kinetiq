@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { connection } from 'next/server';
 import '@smartgym/ui/styles.css';
 
 export const metadata: Metadata = {
@@ -19,10 +20,12 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Render per request so Next can put the middleware's CSP nonce on its scripts.
+  await connection();
   return (
-    <html lang="en">
-      <body className="min-h-dvh">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-dvh" suppressHydrationWarning>{children}</body>
     </html>
   );
 }

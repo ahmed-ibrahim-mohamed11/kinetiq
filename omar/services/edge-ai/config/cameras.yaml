@@ -1,0 +1,31 @@
+# Local development camera inventory: the laptop/USB webcam (device index 0).
+# Mapped to real registered Cloud branch cameras in branch 695ac8f1-cf2f-4409-a1fc-090b6220f9d0
+cameras:
+  - id: c1111111-1111-4111-8111-111111111101
+    name: CAM-01 Entrance Gate
+    purpose: entrance
+    url: webcam://0
+    fps: 15
+    inference_fps: 5
+    zones:
+      - id: f1111111-1111-4111-8111-111111111101
+        type: entrance
+        polygon: [[-500, -500], [4096, -500], [4096, 4096], [-500, 4096]]
+
+  - id: c1111111-1111-4111-8111-111111111102
+    name: CAM-02 Strength Zone North
+    purpose: floor
+    url: webcam://0
+    fps: 15
+    inference_fps: 5
+    zones:
+      - id: f1111111-1111-4111-8111-111111111102
+        type: equipment
+        equipment_id: e1111111-1111-4111-8111-111111111104
+        exercise_slug: squat
+        polygon: [[-500, -500], [4096, -500], [4096, 4096], [-500, 4096]]
+
+exercise_ids:
+  lat-pulldown: db25377e-7f0f-4f30-a89b-3f270a1f4bb9
+  squat: 1206097d-251a-41c5-b83b-2d80e570e662
+  bench-press: 867ee101-edd8-462d-accb-9821d273580a

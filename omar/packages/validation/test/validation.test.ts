@@ -8,6 +8,7 @@ import {
   parseQrCheckInToken,
   pointInPolygon,
   polygonArea,
+  safeNextPath,
 } from '../src/index';
 
 describe('geometry', () => {
@@ -68,5 +69,43 @@ describe('misc', () => {
       mac: 'abcDEF123456',
     });
     expect(parseQrCheckInToken('garbage')).toBeNull();
+  });
+});
+
+describe('safeNextPath (post-login redirect)', () => {
+  it('keeps same-origin paths with query and hash', () => {
+    expect(safeNextPath('/members/abc?tab=consent#x')).toBe('/members/abc?tab=consent#x');
+    expect(safeNextPath('/reports/1')).toBe('/reports/1');
+  });
+  it('falls back for missing or non-path values', () => {
+    expect(safeNextPath(undefined)).toBe('/dashboard');
+    expect(safeNextPath(null)).toBe('/dashboard');
+    expect(safeNextPath('')).toBe('/dashboard');
+    expect(safeNextPath('dashboard')).toBe('/dashboard');
+    expect(safeNextPath('x', '/home')).toBe('/home');
+  });
+  it('rejects every form that resolves to another origin', () => {
+    for (const evil of [
+      '//evil.example',
+      'https://evil.example',
+      'javascript:alert(1)',
+      '/\\evil.example',
+      '/\\/evil.example',
+      '/\t/evil.example',
+      '/\n/evil.example',
+      '/\u0000/evil.example',
+      '/.//evil.example',
+      '/..//evil.example',
+      '/%2e//evil.example',
+    ]) {
+      const out = safeNextPath(evil);
+      expect(out, evil).toBe('/dashboard');
+      expect(new URL(out, 'https://admin.example').origin).toBe('https://admin.example');
+    }
+  });
+  it('treats a still-encoded tab as a harmless same-origin path', () => {
+    const out = safeNextPath('/%09/evil.example');
+    expect(new URL(out, 'https://admin.example').origin).toBe('https://admin.example');
+    expect(out.startsWith('//')).toBe(false);
   });
 });

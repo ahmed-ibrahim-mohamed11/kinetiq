@@ -11,14 +11,14 @@ export type Database = {
           Tables: {
             "attendance_sessions": {
                   Row: {
-                    "branch_id": string,"check_in_at": string,"check_in_confidence": number | null,"check_in_method": Database["public"]['Enums']["checkin_method"],"check_out_at": string | null,"check_out_method": Database["public"]['Enums']["checkin_method"] | null,"created_at": string,"id": string,"member_id": string,"status": Database["public"]['Enums']["session_status"],"updated_at": string
+                    "branch_id": string,"check_in_at": string,"check_in_confidence": number | null,"check_in_method": Database["public"]['Enums']["checkin_method"],"check_out_at": string | null,"check_out_method": Database["public"]['Enums']["checkin_method"] | null,"checked_in_by": string | null,"checked_out_by": string | null,"created_at": string,"id": string,"member_id": string,"status": Database["public"]['Enums']["session_status"],"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "branch_id": string,"check_in_at": string,"check_in_confidence"?: number | null,"check_in_method": Database["public"]['Enums']["checkin_method"],"check_out_at"?: string | null,"check_out_method"?: Database["public"]['Enums']["checkin_method"] | null,"created_at"?: string,"id"?: string,"member_id": string,"status"?: Database["public"]['Enums']["session_status"],"updated_at"?: string
+                    "branch_id": string,"check_in_at": string,"check_in_confidence"?: number | null,"check_in_method": Database["public"]['Enums']["checkin_method"],"check_out_at"?: string | null,"check_out_method"?: Database["public"]['Enums']["checkin_method"] | null,"checked_in_by"?: string | null,"checked_out_by"?: string | null,"created_at"?: string,"id"?: string,"member_id": string,"status"?: Database["public"]['Enums']["session_status"],"updated_at"?: string
                   }
                   Update: {
-                    "branch_id"?: string,"check_in_at"?: string,"check_in_confidence"?: number | null,"check_in_method"?: Database["public"]['Enums']["checkin_method"],"check_out_at"?: string | null,"check_out_method"?: Database["public"]['Enums']["checkin_method"] | null,"created_at"?: string,"id"?: string,"member_id"?: string,"status"?: Database["public"]['Enums']["session_status"],"updated_at"?: string
+                    "branch_id"?: string,"check_in_at"?: string,"check_in_confidence"?: number | null,"check_in_method"?: Database["public"]['Enums']["checkin_method"],"check_out_at"?: string | null,"check_out_method"?: Database["public"]['Enums']["checkin_method"] | null,"checked_in_by"?: string | null,"checked_out_by"?: string | null,"created_at"?: string,"id"?: string,"member_id"?: string,"status"?: Database["public"]['Enums']["session_status"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -37,14 +37,14 @@ isOneToOne: false
                   ]
                 },"audit_logs": {
                   Row: {
-                    "action": string,"actor_role": string | null,"actor_user_id": string | null,"id": number,"ip_address": unknown,"new_data": Json | null,"occurred_at": string,"old_data": Json | null,"organization_id": string | null,"row_id": string | null,"table_name": string
+                    "action": string,"actor_role": string | null,"actor_user_id": string | null,"branch_id": string | null,"id": number,"ip_address": unknown,"new_data": Json | null,"occurred_at": string,"old_data": Json | null,"organization_id": string | null,"row_id": string | null,"table_name": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "action": string,"actor_role"?: string | null,"actor_user_id"?: string | null,"id"?: never,"ip_address"?: unknown,"new_data"?: Json | null,"occurred_at"?: string,"old_data"?: Json | null,"organization_id"?: string | null,"row_id"?: string | null,"table_name": string
+                    "action": string,"actor_role"?: string | null,"actor_user_id"?: string | null,"branch_id"?: string | null,"id"?: never,"ip_address"?: unknown,"new_data"?: Json | null,"occurred_at"?: string,"old_data"?: Json | null,"organization_id"?: string | null,"row_id"?: string | null,"table_name": string
                   }
                   Update: {
-                    "action"?: string,"actor_role"?: string | null,"actor_user_id"?: string | null,"id"?: never,"ip_address"?: unknown,"new_data"?: Json | null,"occurred_at"?: string,"old_data"?: Json | null,"organization_id"?: string | null,"row_id"?: string | null,"table_name"?: string
+                    "action"?: string,"actor_role"?: string | null,"actor_user_id"?: string | null,"branch_id"?: string | null,"id"?: never,"ip_address"?: unknown,"new_data"?: Json | null,"occurred_at"?: string,"old_data"?: Json | null,"organization_id"?: string | null,"row_id"?: string | null,"table_name"?: string
                   }
                   Relationships: [
                     
@@ -84,6 +84,26 @@ isOneToOne: false
       columns: ["model_version_id"]
 isOneToOne: false
       referencedRelation: "model_versions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"biometric_revocations": {
+                  Row: {
+                    "edge_device_id": string,"enrollment_id": string | null,"id": string,"member_id": string | null,"reason": string,"revoked_at": string,"template_ref": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "edge_device_id": string,"enrollment_id"?: string | null,"id"?: string,"member_id"?: string | null,"reason": string,"revoked_at"?: string,"template_ref": string
+                  }
+                  Update: {
+                    "edge_device_id"?: string,"enrollment_id"?: string | null,"id"?: string,"member_id"?: string | null,"reason"?: string,"revoked_at"?: string,"template_ref"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "biometric_revocations_edge_device_id_fkey"
+      columns: ["edge_device_id"]
+isOneToOne: false
+      referencedRelation: "edge_devices"
       referencedColumns: ["id"]
     }
                   ]
@@ -181,14 +201,14 @@ isOneToOne: false
                   ]
                 },"consent_records": {
                   Row: {
-                    "captured_by_staff_id": string | null,"consent_type": Database["public"]['Enums']["consent_type"],"created_at": string,"expires_at": string | null,"granted_at": string,"id": string,"ip_address": unknown,"member_id": string,"policy_version": string,"status": Database["public"]['Enums']["consent_status"],"withdrawn_at": string | null
+                    "captured_by_staff_id": string | null,"consent_type": Database["public"]['Enums']["consent_type"],"created_at": string,"expires_at": string | null,"granted_at": string,"id": string,"informed_acknowledged_at": string | null,"ip_address": unknown,"member_id": string,"policy_version": string,"status": Database["public"]['Enums']["consent_status"],"withdrawn_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "captured_by_staff_id"?: string | null,"consent_type": Database["public"]['Enums']["consent_type"],"created_at"?: string,"expires_at"?: string | null,"granted_at"?: string,"id"?: string,"ip_address"?: unknown,"member_id": string,"policy_version": string,"status"?: Database["public"]['Enums']["consent_status"],"withdrawn_at"?: string | null
+                    "captured_by_staff_id"?: string | null,"consent_type": Database["public"]['Enums']["consent_type"],"created_at"?: string,"expires_at"?: string | null,"granted_at"?: string,"id"?: string,"informed_acknowledged_at"?: string | null,"ip_address"?: unknown,"member_id": string,"policy_version": string,"status"?: Database["public"]['Enums']["consent_status"],"withdrawn_at"?: string | null
                   }
                   Update: {
-                    "captured_by_staff_id"?: string | null,"consent_type"?: Database["public"]['Enums']["consent_type"],"created_at"?: string,"expires_at"?: string | null,"granted_at"?: string,"id"?: string,"ip_address"?: unknown,"member_id"?: string,"policy_version"?: string,"status"?: Database["public"]['Enums']["consent_status"],"withdrawn_at"?: string | null
+                    "captured_by_staff_id"?: string | null,"consent_type"?: Database["public"]['Enums']["consent_type"],"created_at"?: string,"expires_at"?: string | null,"granted_at"?: string,"id"?: string,"informed_acknowledged_at"?: string | null,"ip_address"?: unknown,"member_id"?: string,"policy_version"?: string,"status"?: Database["public"]['Enums']["consent_status"],"withdrawn_at"?: string | null
                   }
                   Relationships: [
                     {
@@ -198,6 +218,20 @@ isOneToOne: false
       referencedRelation: "members"
       referencedColumns: ["id"]
     }
+                  ]
+                },"consent_records_archive": {
+                  Row: {
+                    "archive_reason": string,"archived_at": string,"archived_by": string | null,"branch_id": string | null,"captured_by_staff_id": string | null,"consent_type": Database["public"]['Enums']["consent_type"],"created_at": string,"expires_at": string | null,"granted_at": string,"id": string,"informed_acknowledged_at": string | null,"ip_address": unknown,"member_code": string | null,"member_full_name": string | null,"member_id": string,"organization_id": string | null,"policy_version": string,"status": Database["public"]['Enums']["consent_status"],"withdrawn_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archive_reason": string,"archived_at"?: string,"archived_by"?: string | null,"branch_id"?: string | null,"captured_by_staff_id"?: string | null,"consent_type": Database["public"]['Enums']["consent_type"],"created_at": string,"expires_at"?: string | null,"granted_at": string,"id": string,"informed_acknowledged_at"?: string | null,"ip_address"?: unknown,"member_code"?: string | null,"member_full_name"?: string | null,"member_id": string,"organization_id"?: string | null,"policy_version": string,"status": Database["public"]['Enums']["consent_status"],"withdrawn_at"?: string | null
+                  }
+                  Update: {
+                    "archive_reason"?: string,"archived_at"?: string,"archived_by"?: string | null,"branch_id"?: string | null,"captured_by_staff_id"?: string | null,"consent_type"?: Database["public"]['Enums']["consent_type"],"created_at"?: string,"expires_at"?: string | null,"granted_at"?: string,"id"?: string,"informed_acknowledged_at"?: string | null,"ip_address"?: unknown,"member_code"?: string | null,"member_full_name"?: string | null,"member_id"?: string,"organization_id"?: string | null,"policy_version"?: string,"status"?: Database["public"]['Enums']["consent_status"],"withdrawn_at"?: string | null
+                  }
+                  Relationships: [
+                    
                   ]
                 },"device_health_logs": {
                   Row: {
@@ -455,14 +489,14 @@ isOneToOne: false
                   ]
                 },"members": {
                   Row: {
-                    "branch_id": string,"created_at": string,"email": string | null,"full_name": string,"id": string,"member_code": string,"organization_id": string,"phone": string | null,"status": Database["public"]['Enums']["membership_status"],"updated_at": string,"user_id": string | null
+                    "branch_id": string,"created_at": string,"date_of_birth": string | null,"email": string | null,"emergency_contact_name": string | null,"emergency_contact_phone": string | null,"full_name": string,"id": string,"member_code": string,"notes": string | null,"organization_id": string,"phone": string | null,"status": Database["public"]['Enums']["membership_status"],"updated_at": string,"user_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "branch_id": string,"created_at"?: string,"email"?: string | null,"full_name": string,"id"?: string,"member_code": string,"organization_id": string,"phone"?: string | null,"status"?: Database["public"]['Enums']["membership_status"],"updated_at"?: string,"user_id"?: string | null
+                    "branch_id": string,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"emergency_contact_name"?: string | null,"emergency_contact_phone"?: string | null,"full_name": string,"id"?: string,"member_code": string,"notes"?: string | null,"organization_id": string,"phone"?: string | null,"status"?: Database["public"]['Enums']["membership_status"],"updated_at"?: string,"user_id"?: string | null
                   }
                   Update: {
-                    "branch_id"?: string,"created_at"?: string,"email"?: string | null,"full_name"?: string,"id"?: string,"member_code"?: string,"organization_id"?: string,"phone"?: string | null,"status"?: Database["public"]['Enums']["membership_status"],"updated_at"?: string,"user_id"?: string | null
+                    "branch_id"?: string,"created_at"?: string,"date_of_birth"?: string | null,"email"?: string | null,"emergency_contact_name"?: string | null,"emergency_contact_phone"?: string | null,"full_name"?: string,"id"?: string,"member_code"?: string,"notes"?: string | null,"organization_id"?: string,"phone"?: string | null,"status"?: Database["public"]['Enums']["membership_status"],"updated_at"?: string,"user_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -479,6 +513,133 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"membership_plans": {
+                  Row: {
+                    "ai_addon_fee": number,"ai_training_included": boolean,"code": string,"created_at": string,"currency": string,"description": string | null,"duration_days": number,"freeze_allowance_days": number,"id": string,"included_sessions": number | null,"is_active": boolean,"max_freeze_count": number,"name": string,"organization_id": string,"price": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ai_addon_fee"?: number,"ai_training_included"?: boolean,"code": string,"created_at"?: string,"currency"?: string,"description"?: string | null,"duration_days": number,"freeze_allowance_days"?: number,"id"?: string,"included_sessions"?: number | null,"is_active"?: boolean,"max_freeze_count"?: number,"name": string,"organization_id": string,"price": number,"updated_at"?: string
+                  }
+                  Update: {
+                    "ai_addon_fee"?: number,"ai_training_included"?: boolean,"code"?: string,"created_at"?: string,"currency"?: string,"description"?: string | null,"duration_days"?: number,"freeze_allowance_days"?: number,"id"?: string,"included_sessions"?: number | null,"is_active"?: boolean,"max_freeze_count"?: number,"name"?: string,"organization_id"?: string,"price"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+                      foreignKeyName: "membership_plans_organization_id_fkey"
+                      columns: ["organization_id"]
+                      isOneToOne: false
+                      referencedRelation: "organizations"
+                      referencedColumns: ["id"]
+                    }
+                  ]
+                },"member_subscriptions": {
+                  Row: {
+                    "ai_addon_active": boolean,"branch_id": string,"created_at": string,"currency": string,"discount_amount": number,"expires_at": string,"freeze_count_used": number,"id": string,"member_id": string,"organization_id": string,"original_expires_at": string,"paid_amount": number,"plan_id": string,"promotion_id": string | null,"remaining_balance": number,"sessions_remaining": number | null,"starts_at": string,"status": string,"total_freeze_days_used": number,"total_price": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ai_addon_active"?: boolean,"branch_id": string,"created_at"?: string,"currency"?: string,"discount_amount"?: number,"expires_at": string,"freeze_count_used"?: number,"id"?: string,"member_id": string,"organization_id": string,"original_expires_at": string,"paid_amount"?: number,"plan_id": string,"promotion_id"?: string | null,"remaining_balance"?: number,"sessions_remaining"?: number | null,"starts_at"?: string,"status"?: string,"total_freeze_days_used"?: number,"total_price": number,"updated_at"?: string
+                  }
+                  Update: {
+                    "ai_addon_active"?: boolean,"branch_id"?: string,"created_at"?: string,"currency"?: string,"discount_amount"?: number,"expires_at"?: string,"freeze_count_used"?: number,"id"?: string,"member_id"?: string,"organization_id"?: string,"original_expires_at"?: string,"paid_amount"?: number,"plan_id"?: string,"promotion_id"?: string | null,"remaining_balance"?: number,"sessions_remaining"?: number | null,"starts_at"?: string,"status"?: string,"total_freeze_days_used"?: number,"total_price"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+                      foreignKeyName: "member_subscriptions_member_id_fkey"
+                      columns: ["member_id"]
+                      isOneToOne: false
+                      referencedRelation: "members"
+                      referencedColumns: ["id"]
+                    },
+                    {
+                      foreignKeyName: "member_subscriptions_plan_id_fkey"
+                      columns: ["plan_id"]
+                      isOneToOne: false
+                      referencedRelation: "membership_plans"
+                      referencedColumns: ["id"]
+                    }
+                  ]
+                },"promotions": {
+                  Row: {
+                    "ai_approval_status": string,"applies_to_plan_id": string | null,"code": string,"created_at": string,"description": string | null,"discount_type": string,"discount_value": number,"id": string,"is_active": boolean,"is_ai_generated": boolean,"max_discount_amount": number | null,"min_subscription_amount": number | null,"name": string,"organization_id": string,"updated_at": string,"usage_limit": number | null,"used_count": number,"valid_from": string,"valid_until": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ai_approval_status"?: string,"applies_to_plan_id"?: string | null,"code": string,"created_at"?: string,"description"?: string | null,"discount_type": string,"discount_value": number,"id"?: string,"is_active"?: boolean,"is_ai_generated"?: boolean,"max_discount_amount"?: number | null,"min_subscription_amount"?: number | null,"name": string,"organization_id": string,"updated_at"?: string,"usage_limit"?: number | null,"used_count"?: number,"valid_from"?: string,"valid_until"?: string | null
+                  }
+                  Update: {
+                    "ai_approval_status"?: string,"applies_to_plan_id"?: string | null,"code"?: string,"created_at"?: string,"description"?: string | null,"discount_type"?: string,"discount_value"?: number,"id"?: string,"is_active"?: boolean,"is_ai_generated"?: boolean,"max_discount_amount"?: number | null,"min_subscription_amount"?: number | null,"name"?: string,"organization_id"?: string,"updated_at"?: string,"usage_limit"?: number | null,"used_count"?: number,"valid_from"?: string,"valid_until"?: string | null
+                  }
+                  Relationships: [
+                    {
+                      foreignKeyName: "promotions_organization_id_fkey"
+                      columns: ["organization_id"]
+                      isOneToOne: false
+                      referencedRelation: "organizations"
+                      referencedColumns: ["id"]
+                    }
+                  ]
+                },"subscription_freezes": {
+                  Row: {
+                    "approved_by": string | null,"created_at": string,"days_frozen": number,"end_date": string,"id": string,"member_id": string,"reason": string | null,"start_date": string,"status": string,"subscription_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "approved_by"?: string | null,"created_at"?: string,"days_frozen": number,"end_date": string,"id"?: string,"member_id": string,"reason"?: string | null,"start_date"?: string,"status"?: string,"subscription_id": string
+                  }
+                  Update: {
+                    "approved_by"?: string | null,"created_at"?: string,"days_frozen"?: number,"end_date"?: string,"id"?: string,"member_id"?: string,"reason"?: string | null,"start_date"?: string,"status"?: string,"subscription_id"?: string
+                  }
+                  Relationships: []
+                },"payments": {
+                  Row: {
+                    "amount": number,"branch_id": string,"created_at": string,"currency": string,"id": string,"member_id": string,"method": string,"notes": string | null,"organization_id": string,"recorded_by": string | null,"reference_number": string | null,"status": string,"subscription_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount": number,"branch_id": string,"created_at"?: string,"currency"?: string,"id"?: string,"member_id": string,"method": string,"notes"?: string | null,"organization_id": string,"recorded_by"?: string | null,"reference_number"?: string | null,"status"?: string,"subscription_id"?: string | null
+                  }
+                  Update: {
+                    "amount"?: number,"branch_id"?: string,"created_at"?: string,"currency"?: string,"id"?: string,"member_id"?: string,"method"?: string,"notes"?: string | null,"organization_id"?: string,"recorded_by"?: string | null,"reference_number"?: string | null,"status"?: string,"subscription_id"?: string | null
+                  }
+                  Relationships: []
+                },"invoices": {
+                  Row: {
+                    "branch_id": string,"created_at": string,"discount": number,"due_at": string,"id": string,"invoice_number": string,"issued_at": string,"member_id": string,"organization_id": string,"status": string,"subscription_id": string | null,"subtotal": number,"total": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "branch_id": string,"created_at"?: string,"discount"?: number,"due_at"?: string,"id"?: string,"invoice_number": string,"issued_at"?: string,"member_id": string,"organization_id": string,"status"?: string,"subscription_id"?: string | null,"subtotal": number,"total": number
+                  }
+                  Update: {
+                    "branch_id"?: string,"created_at"?: string,"discount"?: number,"due_at"?: string,"id"?: string,"invoice_number"?: string,"issued_at"?: string,"member_id"?: string,"organization_id"?: string,"status"?: string,"subscription_id"?: string | null,"subtotal"?: number,"total"?: number
+                  }
+                  Relationships: []
+                },"referral_records": {
+                  Row: {
+                    "created_at": string,"id": string,"organization_id": string,"referral_code": string,"referred_member_id": string,"referrer_member_id": string,"reward_applied": boolean
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"organization_id": string,"referral_code": string,"referred_member_id": string,"referrer_member_id": string,"reward_applied"?: boolean
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"organization_id"?: string,"referral_code"?: string,"referred_member_id"?: string,"referrer_member_id"?: string,"reward_applied"?: boolean
+                  }
+                  Relationships: []
+                },"notification_preferences": {
+                  Row: {
+                    "id": string,"member_id": string,"promotional_offers": boolean,"subscription_expiry_alerts": boolean,"updated_at": string,"workout_reports": boolean
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: string,"member_id": string,"promotional_offers"?: boolean,"subscription_expiry_alerts"?: boolean,"updated_at"?: string,"workout_reports"?: boolean
+                  }
+                  Update: {
+                    "id"?: string,"member_id"?: string,"promotional_offers"?: boolean,"subscription_expiry_alerts"?: boolean,"updated_at"?: string,"workout_reports"?: boolean
+                  }
+                  Relationships: []
                 },"model_versions": {
                   Row: {
                     "benchmark": Json | null,"checksum_sha256": string | null,"component": Database["public"]['Enums']["model_component"],"created_at": string,"id": string,"license": string,"name": string,"runtime": Database["public"]['Enums']["model_runtime"],"version": string
@@ -693,14 +854,14 @@ isOneToOne: false
                   ]
                 },"workout_reports": {
                   Row: {
-                    "attendance_session_id": string,"generated_at": string,"id": string,"member_id": string,"share_expires_at": string,"share_token": string,"summary": NonNullable<Json>,"viewed_at": string | null
+                    "attendance_session_id": string,"generated_at": string,"id": string,"member_id": string,"share_expires_at": string | null,"share_token": string | null,"summary": NonNullable<Json>,"viewed_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "attendance_session_id": string,"generated_at"?: string,"id"?: string,"member_id": string,"share_expires_at"?: string,"share_token"?: string,"summary": NonNullable<Json>,"viewed_at"?: string | null
+                    "attendance_session_id": string,"generated_at"?: string,"id"?: string,"member_id": string,"share_expires_at"?: string | null,"share_token"?: string | null,"summary": NonNullable<Json>,"viewed_at"?: string | null
                   }
                   Update: {
-                    "attendance_session_id"?: string,"generated_at"?: string,"id"?: string,"member_id"?: string,"share_expires_at"?: string,"share_token"?: string,"summary"?: NonNullable<Json>,"viewed_at"?: string | null
+                    "attendance_session_id"?: string,"generated_at"?: string,"id"?: string,"member_id"?: string,"share_expires_at"?: string | null,"share_token"?: string | null,"summary"?: NonNullable<Json>,"viewed_at"?: string | null
                   }
                   Relationships: [
                     {
@@ -723,14 +884,111 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
+            "save_ai_workout_session": {
+              Args: {
+                "p_member_id"?: string | null;
+                "p_reps"?: number;
+                "p_valid_reps"?: number | null;
+                "p_imperfect_reps"?: number;
+                "p_exercise"?: string;
+                "p_duration_seconds"?: number;
+                "p_form_score"?: number;
+                "p_rep_telemetry"?: Json;
+                "p_camera_id"?: string | null;
+              };
+              Returns: Json;
+            },
+            "enroll_member_face": {
+              Args: { "p_member_id": string; "p_template_ref"?: string | null };
+              Returns: Json;
+            },
+            "face_check_in": {
+              Args: { "p_member_id": string; "p_confidence"?: number };
+              Returns: Json;
+            },
+            "fn_get_member_entitlement": {
+              Args: { "p_member_id": string };
+              Returns: Json;
+            },
+            "fn_freeze_subscription": {
+              Args: { "p_subscription_id": string; "p_days": number; "p_reason"?: string | null; "p_staff_profile_id"?: string | null };
+              Returns: Json;
+            },
+            "fn_unfreeze_subscription": {
+              Args: { "p_subscription_id": string; "p_staff_profile_id"?: string | null };
+              Returns: Json;
+            },
+            "fn_renew_subscription": {
+              Args: {
+                "p_member_id": string;
+                "p_plan_id": string;
+                "p_branch_id": string;
+                "p_staff_profile_id"?: string | null;
+                "p_payment_method"?: string;
+                "p_promo_code"?: string | null;
+                "p_ai_addon"?: boolean;
+              };
+              Returns: Json;
+            },
             "_active_session_for_member":
-{ Args: { "p_member_id": string }; Returns: string
+{ Args: { "p_branch_id": string,"p_member_id": string }; Returns: string
                            },
 "_apply_edge_event":
 { Args: { "p": Json,"p_branch_id": string,"p_device_id": string }; Returns: undefined
                            },
+"_assert_camera_in_branch":
+{ Args: { "p_branch_id": string,"p_camera_id": string }; Returns: undefined
+                           },
+"_assert_member_in_branch":
+{ Args: { "p_active_only": boolean,"p_branch_id": string,"p_member_id": string }; Returns: undefined
+                           },
+"_assert_zone_in_branch":
+{ Args: { "p_branch_id": string,"p_zone_id": string }; Returns: undefined
+                           },
+"_audit_report_share":
+{ Args: { "p_action": string,"p_member_id": string,"p_new": Json,"p_old": Json,"p_report_id": string }; Returns: undefined
+                           },
+"_audit_scope":
+{ Args: { "p_row": Json,"p_table": string }; Returns: Record<string, unknown>
+                           },
+"_audit_write":
+{ Args: { "p_action": string,"p_new": Json,"p_old": Json,"p_table": string }; Returns: undefined
+                           },
+"_bounded_text":
+{ Args: { "p_field": string,"p_max": number,"p_value": string }; Returns: string
+                           },
+"_caller_sees_session":
+{ Args: { "p_branch_id": string,"p_member_id": string }; Returns: boolean
+                           },
+"_can_manage_staff_role":
+{ Args: { "p_branch_id": string,"p_org_id": string,"p_role": Database["public"]['Enums']["staff_role"] }; Returns: boolean
+                           },
+"_device_secret_audit_row":
+{ Args: { "p_created": string,"p_device": string,"p_hash": string,"p_id": string,"p_retired": string }; Returns: Json
+                           },
+"_end_sessions_without_report":
+{ Args: { "p_member_id": string,"p_reason": string }; Returns: number
+                           },
 "_has_granted_consent":
 { Args: { "p_member_id": string,"p_type": Database["public"]['Enums']["consent_type"] }; Returns: boolean
+                           },
+"_ingest_error_code":
+{ Args: { "p_sqlstate": string }; Returns: string
+                           },
+"_ingest_raise":
+{ Args: { "p_code": string,"p_message": string }; Returns: undefined
+                           },
+"_ingest_reason":
+{ Args: { "p_code": string }; Returns: string
+                           },
+"_is_uuid":
+{ Args: { "p_value": string }; Returns: boolean
+                           },
+"_open_attendance_session":
+{ Args: { "p_actor": string,"p_branch_id": string,"p_member_id": string,"p_method": Database["public"]['Enums']["checkin_method"] }; Returns: string
+                           },
+"_require_tracking_consent":
+{ Args: { "p_session_id": string }; Returns: undefined
                            },
 "abandon_stale_sessions":
 { Args: { "p_max_hours"?: number }; Returns: number
@@ -777,6 +1035,9 @@ isOneToOne: false
 "complete_notification_job":
 { Args: { "p_error"?: string,"p_job_id": string,"p_ok": boolean }; Returns: undefined
                            },
+"create_report_share":
+{ Args: { "p_days"?: number,"p_report_id": string }; Returns: Json
+                           },
 "current_member_id":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
@@ -785,6 +1046,9 @@ isOneToOne: false
                            },
 "disable_push_subscription":
 { Args: { "p_id": string }; Returns: undefined
+                           },
+"expire_consents":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "finalize_attendance_session":
 { Args: { "p_check_out_at"?: string,"p_method"?: Database["public"]['Enums']["checkin_method"],"p_session_id": string }; Returns: string
@@ -806,6 +1070,9 @@ isOneToOne: false
 "ingest_events":
 { Args: { "p_batch_id": string,"p_device_id": string,"p_events": Json,"p_sent_at": string }; Returns: Json
                            },
+"is_allowed_push_endpoint":
+{ Args: { "p_endpoint": string }; Returns: boolean
+                           },
 "is_branch_staff":
 { Args: { "p_branch_id": string }; Returns: boolean
                            },
@@ -815,6 +1082,9 @@ isOneToOne: false
 "issue_device_secret":
 { Args: { "p_device_id": string }; Returns: string
                            },
+"link_member_account":
+{ Args: { "p_email": string,"p_member_id": string }; Returns: string
+                           },
 "member_push_subscriptions":
 { Args: { "p_member_id": string }; Returns: {
               "auth": string,"endpoint": string,"id": string,"p256dh": string
@@ -823,8 +1093,17 @@ isOneToOne: false
 "member_self_check_out":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
+"qr_check_in":
+{ Args: { "p_member_code": string,"p_staff_user_id": string }; Returns: string
+                           },
 "release_stale_notification_locks":
 { Args: Record<PropertyKey, never>; Returns: number
+                           },
+"revoke_biometric_enrollment":
+{ Args: { "p_enrollment_id": string }; Returns: string
+                           },
+"revoke_report_share":
+{ Args: { "p_report_id": string }; Returns: undefined
                            },
 "session_branch":
 { Args: { "p_session_id": string }; Returns: string

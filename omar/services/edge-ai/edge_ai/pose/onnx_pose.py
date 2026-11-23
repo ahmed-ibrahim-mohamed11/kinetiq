@@ -29,13 +29,18 @@ class YoloPoseOnnx:
         iou_threshold: float = 0.5,
         match_iou: float = 0.3,
         providers: list[str] | None = None,
+        session: OnnxSession | None = None,
     ) -> None:
-        self._s = OnnxSession(model_path, providers)
+        self._s = session or OnnxSession(model_path, providers)
         self.model_name = self._s.model_name
         self.input_size = input_size
         self.conf_threshold = conf_threshold
         self.iou_threshold = iou_threshold
         self.match_iou = match_iou
+
+    @property
+    def providers(self) -> list[str]:
+        return list(self._s.session.get_providers())
 
     def estimate(self, image: Any, boxes: list[tuple[float, float, float, float]]) -> list[Pose | None]:
         if not boxes:

@@ -90,7 +90,7 @@ export function LiveWorkout({ sessionId }: { sessionId: string }) {
       </Alert>
     );
   }
-  if (sets === null) return <p className="text-sm text-muted-foreground">Loading your setsâ€¦</p>;
+  if (sets === null) return <p className="text-sm text-muted-foreground">Loading your sets…</p>;
 
   const byExercise = new Map<string, { exerciseName: string; equipmentName: string | null; sets: SetRow[] }>();
   for (const s of sets) {
@@ -108,7 +108,7 @@ export function LiveWorkout({ sessionId }: { sessionId: string }) {
           <LiveDot active={live} /> {live ? 'Live updates on' : 'Refreshing every 15 s'}
         </span>
         <span className="tabular-nums">
-          {sets.length} {sets.length === 1 ? 'set' : 'sets'} Â· {totalReps} reps
+          {sets.length} {sets.length === 1 ? 'set' : 'sets'} · {totalReps} reps
         </span>
       </div>
       {sets.length === 0 ? (
@@ -147,7 +147,7 @@ export function LiveWorkout({ sessionId }: { sessionId: string }) {
                           <Badge variant="default">in progress</Badge>
                         ) : s.verified ? (
                           <Badge variant="success" title={`confidence ${percent(s.confidence)}`}>
-                            verified Â· {percent(s.confidence)}
+                            verified · {percent(s.confidence)}
                           </Badge>
                         ) : (
                           <Badge variant="warning" title="Tracking was uncertain during this set">

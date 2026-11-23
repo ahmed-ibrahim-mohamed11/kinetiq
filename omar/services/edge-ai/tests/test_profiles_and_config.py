@@ -9,7 +9,9 @@ from edge_ai.reps.profiles import RepProfile
 from edge_ai.tools.default_profiles import DEFAULT_PROFILES
 
 ROOT = Path(__file__).resolve().parents[1]
-SEED = ROOT.parents[1] / "supabase" / "seed.sql"
+SUPABASE = ROOT.parents[1] / "supabase"
+# The catalog is reference data in a migration (0007) so production gets it without seed.sql.
+CATALOG_SOURCES = [SUPABASE / "seed.sql", *sorted((SUPABASE / "migrations").glob("*exercise_catalog*.sql"))]
 
 
 def test_default_profiles_are_valid():
@@ -17,10 +19,10 @@ def test_default_profiles_are_valid():
         RepProfile.from_catalog(p)
 
 
-def test_default_profiles_match_seed_sql_slugs():
-    seed = SEED.read_text(encoding="utf-8")
-    slugs = set(re.findall(r"^\('([a-z0-9-]+)', '[^']+', '[a-z_]+', '[a-z_]+',\s*$", seed, flags=re.M))
-    assert slugs, "could not parse exercise slugs from seed.sql"
+def test_default_profiles_match_catalog_sql_slugs():
+    sql = "\n".join(p.read_text(encoding="utf-8") for p in CATALOG_SOURCES if p.exists())
+    slugs = set(re.findall(r"^\('([a-z0-9-]+)', '[^']+', '[a-z_]+', '[a-z_]+',\s*$", sql, flags=re.M))
+    assert slugs, "could not parse exercise slugs from the exercise catalog SQL"
     assert slugs == set(DEFAULT_PROFILES)
 
 

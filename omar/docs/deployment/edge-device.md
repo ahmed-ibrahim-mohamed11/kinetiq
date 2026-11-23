@@ -24,12 +24,16 @@ Register cameras (`cameras` rows with `stream_url` **without** credentials), equ
 git clone <repo> && cd ai-smart-gym
 cp services/edge-ai/.env.example services/edge-ai/.env         # fill EDGE_DEVICE_ID, EDGE_BRANCH_ID, EDGE_DEVICE_SECRET, EDGE_INGEST_URL (https only); leave EDGE_BIOMETRIC_KEY_B64 empty
 mkdir -p secrets
-python3 -c "import os,base64;print(base64.b64encode(os.urandom(32)).decode())" > secrets/edge_biometric_key && chmod 600 secrets/edge_biometric_key   # Docker secret → EDGE_BIOMETRIC_KEY_FILE (TPM/KMS-backed in production)
-openssl rand -base64 24 > secrets/grafana_admin_password && chmod 600 secrets/grafana_admin_password
+python3 -c "import os,base64;print(base64.b64encode(os.urandom(32)).decode())" > secrets/edge_biometric_key   # Docker secret → EDGE_BIOMETRIC_KEY_FILE (TPM/KMS-backed in production)
+openssl rand -base64 24 > secrets/grafana_admin_password
 cp services/edge-ai/config/cameras.example.yaml services/edge-ai/config/cameras.yaml           # ids must match the cloud rows
 cp services/edge-ai/config/camera-credentials.example.yaml services/edge-ai/config/camera-credentials.yaml
-# The container runs as uid 10001; a root-owned 600 file is unreadable to it.
-sudo chown 10001:10001 services/edge-ai/config/camera-credentials.yaml && sudo chmod 600 services/edge-ai/config/camera-credentials.yaml
+# Docker Compose (non-swarm) bind-mounts these files with their host owner and mode, and the containers do not run
+# as your user: edge-ai runs as uid 10001, Grafana as uid 472. Give each secret to its service user and keep it 600;
+# never "fix" a permission error with chmod 644, which exposes the RTSP passwords and keys to every local account.
+sudo chown 10001:10001 secrets/edge_biometric_key services/edge-ai/config/camera-credentials.yaml
+sudo chown 472:0 secrets/grafana_admin_password
+sudo chmod 600 secrets/edge_biometric_key secrets/grafana_admin_password services/edge-ai/config/camera-credentials.yaml
 ```
 
 ## Phase 0 probe (before any AI)

@@ -122,7 +122,14 @@ export async function startHarness(opts: { seed?: boolean; log?: (m: string) => 
     async stop() {
       await pool.end();
       await pgInstance.stop();
-      rmSync(dataDir, { recursive: true, force: true });
+      // On Windows the postmaster can still hold files for a moment after stop(),
+      // so retry; a leftover temp directory is not a test failure.
+      await new Promise((r) => setTimeout(r, 800));
+      try {
+        rmSync(dataDir, { recursive: true, force: true, maxRetries: 15, retryDelay: 400 });
+      } catch (err) {
+        console.warn(`could not remove ${dataDir}: ${(err as Error).message}`);
+      }
     },
     asUser: (uid, fn) => withRole('authenticated', uid, fn),
     asAnon: (fn) => withRole('anon', null, fn),

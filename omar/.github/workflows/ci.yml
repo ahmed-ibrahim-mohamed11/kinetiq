@@ -84,7 +84,8 @@ jobs:
           cache: npm
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          # Pinned to the CLI in package.json (supabase ^2.122): newer CLIs rename `status -o env` keys.
+          version: 2.122.0
       - run: npm ci --no-audit --no-fund
       - name: Start local Supabase (applies migrations + seed)
         run: supabase start -x studio,imgproxy,inbucket,logflare,vector

@@ -2,15 +2,17 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getUser } from '@smartgym/supabase-client/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@smartgym/ui';
+import { safeNextPath } from '@smartgym/validation';
 import { LoginForm } from './login-form';
 
 export const metadata: Metadata = { title: 'Sign in' };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const params = await searchParams;
+  // Only same-origin paths: rejects //host, /\host, control characters and the like.
+  const next = safeNextPath(params.next);
   const user = await getUser();
-  if (user) redirect('/dashboard');
-  const next = params.next && params.next.startsWith('/') && !params.next.startsWith('//') ? params.next : '/dashboard';
+  if (user) redirect(next);
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center px-4 py-10">

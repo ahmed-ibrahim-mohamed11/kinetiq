@@ -32,11 +32,11 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between print:hidden">
+      <div className="flex flex-wrap items-start justify-between gap-3 print:hidden">
         <Link href="/history" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" aria-hidden /> History
         </Link>
-        <ShareButton shareToken={report.share_token} expiresAt={report.share_expires_at} />
+        <ShareButton reportId={report.id} shareToken={report.share_token} expiresAt={report.share_expires_at} />
       </div>
 
       {isWorkoutReportSummary(report.summary) ? (

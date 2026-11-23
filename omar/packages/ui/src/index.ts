@@ -5,3 +5,4 @@ export * from './components/input';
 export * from './components/badge';
 export * from './components/table';
 export * from './components/stat';
+export * from './components/camera-session';

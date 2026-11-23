@@ -76,4 +76,12 @@ export const CONSTANTS = {
   REPORT_LINK_TTL_DAYS: 30,
   /** Raw video is never stored by this platform; derived events retained this long by default. */
   EVENT_RETENTION_DAYS: 365,
+  /** Central Camera Broker & Face Recognition Configuration */
+  FACE_MATCH_THRESHOLD: 0.70,
+  FACE_DETECTION_INTERVAL_MS: 250,
+  RECOGNITION_COOLDOWN_MS: 5000,
+  MAX_FRAME_QUEUE_SIZE: 5,
+  CAMERA_RECONNECT_MAX_ATTEMPTS: 5,
+  CONSUMER_LEASE_TIMEOUT_SECONDS: 30,
+  CAMERA_HEARTBEAT_TIMEOUT_SECONDS: 30,
 } as const;

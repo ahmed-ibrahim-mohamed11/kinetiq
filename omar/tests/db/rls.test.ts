@@ -170,13 +170,58 @@ describe('anon and privileged RPCs', () => {
     await expect(h.asAnon((c) => c.query('select id from public.cameras'))).rejects.toThrow(/permission denied/);
   });
 
-  it('shared report token resolves for anon and exposes no identifiers', async () => {
-    const tok = await h.pool.query('select share_token from public.workout_reports where member_id = $1 limit 1', [A.memberId]);
-    const r = await h.asAnon((c) => c.query('select public.get_shared_report($1) as r', [tok.rows[0].share_token]));
-    expect(r.rows[0].r).toMatchObject({ member_name: 'Member a' });
+  it('shared report token (created by the member, C3) resolves for anon and exposes no identifiers', async () => {
+    const rep = await h.pool.query('select id, share_token from public.workout_reports where member_id = $1 limit 1', [A.memberId]);
+    expect(rep.rows[0].share_token).toBeNull(); // no automatic link
+    const reportId = rep.rows[0].id;
+    // Another member cannot share it.
+    await expect(h.asUser(B.memberUid, (c) => c.query('select public.create_report_share($1) as r', [reportId]))).rejects.toThrow();
+    const s = await h.asUser(A.memberUid, (c) => c.query('select public.create_report_share($1) as r', [reportId]));
+    const token: string = s.rows[0].r.token;
+    expect(token).toMatch(/^[0-9a-f]{48}$/);
+    const r = await h.asAnon((c) => c.query('select public.get_shared_report($1) as r', [token]));
+    expect(r.rows[0].r).toMatchObject({ member_first_name: 'Member' });
+    expect(r.rows[0].r).not.toHaveProperty('member_name');
     expect(JSON.stringify(r.rows[0].r)).not.toContain(A.memberId);
     const miss = await h.asAnon((c) => c.query(`select public.get_shared_report('nope') as r`));
     expect(miss.rows[0].r).toBeNull();
+    // Revoking makes the link dead.
+    await h.asUser(A.memberUid, (c) => c.query('select public.revoke_report_share($1)', [reportId]));
+    const gone = await h.asAnon((c) => c.query('select public.get_shared_report($1) as r', [token]));
+    expect(gone.rows[0].r).toBeNull();
+  });
+
+  it('id-resolution helpers answer only for the caller tenant (R2-11, signed-in cross-tenant oracle)', async () => {
+    const eq = await h.pool.query(`insert into public.equipment (branch_id, name, category) values ($1, 'Oracle probe', 'machine') returning id`, [A.branchId]);
+    const dev = await h.pool.query('select id from public.edge_devices where branch_id = $1 limit 1', [A.branchId]);
+    const usage = await h.pool.query(
+      `insert into public.equipment_usage_sessions (edge_device_id, usage_local_id, attendance_session_id, equipment_id, started_at, ended_at, association_confidence)
+       values ($1, 'oracle-probe', $2, $3, now() - interval '50 minutes', now() - interval '40 minutes', 0.9) returning id`,
+      [dev.rows[0].id, A.sessionId, eq.rows[0].id],
+    );
+    const usageId = usage.rows[0].id;
+    const probe = (uid: string) =>
+      h.asUser(uid, (c) =>
+        c.query('select public.session_member($1) as sm, public.session_branch($1) as sb, public.usage_session($2) as us, public.branch_org($3) as bo', [
+          A.sessionId,
+          usageId,
+          A.branchId,
+        ]),
+      );
+    // Other tenant (member and staff): nothing resolves.
+    for (const uid of [B.memberUid, B.staffUid]) {
+      expect((await probe(uid)).rows[0]).toEqual({ sm: null, sb: null, us: null, bo: null });
+    }
+    // Own member and own staff: unchanged answers.
+    for (const uid of [A.memberUid, A.staffUid]) {
+      expect((await probe(uid)).rows[0]).toEqual({ sm: A.memberId, sb: A.branchId, us: A.sessionId, bo: A.orgId });
+    }
+    // Service role (no JWT subject): unrestricted.
+    const svc = await h.pool.query('select public.session_member($1) as sm', [A.sessionId]);
+    expect(svc.rows[0].sm).toBe(A.memberId);
+    // Policies still work: the member reads their own usage row, the other tenant does not.
+    expect((await h.asUser(A.memberUid, (c) => c.query('select id from public.equipment_usage_sessions where id = $1', [usageId]))).rowCount).toBe(1);
+    expect((await h.asUser(B.staffUid, (c) => c.query('select id from public.equipment_usage_sessions where id = $1', [usageId]))).rowCount).toBe(0);
   });
 
   it('ingest and finalisation RPCs are not executable by authenticated users', async () => {

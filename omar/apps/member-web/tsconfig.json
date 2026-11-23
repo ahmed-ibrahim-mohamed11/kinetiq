@@ -8,7 +8,19 @@
     "incremental": true,
     "jsx": "preserve",
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] },
+    "paths": {
+      "@/*": ["./src/*"],
+      "@smartgym/api-contracts": ["../../packages/api-contracts/src/index.ts"],
+      "@smartgym/api-contracts/*": ["../../packages/api-contracts/src/*"],
+      "@smartgym/shared-config": ["../../packages/shared-config/src/index.ts"],
+      "@smartgym/shared-types": ["../../packages/shared-types/src/index.ts"],
+      "@smartgym/supabase-client": ["../../packages/supabase-client/src/index.ts"],
+      "@smartgym/supabase-client/*": ["../../packages/supabase-client/src/*"],
+      "@smartgym/ui": ["../../packages/ui/src/index.ts"],
+      "@smartgym/ui/*": ["../../packages/ui/src/*"],
+      "@smartgym/validation": ["../../packages/validation/src/index.ts"],
+      "@smartgym/validation/*": ["../../packages/validation/src/*"]
+    },
     "declaration": false,
     "declarationMap": false,
     "sourceMap": false

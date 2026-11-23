@@ -26,7 +26,8 @@ describe('migrations apply on a real PostgreSQL', () => {
       'attendance_sessions', 'person_tracks', 'tracking_uncertain_segments', 'equipment_usage_sessions',
       'exercise_activity_sessions', 'exercise_sets', 'repetition_events', 'workout_reports', 'push_subscriptions',
       'notification_jobs', 'event_ingest_log', 'ingest_batches', 'device_health_logs', 'camera_status_logs', 'audit_logs',
-      'retention_policies',
+      'retention_policies', 'membership_plans', 'member_subscriptions', 'subscription_freezes', 'promotions', 'payments',
+      'invoices', 'referral_records', 'notification_preferences',
     ]) {
       expect(names, `missing table ${t}`).toContain(t);
     }
@@ -59,11 +60,31 @@ describe('migrations apply on a real PostgreSQL', () => {
     }
   });
 
-  it('share tokens are 48 hex chars and the quality_label constraint exists', async () => {
+  it('share tokens are created on demand as 48 hex chars and the quality_label constraint exists', async () => {
+    // C3: no token until the member shares the report (create_report_share), then 48 hex chars.
     const def = await h.pool.query(
-      `select column_default from information_schema.columns where table_name = 'workout_reports' and column_name = 'share_token'`,
+      `select column_name, column_default, is_nullable from information_schema.columns
+        where table_schema = 'public' and table_name = 'workout_reports' and column_name in ('share_token', 'share_expires_at') order by column_name`,
     );
-    expect(def.rows[0].column_default).toMatch(/gen_random_bytes\(24\), 'hex'/);
+    expect(def.rows).toEqual([
+      { column_name: 'share_expires_at', column_default: null, is_nullable: 'YES' },
+      { column_name: 'share_token', column_default: null, is_nullable: 'YES' },
+    ]);
+    const share = await h.pool.query(
+      `select pg_get_constraintdef(oid) as def from pg_constraint where conrelid = 'public.workout_reports'::regclass and conname = 'workout_reports_share_token_format'`,
+    );
+    expect(share.rows[0].def).toContain('{48}');
+    const fn = await h.pool.query(`select prosrc from pg_proc where proname = 'create_report_share' and pronamespace = 'public'::regnamespace`);
+    expect(fn.rows[0].prosrc).toMatch(/encode\(extensions\.gen_random_bytes\(24\), 'hex'\)/);
+    // C2: actor columns on attendance sessions.
+    const actors = await h.pool.query(
+      `select column_name, is_nullable from information_schema.columns
+        where table_schema = 'public' and table_name = 'attendance_sessions' and column_name in ('checked_in_by', 'checked_out_by') order by column_name`,
+    );
+    expect(actors.rows).toEqual([
+      { column_name: 'checked_in_by', is_nullable: 'YES' },
+      { column_name: 'checked_out_by', is_nullable: 'YES' },
+    ]);
     const chk = await h.pool.query(
       `select pg_get_constraintdef(oid) as def from pg_constraint where conrelid = 'public.repetition_events'::regclass and contype = 'c'`,
     );

@@ -18,9 +18,23 @@ class OnnxSession:
         self.model_path = model_path
         self.model_name = str(model_path).replace("\\", "/").rsplit("/", 1)[-1]
         available = ort.get_available_providers()
-        wanted = providers or ["CUDAExecutionProvider", "TensorrtExecutionProvider", "CPUExecutionProvider"]
+        wanted = providers or [
+            "CUDAExecutionProvider",
+            "TensorrtExecutionProvider",
+            "DmlExecutionProvider",
+            "CPUExecutionProvider",
+        ]
         chosen = [p for p in wanted if p in available] or ["CPUExecutionProvider"]
-        self.session = ort.InferenceSession(model_path, providers=chosen)
+        so = ort.SessionOptions()
+        so.log_severity_level = 3
+        # Limit ONNX Runtime threads to prevent CPU thread starvation and high CPU load
+        import os
+        cpu_threads = min(2, max(1, (os.cpu_count() or 4) // 2))
+        so.intra_op_num_threads = cpu_threads
+        so.inter_op_num_threads = 1
+        so.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+        so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        self.session = ort.InferenceSession(model_path, sess_options=so, providers=chosen)
         self.input_name = self.session.get_inputs()[0].name
         self.input_shape = tuple(self.session.get_inputs()[0].shape)
         self.output_names = [o.name for o in self.session.get_outputs()]

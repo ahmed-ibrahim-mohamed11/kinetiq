@@ -3,6 +3,9 @@ Throughput / latency benchmark for the per-frame pipeline (Phase 2 acceptance to
 
     python -m edge_ai.tools.benchmark --detector models/detector.onnx --streams 4 --seconds 30 [--width 1920 --height 1080]
     python -m edge_ai.tools.benchmark --streams 4 --seconds 10          # no model: measures framework overhead only
+    python -m edge_ai.tools.benchmark --detector models/yolox_s.onnx --layout yolox --streams 4
+
+Per-stage latency of detector + top-down pose (RTMPose) on a real image: edge_ai.tools.detect_image.
 
 Simulates N concurrent camera workers on synthetic frames (or --video FILE decoded in a loop,
 which exercises the real decode path) and reports per-stream inference fps, p50/p95 frame
@@ -36,12 +39,19 @@ class BenchResult:
     latency_ms_p50: float | None
     latency_ms_p95: float | None
     detector: str | None
+    detector_layout: str | None
     gpu_utilization: float | None
     gpu_memory_used_mb: float | None
 
 
 def run(
-    detector_path: str | None, streams: int, seconds: float, width: int, height: int, inference_fps: float
+    detector_path: str | None,
+    streams: int,
+    seconds: float,
+    width: int,
+    height: int,
+    inference_fps: float,
+    layout: str | None = None,
 ) -> BenchResult:
     settings = Settings(  # type: ignore[call-arg]
         device_id=UUID("d0000000-0000-4000-8000-000000000001"),
@@ -54,9 +64,9 @@ def run(
     )
     detector = None
     if detector_path:
-        from edge_ai.detection.onnx_detector import OnnxPersonDetector
+        from edge_ai.detection.onnx_detector import create_detector
 
-        detector = OnnxPersonDetector(detector_path)
+        detector = create_detector(detector_path, layout=layout)
     cams = [
         CameraConfig(id=uuid4(), name=f"bench-{i}", url=f"rtsp://192.0.2.{i + 1}/bench", inference_fps=inference_fps)
         for i in range(streams)
@@ -83,6 +93,7 @@ def run(
         latency_ms_p50=round(statistics.median(lat), 2) if lat else None,
         latency_ms_p95=round(lat[int(0.95 * (len(lat) - 1))], 2) if lat else None,
         detector=detector.model_name if detector else None,
+        detector_layout=detector.layout if detector else None,
         gpu_utilization=gpu_util,
         gpu_memory_used_mb=gpu_mem,
     )
@@ -91,6 +102,7 @@ def run(
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--detector")
+    p.add_argument("--layout", choices=["auto", "yolox"], default=None, help="detector output layout (default auto)")
     p.add_argument("--streams", type=int, default=4)
     p.add_argument("--seconds", type=float, default=20.0)
     p.add_argument("--width", type=int, default=1920)
@@ -100,7 +112,17 @@ def main(argv: list[str] | None = None) -> int:
     threading.current_thread().name = "benchmark"
     print(
         json.dumps(
-            asdict(run(args.detector, args.streams, args.seconds, args.width, args.height, args.inference_fps)),
+            asdict(
+                run(
+                    args.detector,
+                    args.streams,
+                    args.seconds,
+                    args.width,
+                    args.height,
+                    args.inference_fps,
+                    layout=args.layout,
+                )
+            ),
             indent=2,
         )
     )

@@ -86,7 +86,7 @@ def _settings(tmp_path: Path) -> Settings:
         device_id=UUID("d0000000-0000-4000-8000-000000000001"),
         branch_id=UUID("b0000000-0000-4000-8000-000000000001"),
         device_secret="dev-only-device-secret-change-me",
-        ingest_url="http://ingest.test/functions/v1/ingest-events",
+        ingest_url="https://ingest.test/functions/v1/ingest-events",
         data_dir=tmp_path,
         cameras_file=ROOT / "config" / "cameras.example.yaml",
         _env_file=None,

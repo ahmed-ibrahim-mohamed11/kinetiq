@@ -244,12 +244,18 @@ export const EventBatch = z.object({
 });
 export type EventBatch = z.infer<typeof EventBatch>;
 
+/** Machine-readable reason a single event was rejected (`reason` is a fixed human-readable sentence). */
+export const IngestRejectionCode = z.enum(['branch_mismatch', 'no_consent', 'unknown_reference', 'invalid_value', 'invalid_state', 'internal']);
+export type IngestRejectionCode = z.infer<typeof IngestRejectionCode>;
+
 export const IngestResult = z.object({
   batch_id: uuid,
   accepted: z.number().int().nonnegative(),
   duplicates: z.number().int().nonnegative(),
-  rejected: z.array(z.object({ event_id: uuid, reason: z.string() })),
+  rejected: z.array(z.object({ event_id: uuid, reason: z.string(), code: IngestRejectionCode.optional() })),
   server_time: isoDateTime,
+  /** True when the batch_id was already processed (the whole batch is an idempotent no-op). */
+  replayed: z.boolean().optional(),
 });
 export type IngestResult = z.infer<typeof IngestResult>;
 

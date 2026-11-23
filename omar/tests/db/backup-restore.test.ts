@@ -47,7 +47,7 @@ beforeAll(async () => {
   );
   const s = await h.pool.query(`select id from public.attendance_sessions where status = 'active' limit 1`);
   await h.pool.query(`select public.finalize_attendance_session($1, now(), 'qr')`, [s.rows[0].id]);
-});
+}, 60_000);
 afterAll(async () => {
   await h?.stop();
 });

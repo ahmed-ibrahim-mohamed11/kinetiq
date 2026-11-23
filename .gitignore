@@ -1,0 +1,22 @@
+# KinetiQ root: safety net on top of each project's own .gitignore
+.venv/
+node_modules/
+.next/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env
+.env.*
+!.env.example
+!.env.local.example
+*.pem
+*.key
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
+.kinetiq.logs/
+.kinetiq.pids.json
+push_log.txt
+*-LAPTOP-49D58D35*

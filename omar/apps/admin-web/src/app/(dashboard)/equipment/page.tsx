@@ -56,7 +56,7 @@ export default async function EquipmentPage() {
                   <CardTitle>{branch.name}</CardTitle>
                   <CardDescription>
                     {items.length} item{items.length === 1 ? '' : 's'}
-                    {plan ? ` Â· floor plan ${plan.width_m} Ã— ${plan.height_m} m` : ' Â· no floor plan dimensions set on this branch'}
+                    {plan ? ` · floor plan ${plan.width_m} × ${plan.height_m} m` : ' · no floor plan dimensions set on this branch'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -79,9 +79,9 @@ export default async function EquipmentPage() {
                           <TableRow key={e.id}>
                             <TableCell className="font-medium">{e.name}</TableCell>
                             <TableCell className="text-sm">{e.category.replaceAll('_', ' ')}</TableCell>
-                            <TableCell className="text-sm">{e.default_exercise_id ? exerciseName.get(e.default_exercise_id) ?? 'â€”' : 'â€”'}</TableCell>
+                            <TableCell className="text-sm">{e.default_exercise_id ? exerciseName.get(e.default_exercise_id) ?? '—' : '—'}</TableCell>
                             <TableCell className="text-sm tabular-nums">
-                              {e.position_x_m !== null && e.position_y_m !== null ? `${e.position_x_m}, ${e.position_y_m}` : 'â€”'}
+                              {e.position_x_m !== null && e.position_y_m !== null ? `${e.position_x_m}, ${e.position_y_m}` : '—'}
                             </TableCell>
                             <TableCell>
                               <Badge variant={e.enabled ? 'success' : 'secondary'}>{e.enabled ? 'enabled' : 'disabled'}</Badge>

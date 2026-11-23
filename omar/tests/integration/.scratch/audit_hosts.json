@@ -1,0 +1,932 @@
+[
+  {
+    "file": ".github\\workflows\\ci.yml",
+    "line": 20,
+    "content": "NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321"
+  },
+  {
+    "file": "apps\\admin-web\\.env.local.example",
+    "line": 1,
+    "content": "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321"
+  },
+  {
+    "file": "apps\\admin-web\\src\\app\\(dashboard)\\cameras\\camera-form.tsx",
+    "line": 75,
+    "content": "<p className=\"text-xs text-muted-foreground\">rtsp://, rtsps://, http:// or https://</p>"
+  },
+  {
+    "file": "apps\\admin-web\\src\\app\\(dashboard)\\kiosk\\page.tsx",
+    "line": 107,
+    "content": "<strong className=\"text-foreground\">2. QR / Code Check-In:</strong> Members who prefer not to use biometrics can open the Member App (<code className=\"text-foreground\">http://localhost:3001/dashboard</code>), copy the signed <code className=\"text-foreground\">SGM1…</code> code under their QR, and paste it in the QR tab."
+  },
+  {
+    "file": "apps\\admin-web\\src\\app\\(dashboard)\\sessions\\camera-vision-monitor.tsx",
+    "line": 442,
+    "content": "if (!window.isSecureContext && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {"
+  },
+  {
+    "file": "apps\\admin-web\\src\\app\\(dashboard)\\sessions\\camera-vision-monitor.tsx",
+    "line": 443,
+    "content": "throw new Error('Browser camera access requires HTTPS (or localhost).');"
+  },
+  {
+    "file": "apps\\admin-web\\src\\lib\\actions.ts",
+    "line": 626,
+    "content": "edgeAiUrl = process.env.EDGE_AI_URL || 'http://127.0.0.1:8088'"
+  },
+  {
+    "file": "apps\\admin-web\\src\\lib\\actions.ts",
+    "line": 670,
+    "content": "edgeAiUrl = process.env.EDGE_AI_URL || 'http://127.0.0.1:8088'"
+  },
+  {
+    "file": "apps\\member-web\\.env.local.example",
+    "line": 1,
+    "content": "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321"
+  },
+  {
+    "file": "apps\\member-web\\next.config.ts",
+    "line": 6,
+    "content": "allowedDevOrigins: ['192.168.1.3', '127.0.0.1', 'localhost', '*.local'],"
+  },
+  {
+    "file": "apps\\member-web\\src\\app\\(app)\\workout\\phone-workout-client.tsx",
+    "line": 53,
+    "content": "function parseCameraError(err: any, hostname = 'localhost'): string {"
+  },
+  {
+    "file": "apps\\member-web\\src\\app\\(app)\\workout\\phone-workout-client.tsx",
+    "line": 471,
+    "content": "const h = window.location.hostname || 'localhost';"
+  },
+  {
+    "file": "apps\\member-web\\src\\app\\(app)\\workout\\phone-workout-client.tsx",
+    "line": 473,
+    "content": "if (!window.isSecureContext && h !== 'localhost' && h !== '127.0.0.1') {"
+  },
+  {
+    "file": "apps\\member-web\\src\\app\\(app)\\workout\\phone-workout-client.tsx",
+    "line": 547,
+    "content": "const h = typeof window !== 'undefined' ? window.location.hostname : 'localhost';"
+  },
+  {
+    "file": "apps\\member-web\\src\\app\\cert\\cert-client.tsx",
+    "line": 63,
+    "content": "const httpsUrl = hostname ? `https://${hostname}:3001/workout` : 'https://localhost:3001/workout';"
+  },
+  {
+    "file": "apps\\member-web\\src\\lib\\actions.ts",
+    "line": 213,
+    "content": "* Eliminates client-side CORS errors and preflight failures on localhost/PWA."
+  },
+  {
+    "file": "docs\\deployment\\edge-device.md",
+    "line": 53,
+    "content": "curl -s localhost:8088/healthz | jq ."
+  },
+  {
+    "file": "docs\\deployment\\edge-device.md",
+    "line": 63,
+    "content": "- Metrics: Prometheus `localhost:9090`, Grafana `localhost:3000`."
+  },
+  {
+    "file": "docs\\operations\\MOBILE_CAMERA_LAN_HTTPS_GUIDE.md",
+    "line": 14,
+    "content": "- **Root Certificate Authority (CA):** `kinetiq-ca.crt` (Subject Alternative Names include `127.0.0.1`, `localhost`, `192.168.1.3`, `*.local`)"
+  },
+  {
+    "file": "docs\\operations\\MOBILE_CAMERA_LAN_HTTPS_GUIDE.md",
+    "line": 16,
+    "content": "- **Zero Loopback Rule:** Handsets communicating over LAN never query `127.0.0.1`. All Edge AI broker endpoints dynamically resolve to `window.location.hostname` (`192.168.1.3:8088`)."
+  },
+  {
+    "file": "docs\\operations\\MOBILE_CAMERA_LAN_HTTPS_GUIDE.md",
+    "line": 129,
+    "content": "8. **Zero Loopback Enforcement:** Verifies 0 requests made to `127.0.0.1` during the handset session."
+  },
+  {
+    "file": "docs\\operations\\runbook.md",
+    "line": 38,
+    "content": "1. `curl localhost:8088/healthz | jq '.sync_last_error'`."
+  },
+  {
+    "file": "docs\\operations\\runbook.md",
+    "line": 73,
+    "content": "`curl localhost:8088/healthz | jq '.identification, .consent_cache_stale, .stages.face'`. `stages.face: null` → no face model/biometric key configured (QR only). `consent_cache_stale: true` → `edge-ai sync` failing (check `config_sync_last_error`); the gate fails closed by design. High `ambiguous` counts → two enrolled members look alike at the current threshold; re-enrol with better photos or raise `FaceMatcher.ambiguity_margin`. Members can always fall back to the kiosk QR (admin → Check-in Kiosk)."
+  },
+  {
+    "file": "docs\\security\\threat-model.md",
+    "line": 27,
+    "content": "| Container escape / privilege | Non-root user, `no-new-privileges`, read-only rootfs, tmpfs, only health port bound to localhost |"
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 18,
+    "content": "| **Admin Web** | `omar/apps/admin-web` | Next.js 15.5, React 19, TypeScript, Tailwind | `http://127.0.0.1:3000` | Staff console: reception registration, subscriptions, billing, entrance kiosk (Face + QR), live floor sessions, cameras, zones, equipment, analytics, audit logs |"
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 19,
+    "content": "| **Member Web (PWA)** | `omar/apps/member-web` | Next.js 15.5, React 19, MediaPipe Pose (WebAssembly) | `http://127.0.0.1:3001` | Member portal: AI Personal Trainer Camera (live squat/exercise form & rep counter), QR pass, workouts, progress, privacy & biometric consent |"
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 20,
+    "content": "| **Edge AI Service** | `omar/services/edge-ai` | Python 3.10, ONNX Runtime, OpenCV, SQLite WAL, Pydantic | `http://127.0.0.1:8088/healthz` | Multi-camera RTSP/webcam worker daemon: YOLOX person detection, ByteTrack/IoU tracking, RTMPose-m 17-keypoint estimation, `BiomechanicalSquatEngine`, offline SQLite queue, cloud sync |"
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 54,
+    "content": "| **Device Sync (`device-sync`)** | `omar/supabase/functions/device-sync/index.ts` | Working | **90%** | Syncs active biometric consents, exercise catalog, and zone polygons to `edge-ai` (`http://127.0.0.1:8088/healthz` -> `config_sync_ok: true`) | Live push notification on admin zone edit (currently polls on interval) |"
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 104,
+    "content": "2. **Edge AI Live Annotated Video Stream**: `CameraWorker` in `orchestrator.py` processes `webcam://0` frames in Python, but exposes only JSON health metrics on `http://127.0.0.1:8088/healthz` — no `/stream.mjpg` or `/frame.jpg` endpoint exists for Admin Web `/cameras` to display the live annotated floor feed."
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 109,
+    "content": "2. **[FIXED] Cross-Port Auth Cookie Collision**: `localhost:3000` and `localhost:3001` previously shared Supabase's default cookie name, logging the user out whenever switching tabs. Fixed via `NEXT_PUBLIC_AUTH_COOKIE_NAME` (`sb-kinetiq-admin-auth` vs `sb-kinetiq-member-auth`)."
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 213,
+    "content": "| **P1-2** | **Add HTTP MJPEG / snapshot endpoint to `edge-ai` & release webcam when idle** | `omar/services/edge-ai/edge_ai/health.py`, `pipeline/orchestrator.py`, `omar/apps/admin-web/src/app/(dashboard)/cameras/[id]/page.tsx` | Prevents single-laptop webcam contention between Python `edge-ai` and browser `getUserMedia`, and renders live annotated frames in Admin `/cameras` | Open `http://127.0.0.1:8088/snapshot.jpg` and verify bounding-box + skeleton overlay |"
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 230,
+    "content": "| **6. Member Web App & AI Personal Trainer Camera** | **91%** | Yes (`http://127.0.0.1:3001`) | **Yes** | Per-rep fault array not persisted to DB on workout save (set totals are persisted) |"
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 231,
+    "content": "| **7. Admin Web App & Reception Console** | **89%** | Yes (`http://127.0.0.1:3000`) | **Yes** | `/cameras` polygon editor lacks live MJPEG snapshot feed from `edge-ai` |"
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 256,
+    "content": "| **3. Maintain the correct member identity of each trainee?** | **YES (Kiosk + Browser Session) / PARTIAL (Passive RTSP Floor)** | At the entrance kiosk (`localhost:3000/kiosk`), members can enroll their face via webcam and check in with Face Recognition or QR code (`public.enroll_member_face` and `public.face_check_in` RPCs verified live), and in Member Web (`localhost:3001/workout`) the authenticated member's identity is bound directly to their workout session. For passive floor cameras managed by Python `edge-ai`, identity binding works when a single checked-in member enters a zone or via spatial handoff, but passive RTSP face recognition is disabled (`face.missing`) until an ArcFace `.onnx` model is placed in `omar/services/edge-ai/models/`. |"
+  },
+  {
+    "file": "docs\\SMART_GYM_COMPLETE_AUDIT.md",
+    "line": 257,
+    "content": "| **4. Display the results in a simple frontend?** | **YES** | Member Web (`localhost:3001/workout`) displays a live camera skeleton overlay, knee & torso angles, a **RIGHT FORM / WRONG FORM** banner, and big Valid / Imperfect rep counters. Admin Web (`localhost:3000/sessions` and `/kiosk`) displays live sessions, an embedded AI Trainer Form Monitor, and dual Face/QR check-in. |"
+  },
+  {
+    "file": "docs\\SMART_GYM_DEMO_ACCOUNTS.md",
+    "line": 10,
+    "content": "- **Portal URL:** `http://localhost:3000/login`"
+  },
+  {
+    "file": "docs\\SMART_GYM_DEMO_ACCOUNTS.md",
+    "line": 17,
+    "content": "- **Portal URL:** `http://localhost:3001/login`"
+  },
+  {
+    "file": "docs\\SMART_GYM_FINAL_HANDOFF.md",
+    "line": 204,
+    "content": "Add a `/live` SSE or WebSocket endpoint to the Edge AI health server (or a FastAPI endpoint) that streams `pipeline.live_state()` JSON every 500ms. Then create a frontend component that connects to `http://edge-ai-host:8088/live` and renders per-person overlays."
+  },
+  {
+    "file": "docs\\SMART_GYM_FINAL_HANDOFF.md",
+    "line": 207,
+    "content": "With the Edge AI service running and 2 people in view, `GET http://localhost:8088/live` (or WS connect) returns a JSON payload containing 2 entries in `people[]`, each with `completed_reps`, `phase`, `member_id` or `identity_status: \"unknown\"`."
+  },
+  {
+    "file": "docs\\SMART_GYM_FINAL_HANDOFF.md",
+    "line": 448,
+    "content": "Invoke-WebRequest http://localhost:8088/healthz | Select-Object -ExpandProperty Content"
+  },
+  {
+    "file": "docs\\SMART_GYM_RELEASE_REPORT.md",
+    "line": 84,
+    "content": "- Complete SSL certificate authority and server certificate (`kinetiq-ca.crt`, `server.crt`) with SANs for `127.0.0.1`, `localhost`, `192.168.1.3`, `*.local`."
+  },
+  {
+    "file": "docs\\SMART_GYM_RELEASE_REPORT.md",
+    "line": 87,
+    "content": "- Zero loopback rule: 0 phone requests to `127.0.0.1`. Dynamic host resolution replaces loopback with `window.location.hostname`."
+  },
+  {
+    "file": "infrastructure\\docker\\docker-compose.edge.yml",
+    "line": 33,
+    "content": "- \"127.0.0.1:8088:8088\""
+  },
+  {
+    "file": "infrastructure\\docker\\docker-compose.edge.yml",
+    "line": 61,
+    "content": "- \"127.0.0.1:9090:9090\""
+  },
+  {
+    "file": "infrastructure\\docker\\docker-compose.edge.yml",
+    "line": 94,
+    "content": "- \"127.0.0.1:3000:3000\""
+  },
+  {
+    "file": "infrastructure\\monitoring\\grafana-datasource.yml",
+    "line": 6,
+    "content": "url: http://prometheus:9090"
+  },
+  {
+    "file": "packages\\supabase-client\\src\\middleware.ts",
+    "line": 56,
+    "content": "if (requestHost && requestHost !== 'localhost' && requestHost !== '127.0.0.1') {"
+  },
+  {
+    "file": "packages\\supabase-client\\src\\middleware.ts",
+    "line": 57,
+    "content": "dynamicEdgeSources.push(`http://${requestHost}:8088`, `https://${requestHost}:8088`);"
+  },
+  {
+    "file": "packages\\supabase-client\\src\\middleware.ts",
+    "line": 73,
+    "content": "'http://127.0.0.1:8088',"
+  },
+  {
+    "file": "packages\\supabase-client\\src\\middleware.ts",
+    "line": 74,
+    "content": "'http://localhost:8088',"
+  },
+  {
+    "file": "packages\\supabase-client\\src\\middleware.ts",
+    "line": 82,
+    "content": "'http://127.0.0.1:8088',"
+  },
+  {
+    "file": "packages\\supabase-client\\src\\middleware.ts",
+    "line": 83,
+    "content": "'http://localhost:8088',"
+  },
+  {
+    "file": "packages\\ui\\src\\components\\camera-session.tsx",
+    "line": 63,
+    "content": "if (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {"
+  },
+  {
+    "file": "packages\\ui\\src\\components\\camera-session.tsx",
+    "line": 66,
+    "content": "if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') {"
+  },
+  {
+    "file": "packages\\ui\\src\\components\\camera-session.tsx",
+    "line": 78,
+    "content": "if (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {"
+  },
+  {
+    "file": "packages\\ui\\src\\components\\camera-session.tsx",
+    "line": 81,
+    "content": "if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') {"
+  },
+  {
+    "file": "packages\\ui\\src\\components\\camera-session.tsx",
+    "line": 91,
+    "content": "if (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {"
+  },
+  {
+    "file": "packages\\ui\\src\\components\\camera-session.tsx",
+    "line": 92,
+    "content": "return `http://${window.location.hostname}:8088`;"
+  },
+  {
+    "file": "packages\\ui\\src\\components\\camera-session.tsx",
+    "line": 94,
+    "content": "return 'http://localhost:8088';"
+  },
+  {
+    "file": "packages\\ui\\src\\components\\camera-session.tsx",
+    "line": 220,
+    "content": "if (typeof window !== 'undefined' && !window.isSecureContext && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {"
+  },
+  {
+    "file": "packages\\validation\\src\\index.ts",
+    "line": 78,
+    "content": "const SAFE_NEXT_BASE = 'http://safe-next.invalid';"
+  },
+  {
+    "file": "PROGRESS.md",
+    "line": 41,
+    "content": "| **Live Supabase: secrets + config** | `secrets set` · `config push --yes` ×4 | `QR_TOKEN_SECRET` + `INGEST_CLOCK_SKEW_SECONDS` set; public sign-ups off, email provider on, `site_url` + redirect allow-list = Vercel apps + localhost, storage limit 10 MiB |"
+  },
+  {
+    "file": "README.md",
+    "line": 67,
+    "content": "npm run dev:admin                                 # http://localhost:3000"
+  },
+  {
+    "file": "README.md",
+    "line": 68,
+    "content": "npm run dev:member                                # http://localhost:3001"
+  },
+  {
+    "file": "scripts\\backup-restore-drill.mjs",
+    "line": 105,
+    "content": "['-h', '127.0.0.1', '-p', String(h.port), '-U', 'postgres', '-d', 'postgres', '--no-owner', '--no-privileges'],"
+  },
+  {
+    "file": "scripts\\backup-restore-drill.mjs",
+    "line": 122,
+    "content": "['-h', '127.0.0.1', '-p', String(h.port), '-U', 'postgres', '-d', 'restore_drill', '-v', 'ON_ERROR_STOP=0', '-q'],"
+  },
+  {
+    "file": "scripts\\generate-ssl-certs.mjs",
+    "line": 17,
+    "content": "const ips = new Set(['127.0.0.1']);"
+  },
+  {
+    "file": "scripts\\generate-ssl-certs.mjs",
+    "line": 32,
+    "content": "'DNS.1 = localhost',"
+  },
+  {
+    "file": "services\\edge-ai\\.env",
+    "line": 22,
+    "content": "# Development only: allow http:// cloud URLs on non-loopback hosts."
+  },
+  {
+    "file": "services\\edge-ai\\.env.example",
+    "line": 6,
+    "content": "EDGE_INGEST_URL=http://127.0.0.1:54321/functions/v1/ingest-events"
+  },
+  {
+    "file": "services\\edge-ai\\.env.example",
+    "line": 22,
+    "content": "# Development only: allow http:// cloud URLs on non-loopback hosts."
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 29,
+    "content": "\"s\": \"http://www.w3.org/2003/05/soap-envelope\","
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 30,
+    "content": "\"a\": \"http://schemas.xmlsoap.org/ws/2004/08/addressing\","
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 31,
+    "content": "\"d\": \"http://schemas.xmlsoap.org/ws/2005/04/discovery\","
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 32,
+    "content": "\"dn\": \"http://www.onvif.org/ver10/network/wsdl\","
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 39,
+    "content": "xaddrs: tuple[str, ...]  # device service endpoints, e.g. http://192.168.1.10/onvif/device_service"
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 71,
+    "content": "'<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" '"
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 72,
+    "content": "'xmlns:a=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\" '"
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 73,
+    "content": "'xmlns:d=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\" '"
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 74,
+    "content": "'xmlns:dn=\"http://www.onvif.org/ver10/network/wsdl\">'"
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 76,
+    "content": "'<a:Action s:mustUnderstand=\"1\">http://schemas.xmlsoap.org/ws/2005/04/discovery/Probe</a:Action>'"
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\camera\\onvif_discovery.py",
+    "line": 78,
+    "content": "\"<a:ReplyTo><a:Address>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</a:Address></a:ReplyTo>\""
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\cloud\\device_sync.py",
+    "line": 6,
+    "content": "so its integrity relies on TLS (Settings refuses non-loopback http:// URLs)."
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\config.py",
+    "line": 16,
+    "content": "_LOOPBACK_HOSTS = {\"127.0.0.1\", \"localhost\", \"::1\"}"
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\config.py",
+    "line": 57,
+    "content": "# Development only: allow http:// cloud URLs on non-loopback hosts."
+  },
+  {
+    "file": "services\\edge-ai\\edge_ai\\tools\\benchmark.py",
+    "line": 60,
+    "content": "ingest_url=\"http://127.0.0.1:1/unused\","
+  },
+  {
+    "file": "services\\edge-ai\\README.md",
+    "line": 66,
+    "content": "Cloud URLs must be `https://` (plain `http://` only for loopback hosts, or with `EDGE_ALLOW_INSECURE_HTTP=1` in development)."
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_device_sync_and_enrollment.py",
+    "line": 101,
+    "content": "\"http://sync.test/functions/v1/device-sync\","
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_device_sync_and_enrollment.py",
+    "line": 117,
+    "content": "\"http://sync.test/x\","
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_device_sync_and_enrollment.py",
+    "line": 130,
+    "content": "\"http://sync.test/d\","
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_live_api_and_face_recognition.py",
+    "line": 258,
+    "content": "req = urllib.request.urlopen(f\"http://127.0.0.1:{port}/live\")"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_live_api_and_face_recognition.py",
+    "line": 265,
+    "content": "req = urllib.request.urlopen(f\"http://127.0.0.1:{port}/camera/frame.jpg\")"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_live_api_and_face_recognition.py",
+    "line": 271,
+    "content": "f\"http://127.0.0.1:{port}/camera/release\","
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_live_api_and_face_recognition.py",
+    "line": 284,
+    "content": "f\"http://127.0.0.1:{port}/camera/acquire\","
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_live_api_and_face_recognition.py",
+    "line": 300,
+    "content": "f\"http://127.0.0.1:{port}/api/face/identify\","
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_live_api_and_face_recognition.py",
+    "line": 314,
+    "content": "f\"http://127.0.0.1:{port}/api/workout/reset\","
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_live_api_and_face_recognition.py",
+    "line": 324,
+    "content": "req = urllib.request.urlopen(f\"http://127.0.0.1:{port}/healthz\")"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_live_api_and_face_recognition.py",
+    "line": 332,
+    "content": "req = urllib.request.urlopen(f\"http://127.0.0.1:{port}/api/camera/status\")"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_live_api_and_face_recognition.py",
+    "line": 342,
+    "content": "req = urllib.request.urlopen(f\"http://127.0.0.1:{port}/api/camera/diagnostics\")"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_onvif_discovery.py",
+    "line": 4,
+    "content": "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\""
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_onvif_discovery.py",
+    "line": 5,
+    "content": "xmlns:wsa=\"http://schemas.xmlsoap.org/ws/2004/08/addressing\""
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_onvif_discovery.py",
+    "line": 6,
+    "content": "xmlns:d=\"http://schemas.xmlsoap.org/ws/2005/04/discovery\""
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_onvif_discovery.py",
+    "line": 7,
+    "content": "xmlns:dn=\"http://www.onvif.org/ver10/network/wsdl\">"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_onvif_discovery.py",
+    "line": 10,
+    "content": "<wsa:Action>http://schemas.xmlsoap.org/ws/2005/04/discovery/ProbeMatches</wsa:Action>"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_onvif_discovery.py",
+    "line": 18,
+    "content": "<d:XAddrs>http://192.168.10.21/onvif/device_service http://[fe80::1]/onvif/device_service</d:XAddrs>"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_onvif_discovery.py",
+    "line": 38,
+    "content": "assert d.xaddrs[0] == \"http://192.168.10.21/onvif/device_service\""
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_queue_and_sync.py",
+    "line": 115,
+    "content": "s = SyncClient(q, \"http://ingest.test/functions/v1/ingest-events\", str(DEVICE), SECRET, batch_size=2, client=client)"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_queue_and_sync.py",
+    "line": 126,
+    "content": "s = SyncClient(q, \"http://ingest.test\", str(DEVICE), SECRET, client=client)"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_queue_and_sync.py",
+    "line": 139,
+    "content": "s = SyncClient(q, \"http://ingest.test\", str(DEVICE), SECRET, client=client)"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_queue_and_sync.py",
+    "line": 162,
+    "content": "q, \"http://ingest.test\", str(DEVICE), SECRET, client=httpx.Client(transport=httpx.MockTransport(boom))"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_sync_robustness.py",
+    "line": 263,
+    "content": "_settings(ingest_url=\"http://gym-lan.example/functions/v1/ingest-events\")"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_sync_robustness.py",
+    "line": 265,
+    "content": "_settings(ingest_url=\"https://x.supabase.co/functions/v1/ingest-events\", sync_url=\"http://x/device-sync\")"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_sync_robustness.py",
+    "line": 267,
+    "content": "assert _settings(ingest_url=\"http://127.0.0.1:54321/functions/v1/ingest-events\")"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_sync_robustness.py",
+    "line": 268,
+    "content": "assert _settings(ingest_url=\"http://localhost:54321/functions/v1/ingest-events\")"
+  },
+  {
+    "file": "services\\edge-ai\\tests\\test_sync_robustness.py",
+    "line": 269,
+    "content": "assert _settings(ingest_url=\"http://gym-lan.example/functions/v1/ingest-events\", allow_insecure_http=True)"
+  },
+  {
+    "file": "services\\notification-worker\\src\\index.ts",
+    "line": 21,
+    "content": "const memberAppUrl = process.env.MEMBER_APP_URL ?? 'http://localhost:3001';"
+  },
+  {
+    "file": "services\\notification-worker\\test\\webpush.test.ts",
+    "line": 191,
+    "content": "await expect(sender.send({ id: 'x', endpoint: 'http://169.254.169.254/latest', p256dh, auth }, '{}')).rejects.toThrow(/https/);"
+  },
+  {
+    "file": "supabase\\config.toml",
+    "line": 50,
+    "content": "\"http://localhost:3000\","
+  },
+  {
+    "file": "supabase\\config.toml",
+    "line": 51,
+    "content": "\"http://localhost:3001\","
+  },
+  {
+    "file": "supabase\\functions\\tests\\device_sync.test.ts",
+    "line": 70,
+    "content": "return new Request('http://localhost/device-sync', {"
+  },
+  {
+    "file": "supabase\\functions\\tests\\device_sync.test.ts",
+    "line": 146,
+    "content": "assert.equal((await handle(new Request('http://localhost/device-sync', { method: 'POST' }), fakeDeps())).status, 405);"
+  },
+  {
+    "file": "supabase\\functions\\tests\\ingest_events.test.ts",
+    "line": 61,
+    "content": "return new Request('http://localhost/ingest-events', {"
+  },
+  {
+    "file": "supabase\\functions\\tests\\ingest_events.test.ts",
+    "line": 336,
+    "content": "assert.equal((await handle(new Request('http://localhost/ingest-events'), fakeDeps())).status, 405);"
+  },
+  {
+    "file": "supabase\\functions\\tests\\notification_dispatch.test.ts",
+    "line": 82,
+    "content": "new Request('http://localhost/notification-dispatch', { method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body: '{}' });"
+  },
+  {
+    "file": "supabase\\functions\\tests\\notification_dispatch.test.ts",
+    "line": 93,
+    "content": "const res = await handlerWith(db, recordingPush())(new Request('http://localhost/', { method: 'GET' }));"
+  },
+  {
+    "file": "supabase\\functions\\tests\\qr_token.test.ts",
+    "line": 82,
+    "content": "new Request('http://localhost/qr-token', { headers: { ...(auth ? { authorization: auth } : {}), ...(origin ? { origin } : {}) } });"
+  },
+  {
+    "file": "supabase\\functions\\tests\\qr_token.test.ts",
+    "line": 84,
+    "content": "new Request('http://localhost/qr-token', {"
+  },
+  {
+    "file": "supabase\\functions\\tests\\qr_token.test.ts",
+    "line": 98,
+    "content": "new Request('http://localhost/qr-token', {"
+  },
+  {
+    "file": "supabase\\functions\\tests\\qr_token.test.ts",
+    "line": 127,
+    "content": "parseAllowedOrigins(['https://member.example.app/', undefined, 'https://admin.example.app/x, http://localhost:3001 , not a url']),"
+  },
+  {
+    "file": "supabase\\functions\\tests\\qr_token.test.ts",
+    "line": 131,
+    "content": "'http://localhost:3001',"
+  },
+  {
+    "file": "supabase\\functions\\tests\\qr_token.test.ts",
+    "line": 201,
+    "content": "const notJson = new Request('http://localhost/qr-token', { method: 'POST', headers: { authorization: 'Bearer staff-a' }, body: '{' });"
+  },
+  {
+    "file": "supabase\\functions\\tests\\qr_token.test.ts",
+    "line": 332,
+    "content": "const res = await handle(new Request('http://localhost/qr-token', { method: 'DELETE', headers: { origin: MEMBER_APP } }), fakeDeps());"
+  },
+  {
+    "file": "tests\\db\\backup-restore.test.ts",
+    "line": 66,
+    "content": "const dump = execFileSync(pgDump, ['-h', '127.0.0.1', '-p', String(h.port), '-U', 'postgres', '-d', 'postgres', '--no-owner', '--no-privileges'], { env, maxBuffer: 256 * 1024 * 1024 });"
+  },
+  {
+    "file": "tests\\db\\backup-restore.test.ts",
+    "line": 71,
+    "content": "execFileSync(psql, ['-h', '127.0.0.1', '-p', String(h.port), '-U', 'postgres', '-d', 'restore_drill', '-v', 'ON_ERROR_STOP=0', '-q'], { env, input: dump, maxBuffer: 256 * 1024 * 1024 });"
+  },
+  {
+    "file": "tests\\db\\e2e-edge.test.ts",
+    "line": 81,
+    "content": "await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));"
+  },
+  {
+    "file": "tests\\db\\e2e-edge.test.ts",
+    "line": 113,
+    "content": "EDGE_INGEST_URL: `http://127.0.0.1:${port}/functions/v1/ingest-events`,"
+  },
+  {
+    "file": "tests\\db\\hardening-checkin.test.ts",
+    "line": 450,
+    "content": "'http://fcm.googleapis.com/fcm/send/x',"
+  },
+  {
+    "file": "tests\\db\\harness.ts",
+    "line": 53,
+    "content": "srv.listen(0, '127.0.0.1', () => {"
+  },
+  {
+    "file": "tests\\db\\harness.ts",
+    "line": 78,
+    "content": "const connectionString = `postgresql://postgres:postgres@127.0.0.1:${port}/postgres`;"
+  },
+  {
+    "file": "tests\\integration\\ingest-smoke.mjs",
+    "line": 4,
+    "content": "*   SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SERVICE_ROLE_KEY=... node tests/integration/ingest-smoke.mjs"
+  },
+  {
+    "file": "tests\\integration\\ingest-smoke.mjs",
+    "line": 27,
+    "content": "const URL_BASE = process.env.SUPABASE_URL ?? 'http://127.0.0.1:54321';"
+  },
+  {
+    "file": "tests\\integration\\ingest-smoke.mjs",
+    "line": 28,
+    "content": "const FUNCTIONS_URL = process.env.FUNCTIONS_URL ?? 'http://127.0.0.1:54321/functions/v1';"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 47,
+    "content": "await adminPage.goto('http://localhost:3000/login');"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 49,
+    "content": "await adminMobilePage.goto('http://localhost:3000/login');"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 81,
+    "content": "await adminPage.goto(`http://localhost:3000${r.path}`, { waitUntil: 'domcontentloaded' });"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 86,
+    "content": "await adminMobilePage.goto(`http://localhost:3000${r.path}`, { waitUntil: 'domcontentloaded' });"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 95,
+    "content": "await memberPage.goto('http://localhost:3001/login');"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 97,
+    "content": "await memberMobilePage.goto('http://localhost:3001/login');"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 122,
+    "content": "await memberPage.goto(`http://localhost:3001${r.path}`, { waitUntil: 'domcontentloaded' });"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 127,
+    "content": "await memberMobilePage.goto(`http://localhost:3001${r.path}`, { waitUntil: 'domcontentloaded' });"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 146,
+    "content": "await memberPage.goto(`http://localhost:3001/reports/${reportId}`, { waitUntil: 'domcontentloaded' });"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 148,
+    "content": "await memberMobilePage.goto(`http://localhost:3001/reports/${reportId}`, { waitUntil: 'domcontentloaded' });"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 154,
+    "content": "await memberPage.goto('http://localhost:3001/settings', { waitUntil: 'domcontentloaded' });"
+  },
+  {
+    "file": "tests\\live\\audit_all_routes.spec.ts",
+    "line": 160,
+    "content": "await memberMobilePage.goto('http://localhost:3001/settings', { waitUntil: 'domcontentloaded' });"
+  },
+  {
+    "file": "tests\\live\\camera-concurrency-browser.spec.ts",
+    "line": 47,
+    "content": "kioskPage.goto('http://localhost:3000/kiosk', { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {}),"
+  },
+  {
+    "file": "tests\\live\\camera-concurrency-browser.spec.ts",
+    "line": 48,
+    "content": "adminLoginPage.goto('http://localhost:3000/login', { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {}),"
+  },
+  {
+    "file": "tests\\live\\camera-concurrency-browser.spec.ts",
+    "line": 49,
+    "content": "memberLoginPage.goto('http://localhost:3001/login', { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {}),"
+  },
+  {
+    "file": "tests\\live\\camera-concurrency-browser.spec.ts",
+    "line": 50,
+    "content": "workoutPage.goto('http://localhost:3001/workout', { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {}),"
+  },
+  {
+    "file": "tests\\live\\camera-concurrency-browser.spec.ts",
+    "line": 51,
+    "content": "diagPage.goto('http://localhost:3000/diagnostics', { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {}),"
+  },
+  {
+    "file": "tests\\live\\camera-concurrency-browser.spec.ts",
+    "line": 91,
+    "content": "const res = await fetch('http://127.0.0.1:8088/api/camera/diagnostics?camera_id=default');"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 18,
+    "content": "it('never emits 127.0.0.1 when running on a mobile browser over LAN', () => {"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 30,
+    "content": "expect(url).not.toContain('127.0.0.1');"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 31,
+    "content": "expect(url).toBe('http://192.168.1.3:8088');"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 34,
+    "content": "it('dynamically rewrites NEXT_PUBLIC_EDGE_AI_URL containing 127.0.0.1 to handset LAN hostname', () => {"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 35,
+    "content": "// When baked-in NEXT_PUBLIC_EDGE_AI_URL has 127.0.0.1 from local dev"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 36,
+    "content": "process.env.NEXT_PUBLIC_EDGE_AI_URL = 'http://127.0.0.1:8088';"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 48,
+    "content": "expect(url).not.toContain('127.0.0.1');"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 49,
+    "content": "expect(url).toBe('http://192.168.1.3:8088');"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 67,
+    "content": "it('rewrites propUrl if it mistakenly contains 127.0.0.1 for mobile clients', () => {"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 76,
+    "content": "const url = resolveEdgeAiUrl('http://127.0.0.1:8088');"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 77,
+    "content": "expect(url).not.toContain('127.0.0.1');"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 78,
+    "content": "expect(url).toBe('http://gym-member.local:8088');"
+  },
+  {
+    "file": "tests\\live\\mobile-camera-unit.test.ts",
+    "line": 85,
+    "content": "expect(csp).toContain('http://192.168.1.3:8088');"
+  },
+  {
+    "file": "tests\\live\\test_60s_stability.mjs",
+    "line": 6,
+    "content": "const BASE = 'http://127.0.0.1:8088';"
+  },
+  {
+    "file": "tests\\live\\test_auth_and_database_routing.mjs",
+    "line": 31,
+    "content": "const EDGE_BASE = process.env.EDGE_AI_URL || 'http://127.0.0.1:8088';"
+  },
+  {
+    "file": "tests\\live\\test_concurrency_e2e.mjs",
+    "line": 3,
+    "content": "const BASE = 'http://127.0.0.1:8088';"
+  },
+  {
+    "file": "tests\\live\\test_mobile_handset_verification.mjs",
+    "line": 22,
+    "content": "const res = await fetch(`https://127.0.0.1:${port}/api/health`, {"
+  },
+  {
+    "file": "tests\\live\\test_mobile_handset_verification.mjs",
+    "line": 35,
+    "content": "const res = await fetch(`https://127.0.0.1:${HTTPS_PORT}/kinetiq-ca.crt`);"
+  },
+  {
+    "file": "tests\\live\\test_mobile_handset_verification.mjs",
+    "line": 92,
+    "content": "const response = await fetch(`https://127.0.0.1:${HTTPS_PORT}/kinetiq-ca.crt`, {"
+  },
+  {
+    "file": "tests\\live\\test_mobile_handset_verification.mjs",
+    "line": 131,
+    "content": "// Track network requests to verify NO phone flow uses 127.0.0.1"
+  },
+  {
+    "file": "tests\\live\\test_mobile_handset_verification.mjs",
+    "line": 135,
+    "content": "if (u.includes('127.0.0.1') || (u.includes('localhost') && !u.includes('localhost:3001'))) {"
+  },
+  {
+    "file": "tests\\live\\test_mobile_handset_verification.mjs",
+    "line": 285,
+    "content": "// Test 7: Verify Zero 127.0.0.1 Requests"
+  },
+  {
+    "file": "tests\\live\\test_mobile_handset_verification.mjs",
+    "line": 287,
+    "content": "console.log('\\n[Test 7] Verifying network requests for zero 127.0.0.1 loopback calls...');"
+  },
+  {
+    "file": "tests\\live\\test_mobile_handset_verification.mjs",
+    "line": 291,
+    "content": "throw new Error(`Phone flow made requests to 127.0.0.1: ${JSON.stringify(loopbackRequests)}`);"
+  },
+  {
+    "file": "tests\\live\\test_mobile_handset_verification.mjs",
+    "line": 293,
+    "content": "console.log('  - CONFIRMED: No phone flow made calls to 127.0.0.1 (Dynamic LAN Host preserved).');"
+  },
+  {
+    "file": "tests\\security\\rls.test.ts",
+    "line": 5,
+    "content": "* Run:  RUN_RLS_TESTS=1 SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_ANON_KEY=... SUPABASE_SERVICE_ROLE_KEY=... npm run test:rls -w tests/security"
+  }
+]

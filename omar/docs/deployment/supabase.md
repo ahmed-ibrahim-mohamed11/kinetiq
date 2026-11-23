@@ -50,6 +50,8 @@ supabase secrets set INGEST_CLOCK_SKEW_SECONDS=300
 supabase functions deploy ingest-events --use-api --no-verify-jwt   # --use-api bundles server-side (no Docker)
 supabase functions deploy device-sync --use-api --no-verify-jwt
 supabase functions deploy qr-token --use-api
+# x-dispatch-secret auth, called by pg_cron/pg_net: without --no-verify-jwt the gateway rejects every cron call with 401
+supabase functions deploy notification-dispatch --use-api --no-verify-jwt
 ```
 
 Type-check before deploying: `cd supabase/functions && deno check --config deno.json ingest-events/index.ts qr-token/index.ts device-sync/index.ts notification-dispatch/index.ts`.

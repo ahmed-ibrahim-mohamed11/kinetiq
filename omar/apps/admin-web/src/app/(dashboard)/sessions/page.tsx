@@ -14,6 +14,7 @@ export default async function SessionsPage() {
       <PageHeader
         title="Live sessions"
         description="Members currently checked in. Set and rep counts update in real time as the edge devices report them."
+        breadcrumbs={[{ label: 'Live Sessions' }]}
       />
       {error && (
         <div className="mb-4">

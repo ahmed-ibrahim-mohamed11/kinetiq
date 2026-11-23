@@ -75,10 +75,10 @@ export default async function AuditPage() {
                       <Badge variant={actionVariant(r.action)}>{r.action}</Badge>
                     </TableCell>
                     <TableCell className="font-mono text-xs">{r.table_name}</TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">{r.row_id ?? 'â€”'}</TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">{r.row_id ?? '—'}</TableCell>
                     <TableCell className="text-xs">
-                      <div>{r.actor_role ?? 'â€”'}</div>
-                      {r.actor_user_id && <div className="font-mono text-muted-foreground">{r.actor_user_id.slice(0, 8)}â€¦</div>}
+                      <div>{r.actor_role ?? '—'}</div>
+                      {r.actor_user_id && <div className="font-mono text-muted-foreground">{r.actor_user_id.slice(0, 8)}…</div>}
                     </TableCell>
                   </TableRow>
                 ))}

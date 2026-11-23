@@ -8,6 +8,7 @@ with granted consents, bind the global identity (→ `identity.checkin`).
 
 Guard rails:
 * at most one attempt per track per `retry_seconds`, and at most `max_attempts`;
+* no face is detected or embedded while the consent gate is closed for everyone;
 * consent gate checked BEFORE the match result is used (and again server-side);
 * ambiguous matches are never bound; they count toward `ambiguous` for metrics;
 * a track that is already bound is skipped.
@@ -36,7 +37,7 @@ class IdentificationOutcome:
     confidence: float
     consent_record_id: str | None
     pad_score: float | None
-    reason: str  # matched | no_face | no_match | ambiguous | no_consent | liveness_failed
+    reason: str  # matched | no_face | no_match | ambiguous | no_consent | liveness_failed | gate_closed
 
 
 @dataclass
@@ -59,6 +60,7 @@ class EntranceIdentifier:
             "ambiguous": 0,
             "no_consent": 0,
             "liveness_failed": 0,
+            "gate_closed": 0,
         }
     )
 
@@ -76,6 +78,11 @@ class EntranceIdentifier:
         self._attempts.pop((camera_id, local_track_id), None)
 
     def identify(self, image: Any, person_box: tuple[float, float, float, float]) -> IdentificationOutcome:
+        # 1:N matching needs an embedding before the match says who it is, so the per-member consent
+        # check necessarily follows the match. When NOBODY could pass the gate (stale cache, no
+        # consenting member) there is no reason to detect or embed a face at all.
+        if not self.consent.any_face_identification_allowed():
+            return self._out(None, 0.0, None, None, "gate_closed")
         x1, y1, x2, y2 = person_box
         head = (x1, y1, x2, y1 + (y2 - y1) * self.head_fraction)
         hx1, hy1, hx2, hy2 = (max(0, int(v)) for v in head)

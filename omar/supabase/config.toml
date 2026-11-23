@@ -78,5 +78,8 @@ verify_jwt = false # device HMAC auth; see supabase/functions/device-sync
 [functions.qr-token]
 verify_jwt = true
 
+[functions.notification-dispatch]
+verify_jwt = false # called by pg_cron/pg_net with x-dispatch-secret; see supabase/functions/notification-dispatch
+
 [analytics]
 enabled = false

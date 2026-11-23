@@ -26,7 +26,7 @@ def _settings(tmp_path: Path) -> Settings:
         device_id=UUID("d0000000-0000-4000-8000-000000000001"),
         branch_id=UUID("b0000000-0000-4000-8000-000000000001"),
         device_secret="dev-only-device-secret-change-me",
-        ingest_url="http://ingest.test/functions/v1/ingest-events",
+        ingest_url="https://ingest.test/functions/v1/ingest-events",
         data_dir=tmp_path,
         cameras_file=ROOT / "config" / "cameras.example.yaml",
         _env_file=None,
@@ -87,6 +87,62 @@ def test_simulation_event_stream(tmp_path: Path, monkeypatch):  # type: ignore[n
 
     for e in events:
         parse_event(e)
+
+
+def test_simulation_overrides_member_and_skip_checkin_checkout(tmp_path: Path, monkeypatch):  # type: ignore[no-untyped-def]
+    """C8: EDGE_SIM_MEMBER_ID / EDGE_SIM_CONSENT_ID / EDGE_SIM_CHECKIN=skip / EDGE_SIM_CHECKOUT=skip."""
+    member = "77777777-7777-4777-8777-777777777777"
+    consent = "66666666-6666-4666-8666-666666666666"
+    monkeypatch.setenv("EDGE_SIM_MEMBER_ID", member)
+    monkeypatch.setenv("EDGE_SIM_CONSENT_ID", consent)
+    monkeypatch.setenv("EDGE_SIM_CHECKIN", "skip")
+    monkeypatch.setenv("EDGE_SIM_CHECKOUT", "skip")
+    settings = _settings(tmp_path)
+    assert (str(settings.sim_member_id), settings.sim_checkin, settings.sim_checkout) == (member, "skip", "skip")
+    built: list[Pipeline] = []
+    orig_init = Pipeline.__init__
+
+    def spy_init(self, *a, **kw):  # type: ignore[no-untyped-def]
+        orig_init(self, *a, **kw)
+        built.append(self)
+
+    monkeypatch.setattr(Pipeline, "__init__", spy_init)
+    assert run_simulation(settings, _cams(), _profiles(), seconds=60, sync=False) == 0
+    events = built[0].queue.peek_batch(10_000)
+    kinds = Counter(e["event_type"] for e in events)
+    assert kinds["identity.checkin"] == 0 and kinds["identity.checkout"] == 0
+    usage = next(e for e in events if e["event_type"] == "equipment.usage.started")
+    assert usage["payload"]["member_id"] == member
+    assert kinds["set.completed"] == 2
+
+    monkeypatch.setenv("EDGE_SIM_CHECKIN", "qr")
+    monkeypatch.setenv("EDGE_SIM_CHECKOUT", "edge")
+    built.clear()
+    assert run_simulation(_settings(tmp_path / "b"), _cams(), _profiles(), seconds=60, sync=False) == 0
+    events = built[0].queue.peek_batch(10_000)
+    checkin = next(e for e in events if e["event_type"] == "identity.checkin")
+    checkout = next(e for e in events if e["event_type"] == "identity.checkout")
+    assert checkin["payload"]["member_id"] == member and checkin["payload"]["consent_record_id"] == consent
+    assert checkout["payload"]["member_id"] == member
+
+
+def test_simulation_defaults_match_the_seed(tmp_path: Path, monkeypatch):  # type: ignore[no-untyped-def]
+    for k in ("EDGE_SIM_MEMBER_ID", "EDGE_SIM_CONSENT_ID", "EDGE_SIM_CHECKIN", "EDGE_SIM_CHECKOUT"):
+        monkeypatch.delenv(k, raising=False)
+    s = _settings(tmp_path)
+    assert str(s.sim_member_id) == "33333333-3333-4333-8333-333333333333"
+    assert str(s.sim_consent_id) == "55555555-5555-4555-8555-555555555556"
+    assert (s.sim_checkin, s.sim_checkout) == ("qr", "edge")
+
+
+def test_simulate_cli_accepts_cameras_flag() -> None:
+    import subprocess
+    import sys
+
+    out = subprocess.run(  # noqa: S603 — fixed argv
+        [sys.executable, "-m", "edge_ai", "simulate", "--help"], capture_output=True, text=True, cwd=ROOT, check=False
+    )
+    assert "--cameras" in out.stdout
 
 
 def test_simulation_syncs_to_fake_server(tmp_path: Path):

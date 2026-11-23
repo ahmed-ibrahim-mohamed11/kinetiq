@@ -27,7 +27,7 @@ export function ReportView({ summary, memberName, generatedAt, timeZone }: { sum
         <StatTile label="Visit" value={formatDuration(summary.visit_seconds)} hint="check-in to check-out" />
         <StatTile label="Active exercise" value={formatDuration(summary.active_exercise_seconds)} hint="time actually moving" />
         <StatTile label="Sets" value={summary.total_sets} />
-        <StatTile label="Total reps" value={summary.total_reps} hint="volume = repetitions (no weights recorded)" />
+        <StatTile label="Total reps" value={summary.total_reps} hint="volume = repetitions (no weights recorded)" data-testid="report-total-reps" />
       </section>
 
       {summary.exercises.length === 0 ? (

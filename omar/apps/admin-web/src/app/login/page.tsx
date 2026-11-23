@@ -3,19 +3,15 @@ import { redirect } from 'next/navigation';
 import { ShieldCheck } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@smartgym/ui';
 import { getUser } from '@smartgym/supabase-client/server';
+import { safeNextPath } from '@smartgym/validation';
 import { LoginForm } from './login-form';
 
 export const metadata: Metadata = { title: 'Sign in' };
 
-function safeNext(next: string | undefined): string {
-  // Only allow same-origin relative paths to avoid open redirects.
-  if (!next || !next.startsWith('/') || next.startsWith('//')) return '/dashboard';
-  return next;
-}
-
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const { next } = await searchParams;
-  const target = safeNext(next);
+  // Only same-origin paths: rejects //host, /\host, control characters and the like.
+  const target = safeNextPath(next);
   const user = await getUser();
   if (user) redirect(target);
 
